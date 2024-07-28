@@ -19,6 +19,12 @@ class CatatTransaksiController extends Controller
         ]);
     }
 
+    public function layanan() {
+        return view('dashboard.kasir.layanan', [
+            'layanans' => Layanan::all(),
+        ]);
+    }
+
     public function catat(Request $request) {
         try {
             $validatedData = $request->validate([

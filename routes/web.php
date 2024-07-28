@@ -50,3 +50,6 @@ Route::get('/layananLog/history', [LayananController::class, 'history'])->name('
 Route::get('/transaksiBaru', [CatatTransaksiController::class, 'index']);
 
 Route::post('/transaksiBaru', [CatatTransaksiController::class, 'catat']);
+
+//tampil list layanan
+Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan']);

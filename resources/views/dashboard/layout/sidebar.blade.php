@@ -19,7 +19,7 @@
     </li><!-- End Transaksi Baru Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="pages-faq.html">
+      <a class="nav-link {{ Request::is('list-layanan') ? '' : 'collapsed' }}" href="/list-layanan">
         <i class="bi bi-collection"></i>
         <span>Layanan</span>
       </a>
