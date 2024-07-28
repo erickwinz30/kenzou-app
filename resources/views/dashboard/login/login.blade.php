@@ -80,7 +80,7 @@
                       <div class="input-group has-validation">
                         <span class="input-group-text" id="inputGroupPrepend">@</span>
                         <input type="text" name="username" class="form-control" id="username"
-                          @error('username') is-invalid @enderror required>
+                          placeholder="Masukkan username..." @error('username') is-invalid @enderror required>
                         {{-- <div class="invalid-feedback">Please enter your username.</div> --}}
                         @error('username')
                           <div class="invalid-feedback">
@@ -92,7 +92,8 @@
 
                     <div class="col-12">
                       <label for="yourPassword" class="form-label">Password</label>
-                      <input type="password" name="password" class="form-control" id="yourPassword" required>
+                      <input type="password" name="password" class="form-control" id="yourPassword"
+                        placeholder="Masukkan password..." required>
                       <div class="invalid-feedback">Please enter your password!</div>
                     </div>
                     <div class="col-12">

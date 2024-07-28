@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('detail_layanans', function (Blueprint $table) {
-            $table->id();
             $table->foreignUuid('transaksi_id');
             $table->foreignId('layanan_id');
             $table->timestamps();

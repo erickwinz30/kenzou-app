@@ -35,7 +35,7 @@
 
             <!-- Input Modal -->
             <div class="modal fade" id="inputModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Kasir</h1>
@@ -121,7 +121,7 @@
             <!-- Edit Modal -->
             <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="exampleModalLabel"
               aria-hidden="true">
-              <div class="modal-dialog">
+              <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Kasir</h1>
@@ -242,9 +242,12 @@
                           Tidak
                         @endif
                       </td>
-                      <td
-                        style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                        {{ $user->created_at }}</td>
+                      <td>
+                        <span
+                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                          {{ $user->created_at }}
+                        </span>
+                      </td>
                       <td>
                         <button class="btn btn-warning" id="edit-button" data-bs-toggle='modal'
                           data-bs-target='#editModal' data-id="{{ $user->id }}" data-nama="{{ $user->nama }}"

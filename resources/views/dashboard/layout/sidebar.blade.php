@@ -12,7 +12,7 @@
     </li><!-- End Dashboard Kasir Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="/transaksi">
+      <a class="nav-link {{ Request::is('transaksiBaru') ? '' : 'collapsed' }}" href="/transaksiBaru">
         <i class="bi bi-cart"></i>
         <span>Transaksi Baru</span>
       </a>
@@ -61,14 +61,14 @@
       </li><!-- End Transaksi Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('kasir') ? '' : 'collapsed' }}" href="/kasir">
+        <a class="nav-link {{ Request::is('kasir') || Request::is('kasir/*') ? '' : 'collapsed' }}" href="/kasir">
           <i class="bi bi-person-gear"></i>
           <span>Kasir</span>
         </a>
       </li><!-- End Kasir Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('layanan') ? '' : 'collapsed' }}" href="/layanan">
+        <a class="nav-link {{ Request::is('layanan') || Request::is('layanan/*') ? '' : 'collapsed' }}" href="/layanan">
           <i class="bi bi-collection"></i>
           <span>Layanan</span>
         </a>

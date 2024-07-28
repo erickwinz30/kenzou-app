@@ -36,6 +36,7 @@ class LayananController extends Controller
         $validatedData = $request->validate([
             'nama_layanan' => 'required|min:3|max:255',
             'harga' => 'required',
+            'detail' => 'required|max:255',
         ]);
 
         $validatedData['added_date'] = Carbon::now('Asia/Jakarta');
@@ -64,7 +65,9 @@ class LayananController extends Controller
      */
     public function edit(Layanan $layanan)
     {
-        //
+        return view('dashboard.layanan.edit', [
+            'layanan' => $layanan,
+        ]);
     }
 
     /**
@@ -72,7 +75,21 @@ class LayananController extends Controller
      */
     public function update(Request $request, Layanan $layanan)
     {
-        //
+        $rules = [
+            'nama_layanan' => 'required|min:3|max:255',
+            'harga' => 'required',
+            'detail' => 'required|max:255',
+        ];
+
+        $validatedData = $request->validate($rules);
+        
+        Layanan::where('id', $layanan->id)->update($validatedData);
+
+        $validatedData['updated_date'] = Carbon::now('Asia/Jakarta');
+
+        LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
+
+        return redirect('/layanan')->with('success', 'Layanan telah diupdate!!');
     }
 
     /**
@@ -80,6 +97,10 @@ class LayananController extends Controller
      */
     public function destroy(Layanan $layanan)
     {
+        $validatedData['deleted_date'] = Carbon::now('Asia/Jakarta');
+
+        LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
+
         Layanan::destroy($layanan->id);
 
         return redirect('/layanan')->with('success', 'Layanan telah terhapus!');

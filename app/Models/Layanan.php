@@ -19,4 +19,8 @@ class Layanan extends Model
     public function layananLog() {
         return $this->hasMany(LayananLog::class);
     }
+
+    public function detailLayanan() {
+        return $this->hasMany(DetailLayanan::class);
+    }
 }

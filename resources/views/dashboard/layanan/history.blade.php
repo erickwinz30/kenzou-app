@@ -30,6 +30,7 @@
                     <th>No</th>
                     <th>Nama Layanan</th>
                     <th>Harga</th>
+                    <th>Detail</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Dibuat</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Terakhir Update</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Dihapus</th>
@@ -41,10 +42,14 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $layanan->nama_layanan }}</td>
                       <td>Rp. {{ number_format($layanan->harga, 0, ',', '.') }}</td>
+                      <td>{{ Str::limit($layanan->detail, 20) }}</td>
                       {{-- <td class="bg-success rounded-pill">{{ $layanan->added_date }}</td> --}}
-                      <td
-                        style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                        {{ $layanan->added_date }}</td>
+                      <td>
+                        <span
+                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                          {{ $layanan->added_date }}
+                        </span>
+                      </td>
                       <td>
                         @if ($layanan->updated_date)
                           <span

@@ -15,6 +15,7 @@ class LayananLog extends Model
         'layanan_id',
         'nama_layanan',
         'harga',
+        'detail',
         'added_date',
         'updated_date',
         'deleted_date',

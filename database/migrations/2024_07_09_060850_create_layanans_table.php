@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('nama_layanan');
             $table->integer('harga');
             $table->datetime('added_date')->nullable();
+            $table->string('detail');
             $table->timestamps();
         });
     }

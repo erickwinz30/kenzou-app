@@ -46,6 +46,7 @@
                     <th>No</th>
                     <th>Nama Layanan</th>
                     <th>Harga</th>
+                    <th>Detail</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Buat</th>
                     <th>Aksi</th>
                   </tr>
@@ -55,8 +56,14 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $layanan->nama_layanan }}</td>
-                      <td>{{ $layanan->harga }}</td>
-                      <td>{{ $layanan->added_date }}</td>
+                      <td>Rp {{ number_format($layanan->harga, 0, ',', '.') }}</td>
+                      <td>{{ Str::limit($layanan->detail, 20) }}</td>
+                      <td class="text-center align-middle" style="padding: 0;">
+                        <span
+                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                          {{ $layanan->added_date }}
+                        </span>
+                      </td>
                       <td>
                         <a href="/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
                             class="bi bi-pencil"></i></a>

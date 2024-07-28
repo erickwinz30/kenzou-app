@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('layanan_id');
             $table->string('nama_layanan');
             $table->decimal('harga');
+            $table->string('detail');
             $table->datetime('added_date');
             $table->datetime('updated_date')->nullable();
             $table->datetime('deleted_date')->nullable();

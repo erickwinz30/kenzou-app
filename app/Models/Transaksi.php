@@ -14,7 +14,9 @@ class Transaksi extends Model
 
     protected $guarded = ['id'];
 
-    protected $with = ['pelanggan', 'layanan', 'user'];
+    protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan'];
+
+    public $incrementing = false;
 
     protected static function boot()
     {
@@ -39,6 +41,6 @@ class Transaksi extends Model
     }
 
     public function detail_layanan() {
-        return $this->hasMany(DetailLayanan::class);
+        return $this->hasOne(DetailLayanan::class);
     }
 }
