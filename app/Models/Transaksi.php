@@ -41,6 +41,6 @@ class Transaksi extends Model
     }
 
     public function detail_layanan() {
-        return $this->hasOne(DetailLayanan::class);
+        return $this->hasMany(DetailLayanan::class);
     }
 }

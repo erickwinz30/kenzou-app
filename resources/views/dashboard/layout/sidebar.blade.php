@@ -54,7 +54,8 @@
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('transaksi/*') ? '' : 'collapsed' }}" href="#">
+        <a class="nav-link {{ Request::is('transaksi/*') || Request::is('transaksi/') ? '' : 'collapsed' }}"
+          href="transaksi">
           <i class="bi bi-wallet2"></i>
           <span>Transaksi</span>
         </a>

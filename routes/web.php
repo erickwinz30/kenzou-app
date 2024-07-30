@@ -53,3 +53,6 @@ Route::post('/transaksiBaru', [CatatTransaksiController::class, 'catat']);
 
 //tampil list layanan
 Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan']);
+
+//admin
+Route::resource('transaksi', TransaksiController::class)->middleware('isAdmin');

@@ -85,13 +85,13 @@
               {{-- Container detail layanan pada transaksi --}}
               <div class="d-flex justify-content-between align-items-center mb-2">
                 <h6 class="card-text fw-semibold">Tgl Transaksi</h6>
-                <p class="card-text">6 Januari 2024</p>
+                <p class="card-text">{{ $tanggal_transaksi }}</p>
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
-                <h6 class="card-text fw-semibold">No. Pelanggan</h6>
+                <h6 class="card-text fw-semibold my-auto">No. Pelanggan</h6>
               </div>
-              <h6 class="card-text fw-semibold mb-3" id="card_item">Item</h6>
-              <div class="item_transaksi" id="item_transaksi">
+              <h6 class="card-text fw-semibold" id="card_item">Item</h6>
+              <div class="item_transaksi mb-3" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
               </div>
               <div class="mb-3">
@@ -172,10 +172,10 @@
           // Add the item name and price to the new div
           itemDiv.innerHTML = `
             <input type="hidden" name="layanan_id[]" value="${itemId}">
-            <p class="card-text">${itemName}</p>
+            <p class="card-text my-auto">${itemName}</p>
             <div class="d-flex justify-content-end align-items-center">
-            <p class="card-text">Rp. ${itemPrice}</p>
-            <button class="btn p-0 ms-2 remove-item">
+            <p class="card-text my-auto">Rp. ${itemPrice}</p>
+            <button type="button" class="btn p-0 ms-2 remove-item">
               <i class="bi bi-x-circle"></i>
             </button>
             </div>
@@ -209,15 +209,16 @@
 
         infoPelanggan.innerHTML = `
           <input type="hidden" name="nomor_telepon" value="${noHp}">
-          <p class="card-text pt-1">${noHp}</p>
-          <button class="btn p-0 ms-2 remove-telepon">
+          <p class="card-text my-auto">${noHp}</p>
+          <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
             <i class="bi bi-x-circle"></i>
           </button>
         `;
 
         document.getElementById('containerNoPelanggan').appendChild(infoPelanggan);
 
-        infoPelanggan.querySelector('.remove-pelanggan').addEventListener('click', function() {
+        document.getElementById('remove-pelanggan').addEventListener('click', function() {
+          // event.preventDefault();
           infoPelanggan.remove();
         });
       });

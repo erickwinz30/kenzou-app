@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Layanan;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class TransaksiController extends Controller
 {
@@ -12,7 +14,9 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        return view('dashboard.transaksi.index');
+        return view('dashboard.transaksi.index', [
+            'transaksis' => Transaksi::all(),
+        ]);
     }
 
     /**
