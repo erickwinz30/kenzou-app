@@ -56,3 +56,5 @@ Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan']);
 
 //admin
 Route::resource('transaksi', TransaksiController::class)->middleware('isAdmin');
+
+Route::post('cariTglTransaksi', [TransaksiController::class, 'cariTanggal'])->middleware('isAdmin');

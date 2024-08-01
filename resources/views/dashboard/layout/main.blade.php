@@ -27,6 +27,8 @@
   <link href="{{ asset('vendor/quill/quill.bubble.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css">
 
 
   <!-- Template Main CSS File -->

@@ -30,20 +30,24 @@
             </div>
             <div class="d-flex align-items-center justify-content-between mb-3">
               <div>
-                <a href="/layanan/create" type="button" class="btn btn-success d-inline">
+                <a href="/transaksiBaru" type="button" class="btn btn-success d-inline">
                   <i class="bi bi-plus" style="margin-right: 2px;"></i>Transaksi
                 </a>
               </div>
-              <div class="d-flex align-items-center justify-content-between">
-                <input type="date" name="from_date" id="from_date">
-                <p class="card-text mx-2 my-auto">S/D</p>
-                <input type="date" name="to_date" id="to_date">
-              </div>
+              <form id="dateForm" action="/cariTglTransaksi" method="POST">
+                @csrf
+                <div class="d-flex align-items-center justify-content-between">
+                  <input type="text" name="min" id="min">
+                  <p class="card-text mx-2 my-auto">S/D</p>
+                  <input type="text" name="max" id="max">
+                  <button type="submit" id="searchBtn" class="btn btn-primary ms-3">Search</button>
+                </div>
+              </form>
             </div>
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
-              <table class="table datatable">
+              <table class="table" id="tabelTransaksi">
                 <thead>
                   <tr>
                     <th>No</th>
@@ -58,44 +62,49 @@
                     <th>Aksi</th>
                   </tr>
                 </thead>
-                <tbody>
-                  @foreach ($transaksis as $transaksi)
+                <tbody id="transaksiTableBody">
+                  @if ($transaksis->isNotEmpty())
+                    @foreach ($transaksis as $transaksi)
+                      <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ Str::limit($transaksi->id, 15) }}</td>
+                        <td>{{ $transaksi->nomor_telepon }}</td>
+                        <td>
+                          @php
+                            $namaLayanan = $transaksi->detail_layanan->pluck('layanan.nama_layanan')->toArray();
+                            echo implode(', ', $namaLayanan);
+                          @endphp
+                        </td>
+                        <td>{{ $transaksi->user->nama }}</td>
+                        <td class="text-center align-middle" style="padding: 0;">
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px; display: inline-block;">
+                            {{ $transaksi->date }}
+                          </span>
+                        </td>
+                        <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                        <td>{{ $transaksi->metode_pembayaran }}</td>
+                        <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
+                        <td>
+                          <a href="/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
+                              class="bi bi-pencil"></i></a>
+                          <form action="/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
+                            id="deleteForm{{ $transaksi->id }}">
+                            @method('DELETE')
+                            @csrf
+                            <button type="button" class="btn btn-danger"
+                              onclick="deleteConfirmation('{{ $transaksi->id }}')">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    @endforeach
+                  @else
                     <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>{{ Str::limit($transaksi->id, 15) }}</td>
-                      <td>{{ $transaksi->nomor_telepon }}</td>
-                      <td>
-                        @php
-                          $namaLayanan = $transaksi->detail_layanan->pluck('layanan.nama_layanan')->toArray();
-                          echo implode(', ', $namaLayanan);
-                        @endphp
-                      </td>
-                      <td>{{ $transaksi->user->nama }}</td>
-                      {{-- <td>{{ Str::limit($layanan->detail, 20) }}</td> --}}
-                      <td class="text-center align-middle" style="padding: 0;">
-                        <span
-                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px; display: inline-block;">
-                          {{ $transaksi->date }}
-                        </span>
-                      </td>
-                      <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
-                      <td>{{ $transaksi->metode_pembayaran }}</td>
-                      <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
-                      <td>
-                        <a href="/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
-                            class="bi bi-pencil"></i></a>
-                        <form action="/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
-                          id="deleteForm{{ $transaksi->id }}">
-                          @method('DELETE')
-                          @csrf
-                          <button type="button" class="btn btn-danger"
-                            onclick="deleteConfirmation('{{ $transaksi->id }}')">
-                            <i class="bi bi-trash"></i>
-                          </button>
-                        </form>
-                      </td>
+                      <td colspan="10" class="text-center">No transactions found for the selected date range.</td>
                     </tr>
-                  @endforeach
+                  @endif
                 </tbody>
               </table>
             </div>
@@ -105,4 +114,92 @@
       </div>
     </div>
   </section>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+  <script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
+  <script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
+  <script>
+    // Initialize minDate and maxDate variables
+    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+      var min = minDate.val();
+      var max = maxDate.val();
+      var dateStr = data[5]; // Ensure this index is correct
+
+      console.log('Date string from table:', dateStr); // Debug
+
+      // Remove HTML tags and trim extra spaces
+      dateStr = dateStr.replace(/<[^>]*>/g, '').trim();
+
+      var date;
+
+      // Adjust date parsing based on the expected format
+      if (dateStr) {
+        var dateParts = dateStr.split(' '); // Split by space for `YYYY-MM-DD HH:MM:SS` format
+        var dateOnly = dateParts[0]; // Get the date part
+
+        var dateParts = dateOnly.split('-'); // Split by '-'
+        if (dateParts.length === 3) {
+          var year = parseInt(dateParts[0], 10);
+          var month = parseInt(dateParts[1], 10) - 1; // Months are 0-based
+          var day = parseInt(dateParts[2], 10);
+          date = new Date(year, month, day);
+        } else {
+          console.error('Unexpected date format:', dateStr);
+        }
+      }
+
+      // Convert min and max to Date objects
+      var minDateObj = min ? new Date(min) : null;
+      var maxDateObj = max ? new Date(max) : null;
+
+      console.log('Parsed min date:', minDateObj);
+      console.log('Parsed max date:', maxDateObj);
+      console.log('Parsed date to compare:', date);
+
+      if (
+        (minDateObj === null && maxDateObj === null) ||
+        (minDateObj === null && date <= maxDateObj) ||
+        (minDateObj <= date && maxDateObj === null) ||
+        (minDateObj <= date && date <= maxDateObj)
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    // Create date inputs
+    minDate = new DateTime($('#min'), {
+      format: 'YYYY-MM-DD'
+    });
+    maxDate = new DateTime($('#max'), {
+      format: 'YYYY-MM-DD'
+    });
+
+    // DataTables initialization
+    $(document).ready(function() {
+      var table = $('#tabelTransaksi').DataTable();
+
+      $('#min, #max').on('change', function() {
+        table.draw();
+      });
+    });
+
+    //konfirmasi hapus data
+    function deleteConfirmation(id) {
+      Swal.fire({
+        title: "Yakin ingin menghapus?",
+        text: "Aksi ini tidak bisa mengembalikan data!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2980B9",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('deleteForm' + id).submit();
+        }
+      });
+    }
+  </script>
 @endsection
