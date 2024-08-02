@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
@@ -42,15 +43,19 @@ class TransaksiController extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Transaksi $transaksi)
     {
-        //
+        return view('dashboard.transaksi.edit', [
+            'transaksi' => $transaksi,
+            'users' => User::all(),
+            'layanans' => Layanan::all(),
+        ]);
     }
 
     /**
@@ -76,29 +81,6 @@ class TransaksiController extends Controller
             Log::error('Transaction Creation Error: ', ['message' => $e->getMessage()]);
 
             return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
-        }
-    }
-
-    public function cariTanggal(Request $request) {
-        try {
-            $validatedData = $request->validate([
-                'from_date' => 'required',
-                'to_date' => 'required',
-            ]);
-
-            $fromDate = Carbon::parse($validatedData['from_date'])->startOfDay();
-            $toDate = Carbon::parse($validatedData['to_date'])->endOfDay();
-
-            $transaksis = Transaksi::whereBetween('date', [$fromDate, $toDate])->get();
-
-            Log::info('Date Found: ', ['cariTanggal' => $transaksis]);
-
-            return view('dashboard.transaksi.index', compact('transaksis'));
-
-        } catch(\Exception $e) {
-            Log::error('Date Searching Error: ', ['message' => $e->getMessage()]);
-
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat melakukan pencarian berdasarkan tanggal!!');
         }
     }
 }

@@ -1,6 +1,9 @@
 @extends('dashboard.layout.main')
 
 @section('container')
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css">
+
   <div class="pagetitle">
     <h1>Transaksi</h1>
     <nav>
@@ -20,6 +23,15 @@
     </div>
   @endif
 
+  @if (session()->has('error'))
+    <div class="row justify-content-center">
+      <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  @endif
+
   <section class="section">
     <div class="row justify-content-center">
       <div class="col-lg-12">
@@ -29,20 +41,19 @@
               <h5 class="card-title">Data Transaksi</h5>
             </div>
             <div class="d-flex align-items-center justify-content-between mb-3">
+              <div class="d-flex align-items-center justify-content-between">
+                <p class="me-2 my-auto">Tanggal:</p>
+                <input type="text" name="min" id="min">
+                <p class="card-text mx-2 my-auto">S/D</p>
+                <input type="text" name="max" id="max">
+                <button type="button" id="tombolReset" class="btn btn-primary ms-3"><i
+                    class="bi bi-arrow-clockwise"></i></button>
+              </div>
               <div>
                 <a href="/transaksiBaru" type="button" class="btn btn-success d-inline">
                   <i class="bi bi-plus" style="margin-right: 2px;"></i>Transaksi
                 </a>
               </div>
-              <form id="dateForm" action="/cariTglTransaksi" method="POST">
-                @csrf
-                <div class="d-flex align-items-center justify-content-between">
-                  <input type="text" name="min" id="min">
-                  <p class="card-text mx-2 my-auto">S/D</p>
-                  <input type="text" name="max" id="max">
-                  <button type="submit" id="searchBtn" class="btn btn-primary ms-3">Search</button>
-                </div>
-              </form>
             </div>
 
             <!-- Table with stripped rows -->
@@ -126,7 +137,7 @@
       var max = maxDate.val();
       var dateStr = data[5]; // Ensure this index is correct
 
-      console.log('Date string from table:', dateStr); // Debug
+      // console.log('Date string from table:', dateStr); // Debug
 
       // Remove HTML tags and trim extra spaces
       dateStr = dateStr.replace(/<[^>]*>/g, '').trim();
@@ -153,9 +164,9 @@
       var minDateObj = min ? new Date(min) : null;
       var maxDateObj = max ? new Date(max) : null;
 
-      console.log('Parsed min date:', minDateObj);
-      console.log('Parsed max date:', maxDateObj);
-      console.log('Parsed date to compare:', date);
+      // console.log('Parsed min date:', minDateObj);
+      // console.log('Parsed max date:', maxDateObj);
+      // console.log('Parsed date to compare:', date);
 
       if (
         (minDateObj === null && maxDateObj === null) ||
@@ -183,8 +194,19 @@
       $('#min, #max').on('change', function() {
         table.draw();
       });
-    });
 
+      // Reset button functionality
+      $('#tombolReset').on('click', function() {
+        $('#min').val('');
+        $('#max').val('');
+        minDate.val('');
+        maxDate.val('');
+        table.draw();
+      });
+    });
+  </script>
+
+  <script>
     //konfirmasi hapus data
     function deleteConfirmation(id) {
       Swal.fire({

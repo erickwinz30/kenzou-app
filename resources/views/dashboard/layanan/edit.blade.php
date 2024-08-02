@@ -24,7 +24,7 @@
       <div class="col-lg-8">
         <div class="card">
           <div class="card-body">
-            <h5 class="card-title">Tambah Layanan</h5>
+            <h5 class="card-title">Edit Layanan</h5>
             <form action="/layanan/{{ $layanan->id }}" method="POST">
               @method('put')
               @csrf
