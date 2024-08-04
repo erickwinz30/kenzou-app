@@ -65,6 +65,8 @@ class CatatTransaksiController extends Controller
 
             // Log each detail layanan
             Log::info('Detail Layanan Created:', ['detail_layanan' => $detailLayanan]);
+
+            return redirect('/transaksi')->with('success', 'Data transaksi telah diupdate!!!');
         }
 
             return redirect('/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');

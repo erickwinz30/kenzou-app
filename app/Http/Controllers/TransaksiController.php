@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use App\Models\DetailLayanan;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -61,9 +62,66 @@ class TransaksiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Transaksi $transaksi)
     {
-        //
+        try {
+            $rules = [
+                'user_id' => 'required',
+                'nomor_telepon' => 'required|min:10|max:15',
+                'date' => 'required',
+                'metode_pembayaran' => 'required',
+                'keterangan' => 'max:255',
+                'total_harga' => 'required',
+            ];
+
+            $validatedDataTransaksi = $request->validate($rules);
+
+            Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
+
+            // Retrieve the updated transaction
+            $updatedTransaction = Transaksi::find($transaksi->id);
+
+            Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
+            
+            $rules2 = [
+                'layanan' => 'array',
+                'layanan.*' => 'nullable|:layanans,id',
+            ];
+
+            $validatedDataLayanan = $request->validate($rules2);
+
+            $existingDetailLayanan = $transaksi->detail_layanan;
+
+            foreach ($validatedDataLayanan['layanan'] as $index => $layananId) {
+            if (isset($existingDetailLayanan[$index])) {
+                if (empty($layananId)) {
+                    // Delete the detail_layanan entry if the option is empty
+                    $existingDetailLayanan[$index]->delete();
+                    Log::info('Detail Layanan Deleted: ', ['id' => $existingDetailLayanan[$index]->id]);
+                } else {
+                    // Update the detail_layanan entry if the option is not empty
+                    $existingDetailLayanan[$index]->update([
+                        'layanan_id' => $layananId,
+                    ]);
+                    Log::info('Detail Layanan Updated: ', ['layanan' => $existingDetailLayanan[$index]->toArray()]);
+                }
+            } else {
+                if (!empty($layananId)) {
+                    // Create a new detail_layanan entry if it does not exist and the option is not empty
+                    $newDetailLayanan = $transaksi->detail_layanan()->create([
+                        'layanan_id' => $layananId,
+                        'transaksi_id' => $transaksi->id, // Ensure the correct transaksi_id is assigned
+                    ]);
+                    Log::info('Detail Layanan Created: ', ['layanan' => $newDetailLayanan->toArray()]);
+                }
+            }
+        }   
+            return redirect('/transaksi')->with('success', 'Data transaksi telah diupdate!!');
+        } catch (\Exception $e) {
+            Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
+
+            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+        }
     }
 
     /**
