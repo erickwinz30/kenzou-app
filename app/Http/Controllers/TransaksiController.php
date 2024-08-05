@@ -19,7 +19,7 @@ class TransaksiController extends Controller
     public function index()
     {
         return view('dashboard.transaksi.index', [
-            'transaksis' => Transaksi::all(),
+            'transaksis' => Transaksi::orderBy('date', 'desc')->get(),
         ]);
     }
 
@@ -140,5 +140,9 @@ class TransaksiController extends Controller
 
             return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
         }
+    }
+
+    public function today() {
+        
     }
 }

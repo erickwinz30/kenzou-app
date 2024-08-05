@@ -128,19 +128,21 @@
                   </div>
                 @enderror
               </div>
-              <div class="mb-3">
-                <label for="total_harga" class="form-label @error('total_harga') is-invalid @enderror">Total
-                  Harga</label>
-                <div class="input-group">
-                  <span class="input-group-text" id="mataUang">Rp</span>
-                  <input type="text" inputmode="numeric" class="form-control" id="total_harga" name="total_harga"
-                    value="{{ old('total_harga', $transaksi->total_harga) }}" aria-describedby="mataUang" required
-                    autofocus>
-                  @error('total_harga')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex justify-content-end">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <label for="total_harga" class="form-label @error('total_harga') is-invalid @enderror">Total
+                    Harga:</label>
+                  <div class="input-group w-50">
+                    <span class="input-group-text" id="mataUang">Rp</span>
+                    <input type="text" inputmode="numeric" class="form-control" id="total_harga"
+                      name="total_harga" value="{{ old('total_harga', $transaksi->total_harga) }}"
+                      aria-describedby="mataUang" required autofocus>
+                    @error('total_harga')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
                 </div>
               </div>
               <div class="modal-footer">

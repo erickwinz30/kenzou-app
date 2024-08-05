@@ -1,8 +1,10 @@
 @extends('dashboard.layout.main')
 
 @section('container')
-  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.bootstrap5.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.bootstrap5.css">
 
   <div class="pagetitle">
     <h1>Transaksi</h1>
@@ -40,19 +42,24 @@
             <div>
               <h5 class="card-title">Data Transaksi</h5>
             </div>
-            <div class="d-flex align-items-center justify-content-between mb-3">
-              <div class="d-flex align-items-center justify-content-between">
-                <p class="me-2 my-auto">Tanggal:</p>
-                <input type="text" name="min" id="min">
-                <p class="card-text mx-2 my-auto">S/D</p>
-                <input type="text" name="max" id="max">
-                <button type="button" id="tombolReset" class="btn btn-primary ms-3"><i
-                    class="bi bi-arrow-clockwise"></i></button>
-              </div>
-              <div>
-                <a href="/transaksiBaru" type="button" class="btn btn-success d-inline">
-                  <i class="bi bi-plus" style="margin-right: 2px;"></i>Transaksi
-                </a>
+            <div class="container">
+              <div class="row mb-3">
+                <div class="col-12 col-md-8 d-flex flex-wrap align-items-center mb-3 mb-md-0">
+                  <i class="bi bi-calendar3 me-3"></i>
+                  <input type="text" class="form-control me-2 w-auto" name="min" id="min"
+                    style="max-width: 200px;">
+                  <p class="card-text mx-2 my-auto">S/D</p>
+                  <input type="text" class="form-control me-2 w-auto" name="max" id="max"
+                    style="max-width: 200px;">
+                  <button type="button" id="tombolReset" class="btn btn-primary ms-3">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
+                </div>
+                <div class="col-12 col-md-4 text-end">
+                  <a href="/transaksiBaru" class="btn btn-success d-inline">
+                    <i class="bi bi-plus me-2"></i>Transaksi
+                  </a>
+                </div>
               </div>
             </div>
 
@@ -66,10 +73,10 @@
                     <th>No. Telp Pelanggan</th>
                     <th>Nama Layanan</th>
                     <th>Kasir</th>
-                    <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal</th>
-                    <th>Total Harga</th>
+                    <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Transaksi</th>
                     <th>Metode Pembayaran</th>
                     <th>Keterangan</th>
+                    <th>Total Harga</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -89,13 +96,13 @@
                         <td>{{ $transaksi->user->nama }}</td>
                         <td class="text-center align-middle" style="padding: 0;">
                           <span
-                            style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px; display: inline-block;">
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
                             {{ $transaksi->date }}
                           </span>
                         </td>
-                        <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                         <td>{{ $transaksi->metode_pembayaran }}</td>
                         <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
+                        <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                         <td>
                           <a href="/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
                               class="bi bi-pencil"></i></a>
@@ -117,6 +124,13 @@
                     </tr>
                   @endif
                 </tbody>
+                <tfoot>
+                  <tr>
+                    <th colspan="8" class="text-right">Total Penjualan:</th>
+                    <th id="totalHarga">Rp 0</th>
+                    <th colspan="1"></th>
+                  </tr>
+                </tfoot>
               </table>
             </div>
             <!-- End Table with stripped rows -->
@@ -128,8 +142,17 @@
 
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
   <script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.1.3/js/dataTables.bootstrap5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
   <script src="https://cdn.datatables.net/datetime/1.5.3/js/dataTables.dateTime.min.js"></script>
+  <script src="https://cdn.datatables.net/fixedheader/4.0.1/js/dataTables.fixedHeader.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.1.1/js/dataTables.buttons.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.bootstrap5.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.colVis.min.js"></script>
   <script>
     // Initialize minDate and maxDate variables
     $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
@@ -164,10 +187,6 @@
       var minDateObj = min ? new Date(min) : null;
       var maxDateObj = max ? new Date(max) : null;
 
-      // console.log('Parsed min date:', minDateObj);
-      // console.log('Parsed max date:', maxDateObj);
-      // console.log('Parsed date to compare:', date);
-
       if (
         (minDateObj === null && maxDateObj === null) ||
         (minDateObj === null && date <= maxDateObj) ||
@@ -189,7 +208,48 @@
 
     // DataTables initialization
     $(document).ready(function() {
-      var table = $('#tabelTransaksi').DataTable();
+      var table = $('#tabelTransaksi').DataTable({
+        layout: {
+          topStart: {
+            buttons: ['csv', 'excel', 'print', 'colvis']
+          }
+        },
+        fixedHeader: true,
+        "footerCallback": function(row, data, start, end, display) {
+          var api = this.api();
+
+          // Remove formatting to get integer data for summation
+          var intVal = function(i) {
+            return typeof i === 'string' ?
+              i.replace(/[\Rp,.]/g, '') * 1 :
+              typeof i === 'number' ?
+              i : 0;
+          };
+
+          // Total over all pages
+          total = api
+            .column(8)
+            .data()
+            .reduce(function(a, b) {
+              return intVal(a) + intVal(b);
+            }, 0);
+
+          // Total over this page
+          pageTotal = api
+            .column(8, {
+              page: 'current'
+            })
+            .data()
+            .reduce(function(a, b) {
+              return intVal(a) + intVal(b);
+            }, 0);
+
+          // Update footer
+          $(api.column(8).footer()).html(
+            'Rp ' + new Intl.NumberFormat('id-ID').format(pageTotal)
+          );
+        },
+      });
 
       $('#min, #max').on('change', function() {
         table.draw();
