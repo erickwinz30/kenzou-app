@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
@@ -18,8 +19,12 @@ class TransaksiController extends Controller
      */
     public function index()
     {
+        $today = Carbon::today()->toDateString();
+
         return view('dashboard.transaksi.index', [
-            'transaksis' => Transaksi::orderBy('date', 'desc')->get(),
+            'transaksis' => Transaksi::whereDate('date', $today)
+            ->orderBy('date', 'desc')
+            ->get(),
         ]);
     }
 
@@ -142,7 +147,69 @@ class TransaksiController extends Controller
         }
     }
 
-    public function today() {
+    public function thisWeek() {
+        try {
+            // Menentukan awal dan akhir minggu ini
+            $startOfWeek = Carbon::now()->startOfWeek();
+            $endOfWeek = Carbon::now()->endOfWeek();
+
+            // Mengambil data transaksi dalam rentang tanggal minggu ini
+            $transaksis = Transaksi::whereBetween('date', [$startOfWeek, $endOfWeek])
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return view('dashboard.transaksi.index', [
+                'transaksis' => $transaksis,
+            ]);
+        } catch(\Exception $e) {
+            Log::error('This Week Data Error: ', ['message' => $e->getMessage()]);
+
+            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+        }
+        
+    }
+
+    public function thisMonth() {
+        try {
+            // Menentukan awal dan akhir minggu ini
+            $startOfMonth = Carbon::now()->startOfMonth();
+            $endOfMonth = Carbon::now()->endOfMonth();
+
+            // Mengambil data transaksi dalam rentang tanggal minggu ini
+            $transaksis = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return view('dashboard.transaksi.index', [
+                'transaksis' => $transaksis,
+            ]);
+        } catch(\Exception $e) {
+            Log::error('This Month Data Error: ', ['message' => $e->getMessage()]);
+
+            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per bulan');
+        }
+        
+    }
+
+    public function thisYear() {
+        try {
+            // Menentukan awal dan akhir minggu ini
+            $startOfYear = Carbon::now()->startOfYear();
+            $endOfYear = Carbon::now()->endOfYear();
+
+            // Mengambil data transaksi dalam rentang tanggal minggu ini
+            $transaksis = Transaksi::whereBetween('date', [$startOfYear, $endOfYear])
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return view('dashboard.transaksi.index', [
+                'transaksis' => $transaksis,
+            ]);
+        } catch(\Exception $e) {
+            Log::error('This Year Data Error: ', ['message' => $e->getMessage()]);
+
+            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
+        }
         
     }
 }

@@ -2,7 +2,7 @@
 
 @section('container')
   <link rel="stylesheet" href="https://cdn.datatables.net/2.1.3/css/dataTables.bootstrap5.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
+  {{-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css"> --}}
   <link rel="stylesheet" href="https://cdn.datatables.net/datetime/1.5.3/css/dataTables.dateTime.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.1.1/css/buttons.bootstrap5.css">
 
@@ -45,15 +45,25 @@
             <div class="container">
               <div class="row mb-3">
                 <div class="col-12 col-md-8 d-flex flex-wrap align-items-center mb-3 mb-md-0">
-                  <i class="bi bi-calendar3 me-3"></i>
+                  <i class="bi bi-calendar3 me-2"></i>
                   <input type="text" class="form-control me-2 w-auto" name="min" id="min"
                     style="max-width: 200px;">
-                  <p class="card-text mx-2 my-auto">S/D</p>
+                  <p class="card-text me-2 my-auto">S/D</p>
                   <input type="text" class="form-control me-2 w-auto" name="max" id="max"
                     style="max-width: 200px;">
-                  <button type="button" id="tombolReset" class="btn btn-primary ms-3">
+                  <button type="button" id="tombolReset" class="btn btn-primary me-2">
                     <i class="bi bi-arrow-clockwise"></i>
                   </button>
+                  <div class="btn-group mt-2" role="group" aria-label="Basic example">
+                    <a href="/transaksi"
+                      class="btn btn-primary {{ Request::is('transaksi') ? 'disabled' : '' }}">Today</a>
+                    <a href="{{ route('transaksi.thisWeek') }}"
+                      class="btn btn-primary {{ Request::is('transaksiThisWeek') ? 'disabled' : '' }}">This Week</a>
+                    <a href="{{ route('transaksi.thisMonth') }}"
+                      class="btn btn-primary {{ Request::is('transaksiThisMonth') ? 'disabled' : '' }}">This Month</a>
+                    <a href="{{ route('transaksi.thisYear') }}"
+                      class="btn btn-primary {{ Request::is('transaksiThisYear') ? 'disabled' : '' }}">This Year</a>
+                  </div>
                 </div>
                 <div class="col-12 col-md-4 text-end">
                   <a href="/transaksiBaru" class="btn btn-success d-inline">

@@ -7,6 +7,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\CatatTransaksiController;
+use App\Http\Controllers\DateRangeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,3 +57,8 @@ Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan']);
 
 //admin
 Route::resource('transaksi', TransaksiController::class)->middleware('isAdmin');
+
+//dateRange
+Route::get('/transaksiThisWeek', [TransaksiController::class, 'thisWeek'])->middleware('isAdmin')->name('transaksi.thisWeek');
+Route::get('/transaksiThisMonth', [TransaksiController::class, 'thisMonth'])->middleware('isAdmin')->name('transaksi.thisMonth');
+Route::get('/transaksiThisYear', [TransaksiController::class, 'thisYear'])->middleware('isAdmin')->name('transaksi.thisYear');
