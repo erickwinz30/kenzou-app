@@ -2,46 +2,48 @@
 <aside id="sidebar" class="sidebar">
 
   <ul class="sidebar-nav" id="sidebar-nav">
-    <li class="nav-heading">Kasir</li>
+    @can('notAdmin')
+      <li class="nav-heading">Kasir</li>
 
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="index.html">
-        <i class="bi bi-grid"></i>
-        <span>Dashboard Kasir</span>
-      </a>
-    </li><!-- End Dashboard Kasir Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" href="index.html">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard Kasir</span>
+        </a>
+      </li><!-- End Dashboard Kasir Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('transaksiBaru') ? '' : 'collapsed' }}" href="/transaksiBaru">
-        <i class="bi bi-cart"></i>
-        <span>Transaksi Baru</span>
-      </a>
-    </li><!-- End Transaksi Baru Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('transaksiBaru') ? '' : 'collapsed' }}" href="/transaksiBaru">
+          <i class="bi bi-cart"></i>
+          <span>Transaksi Baru</span>
+        </a>
+      </li><!-- End Transaksi Baru Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('list-layanan') ? '' : 'collapsed' }}" href="/list-layanan">
-        <i class="bi bi-collection"></i>
-        <span>Layanan</span>
-      </a>
-    </li><!-- End Layanan Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('list-layanan') ? '' : 'collapsed' }}" href="/list-layanan">
+          <i class="bi bi-collection"></i>
+          <span>Layanan</span>
+        </a>
+      </li><!-- End Layanan Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
-        <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
-      </a>
-      <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-        <li>
-          <a href="tables-general.html">
-            <i class="bi bi-circle"></i><span>General Tables</span>
-          </a>
-        </li>
-        <li>
-          <a href="tables-data.html">
-            <i class="bi bi-circle"></i><span>Data Tables</span>
-          </a>
-        </li>
-      </ul>
-    </li><!-- End Tables Nav -->
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="tables-general.html">
+              <i class="bi bi-circle"></i><span>General Tables</span>
+            </a>
+          </li>
+          <li>
+            <a href="tables-data.html">
+              <i class="bi bi-circle"></i><span>Data Tables</span>
+            </a>
+          </li>
+        </ul>
+      </li><!-- End Tables Nav -->
+    @endcan
 
     @can('isAdmin')
       <li class="nav-heading">Admin</li>

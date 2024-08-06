@@ -48,12 +48,12 @@ Route::resource('/layanan', LayananController::class)->middleware('isAdmin');
 Route::get('/layananLog/history', [LayananController::class, 'history'])->name('layanan.history');
 
 //catat transaksi
-Route::get('/transaksiBaru', [CatatTransaksiController::class, 'index']);
+Route::get('/transaksiBaru', [CatatTransaksiController::class, 'index'])->middleware('notAdmin');
 
-Route::post('/transaksiBaru', [CatatTransaksiController::class, 'catat']);
+Route::post('/transaksiBaru', [CatatTransaksiController::class, 'catat'])->middleware('notAdmin');
 
 //tampil list layanan
-Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan']);
+Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan'])->middleware('notAdmin');
 
 //admin
 Route::resource('transaksi', TransaksiController::class)->middleware('isAdmin');
