@@ -57,6 +57,8 @@ class CatatTransaksiController extends Controller
                 'layanan_id.*' => 'exists:layanans,id',
             ]);
 
+            Log::info('Detail Layanan Created:', ['detail_layanan' => $validatedData2]);
+
             foreach($validatedData2['layanan_id'] as $layananId) {
                 $detailLayanan = DetailLayanan::create([
                 'transaksi_id' => $transaction->id, // UUID
@@ -66,8 +68,8 @@ class CatatTransaksiController extends Controller
             // Log each detail layanan
             Log::info('Detail Layanan Created:', ['detail_layanan' => $detailLayanan]);
 
-            return redirect('/transaksi')->with('success', 'Data transaksi telah diupdate!!!');
-        }
+            // return redirect('/transaksi')->with('success', 'Data transaksi telah ditambah!!!');
+            }
 
             return redirect('/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
         } catch (\Exception $e) {

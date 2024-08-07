@@ -5,9 +5,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LayananController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\CatatTransaksiController;
-use App\Http\Controllers\DateRangeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,10 +26,8 @@ Route::get('/', function () {
 });
 
 //dashboard
-
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->middleware('auth')->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
+Route::get('/fetch-sales-data', [DashboardController::class, 'index'])->name('fetch-sales-data');
 
 //login
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
