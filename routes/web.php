@@ -27,7 +27,7 @@ Route::get('/', function () {
 
 //dashboard
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-Route::get('/fetch-sales-data', [DashboardController::class, 'index'])->name('fetch-sales-data');
+Route::get('/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
 
 //login
 Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');

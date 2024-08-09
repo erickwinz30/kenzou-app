@@ -6,7 +6,7 @@
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item">Kasir</li>
+        <li class="breadcrumb-item active">Kasir</li>
       </ol>
     </nav>
   </div><!-- End Page Title -->

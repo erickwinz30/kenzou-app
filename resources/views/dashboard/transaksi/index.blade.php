@@ -11,7 +11,7 @@
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="/dashboard">Admin</a></li>
-        <li class="breadcrumb-item"><a href="/transaksi">Transaksi</a></li>
+        <li class="breadcrumb-item active"><a href="/transaksi">Transaksi</a></li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
