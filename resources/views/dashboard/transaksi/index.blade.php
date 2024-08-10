@@ -42,36 +42,44 @@
             <div>
               <h5 class="card-title">Data Transaksi</h5>
             </div>
-            <div class="container">
-              <div class="row mb-3">
-                <div class="col-12 col-md-8 d-flex flex-wrap align-items-center mb-3 mb-md-0">
-                  <i class="bi bi-calendar3 me-2"></i>
-                  <input type="text" class="form-control me-2 w-auto" name="min" id="min"
-                    style="max-width: 200px;">
-                  <p class="card-text me-2 my-auto">S/D</p>
-                  <input type="text" class="form-control me-2 w-auto" name="max" id="max"
-                    style="max-width: 200px;">
-                  <button type="button" id="tombolReset" class="btn btn-primary me-2">
-                    <i class="bi bi-arrow-clockwise"></i>
-                  </button>
-                  <div class="btn-group mt-2" role="group" aria-label="Basic example">
-                    <a href="/transaksi"
-                      class="btn btn-primary {{ Request::is('transaksi') ? 'disabled' : '' }}">Today</a>
-                    <a href="{{ route('transaksi.thisWeek') }}"
-                      class="btn btn-primary {{ Request::is('transaksiThisWeek') ? 'disabled' : '' }}">This Week</a>
-                    <a href="{{ route('transaksi.thisMonth') }}"
-                      class="btn btn-primary {{ Request::is('transaksiThisMonth') ? 'disabled' : '' }}">This Month</a>
-                    <a href="{{ route('transaksi.thisYear') }}"
-                      class="btn btn-primary {{ Request::is('transaksiThisYear') ? 'disabled' : '' }}">This Year</a>
+            <div class="row align-items-center mb-3 card">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-12 col-md-8 pt-3 pb-2">
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                      <i class="bi bi-calendar3 fs-5"></i>
+                      <input type="text" class="form-control" name="min" id="min" placeholder="Dari"
+                        style="max-width: 150px;">
+                      <span class="text-muted">S/D</span>
+                      <input type="text" class="form-control" name="max" id="max" placeholder="Sampai"
+                        style="max-width: 150px;">
+                      <button type="button" id="tombolReset" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i>
+                      </button>
+                    </div>
+                    <div class="btn-group mt-3" role="group">
+                      <a href="/transaksi"
+                        class="btn btn-outline-primary {{ Request::is('transaksi') ? 'active' : '' }}">Today</a>
+                      <a href="{{ route('transaksi.thisWeek') }}"
+                        class="btn btn-outline-primary {{ Request::is('transaksiThisWeek') ? 'active' : '' }}">This
+                        Week</a>
+                      <a href="{{ route('transaksi.thisMonth') }}"
+                        class="btn btn-outline-primary {{ Request::is('transaksiThisMonth') ? 'active' : '' }}">This
+                        Month</a>
+                      <a href="{{ route('transaksi.thisYear') }}"
+                        class="btn btn-outline-primary {{ Request::is('transaksiThisYear') ? 'active' : '' }}">This
+                        Year</a>
+                    </div>
                   </div>
-                </div>
-                <div class="col-12 col-md-4 text-end">
-                  <a href="/transaksiBaru" class="btn btn-success d-inline">
-                    <i class="bi bi-plus me-2"></i>Transaksi
-                  </a>
+                  <div class="col-12 col-md-4 pt-3 mt-3 mt-md-0 d-flex justify-content-end align-items-center">
+                    <a href="/transaksiBaru" class="btn btn-success w-50 w-md-auto">
+                      <i class="bi bi-plus me-2"></i>Transaksi
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
+
 
             <!-- Table with stripped rows -->
             <div class="table-responsive">
