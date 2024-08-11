@@ -34,12 +34,8 @@
       <div class="col-lg-10">
         <div class="card">
           <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between" data-bs-toggle='modal'
-              data-bs-target='#inputModal'>
+            <div class="d-flex align-items-center justify-content-between">
               <h5 class="card-title">Data Kasir</h5>
-              <button type="button" class="btn btn-success d-inline">
-                <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir
-              </button>
             </div>
 
             <!-- Input Modal -->

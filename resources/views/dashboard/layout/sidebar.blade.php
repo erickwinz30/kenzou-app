@@ -1,5 +1,29 @@
 <!-- ======= Sidebar ======= -->
 <aside id="sidebar" class="sidebar">
+  <div class="accordion" id="accordionExample">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+          aria-expanded="false" aria-controls="collapseOne">
+          <strong>{{ Auth::user()->nama }}</strong>
+          <span class="fs-6 ms-1">(
+            @if (Auth::user()->is_admin == 1)
+              Admin
+            @else
+              Kasir
+            @endif
+            )
+          </span>
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
+        data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <a href="/logout">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <ul class="sidebar-nav" id="sidebar-nav">
     @can('notAdmin')

@@ -45,7 +45,7 @@
             <div class="row align-items-center mb-3 card">
               <div class="card-body">
                 <div class="row">
-                  <div class="col-12 col-md-8 pt-3 pb-2">
+                  <div class="col-12 col-md-8 mt-3">
                     <div class="d-flex flex-wrap align-items-center gap-2">
                       <i class="bi bi-calendar3 fs-5"></i>
                       <input type="text" class="form-control" name="min" id="min" placeholder="Dari"
@@ -57,7 +57,9 @@
                         <i class="bi bi-arrow-clockwise"></i>
                       </button>
                     </div>
-                    <div class="btn-group mt-3" role="group">
+                  </div>
+                  <div class="col-12 col-md-4 mt-3">
+                    <div class="btn-group w-100 w-md-auto" role="group">
                       <a href="/transaksi"
                         class="btn btn-outline-primary {{ Request::is('transaksi') ? 'active' : '' }}">Today</a>
                       <a href="{{ route('transaksi.thisWeek') }}"
@@ -70,11 +72,6 @@
                         class="btn btn-outline-primary {{ Request::is('transaksiThisYear') ? 'active' : '' }}">This
                         Year</a>
                     </div>
-                  </div>
-                  <div class="col-12 col-md-4 pt-3 mt-3 mt-md-0 d-flex justify-content-end align-items-center">
-                    <a href="/transaksiBaru" class="btn btn-success w-50 w-md-auto">
-                      <i class="bi bi-plus me-2"></i>Transaksi
-                    </a>
                   </div>
                 </div>
               </div>

@@ -28,14 +28,6 @@
             <div class="d-flex align-items-center justify-content-between" data-bs-toggle='modal'
               data-bs-target='#inputModal'>
               <h5 class="card-title">Data Layanan</h5>
-              <div>
-                <a href="/layanan/create" type="button" class="btn btn-success d-inline">
-                  <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
-                </a>
-                <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
-                  <i class="bi bi-clock-history" style="margin-right: 2px;"></i>History
-                </a>
-              </div>
             </div>
 
             <!-- Table with stripped rows -->
