@@ -9,22 +9,22 @@
     <i class="bi bi-list toggle-sidebar-btn"></i>
   </div><!-- End Logo -->
 
-  @if (Request::is('transaksi'))
+  @if (Request::is('dashboard/atransaksi'))
     <div class="me-4">
-      <a href="/transaksiBaru" class="btn btn-success">
+      <a href="/dashboard/transaksiBaru" class="btn btn-success">
         <i class="bi bi-plus me-1"></i>Transaksi
       </a>
     </div>
-  @elseif(Request::is('layanan'))
+  @elseif(Request::is('dashboard/layanan'))
     <div class="me-4">
-      <a href="/layanan/create" type="button" class="btn btn-success d-inline">
+      <a href="/dashboard/layanan/create" type="button" class="btn btn-success d-inline">
         <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
       </a>
       <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
         <i class="bi bi-clock-history" style="margin-right: 2px;"></i>History
       </a>
     </div>
-  @elseif (Request::is('kasir'))
+  @elseif (Request::is('dashboard/kasir'))
     <div class="me-4">
       <button type="button" class="btn btn-success d-inline" data-bs-toggle='modal' data-bs-target='#inputModal'>
         <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir

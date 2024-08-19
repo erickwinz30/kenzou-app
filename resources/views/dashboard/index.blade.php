@@ -30,7 +30,7 @@
 
                 <script>
                   document.addEventListener("DOMContentLoaded", () => {
-                    fetch('/fetch-sales-data', {
+                    fetch('/dashboard/fetch-sales-data', {
                         headers: {
                           'Accept': 'application/json'
                         }
@@ -137,7 +137,7 @@
 
                 <script>
                   document.addEventListener("DOMContentLoaded", () => {
-                    fetch('/fetch-sales-data', {
+                    fetch('/dashboard/fetch-sales-data', {
                         headers: {
                           'Accept': 'application/json'
                         }
