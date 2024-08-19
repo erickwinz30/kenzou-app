@@ -9,7 +9,7 @@
     <i class="bi bi-list toggle-sidebar-btn"></i>
   </div><!-- End Logo -->
 
-  @if (Request::is('dashboard/atransaksi'))
+  @if (Request::is('dashboard/transaksi'))
     <div class="me-4">
       <a href="/dashboard/transaksiBaru" class="btn btn-success">
         <i class="bi bi-plus me-1"></i>Transaksi

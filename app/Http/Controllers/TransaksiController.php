@@ -47,9 +47,15 @@ class TransaksiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Transaksi $transaksi)
     {
-        
+        $detailLayanan = DetailLayanan::where('transaksi_id', $transaksi->id)->get();
+        Log::info('Detail Layanan:', ['layanan' => $detailLayanan]);
+
+        return view('dashboard.transaksi.view', [
+            'transaksi' => $transaksi,
+            'detailLayanans' => $detailLayanan,
+        ]);
     }
 
     /**

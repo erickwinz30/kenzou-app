@@ -119,6 +119,8 @@
                         <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
                         <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                         <td>
+                          <a href="/dashboard/transaksi/{{ $transaksi->id }}" class="btn btn-info"><i
+                              class="bi bi-eye"></i></a>
                           <a href="/dashboard/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
                               class="bi bi-pencil"></i></a>
                           <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
