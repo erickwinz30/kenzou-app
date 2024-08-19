@@ -88,7 +88,7 @@
         <!-- Detail Transaksi -->
         <div class="card">
           <div class="card-body">
-            <form action="/transaksiBaru" method="POST">
+            <form action="/dashboard/transaksiBaru" method="POST">
               @csrf
               <h5 class="card-title">Detail Transaksi</h5>
               {{-- Container detail layanan pada transaksi --}}

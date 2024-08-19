@@ -47,7 +47,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                    <form action="/kasir" method="POST">
+                    <form action="/dashboard/kasir" method="POST">
                       @csrf
                       <div class="mb-3">
                         <label for="nama" class="form-label @error('nama') is-invalid @enderror">Nama Kasir</label>
@@ -259,7 +259,7 @@
                           data-username="{{ $user->username }}" data-email="{{ $user->email }}"
                           data-nomor_telepon="{{ $user->nomor_telepon }}" data-is_admin="{{ $user->is_admin }}"><i
                             class="bi bi-pencil"></i></button>
-                        <form action="/kasir/{{ $user->id }}" method="POST" class="d-inline"
+                        <form action="/dashboard/kasir/{{ $user->id }}" method="POST" class="d-inline"
                           id="deleteForm{{ $user->id }}">
                           @method('DELETE')
                           @csrf
@@ -297,7 +297,7 @@
 
           //menambahkan id ke action dari form edit
           var editForm = document.querySelector('#edit-form');
-          editForm.action = `/kasir/${id}`;
+          editForm.action = `/dashboard/kasir/${id}`;
 
           document.querySelector('#editModal input[id="edit_id"]').value = id;
           document.querySelector('#editModal input[id="edit_nama"]').value = nama;

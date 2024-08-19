@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nomor_telepon');
             $table->foreignUuid('user_id');
             $table->datetime('date');
-            $table->bigInteger('total_harga');
+            $table->decimal('total_harga');
             $table->string('metode_pembayaran');
             $table->string('keterangan')->nullable();
             $table->timestamps();

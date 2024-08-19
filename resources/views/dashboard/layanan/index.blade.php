@@ -6,7 +6,7 @@
     <nav>
       <ol class="breadcrumb">
         <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item active"><a href="/layanan">Layanan</a></li>
+        <li class="breadcrumb-item active"><a href="/dashboard/layanan">Layanan</a></li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
@@ -57,9 +57,9 @@
                         </span>
                       </td>
                       <td>
-                        <a href="/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
+                        <a href="/dashboard/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
                             class="bi bi-pencil"></i></a>
-                        <form action="/layanan/{{ $layanan->id }}" method="POST" class="d-inline"
+                        <form action="/dashboard/layanan/{{ $layanan->id }}" method="POST" class="d-inline"
                           id="deleteForm{{ $layanan->id }}">
                           @method('DELETE')
                           @csrf

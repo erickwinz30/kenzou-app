@@ -73,7 +73,7 @@
                     <p class="text-center small">Masukkan username & password untuk login</p>
                   </div>
 
-                  <form action='/login' method="POST" class="row g-3 needs-validation" novalidate>
+                  <form action='/dashboard/login' method="POST" class="row g-3 needs-validation" novalidate>
                     @csrf
                     <div class="col-12">
                       <label for="username" class="form-label">Username</label>

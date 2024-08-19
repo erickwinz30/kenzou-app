@@ -26,38 +26,40 @@ Route::get('/', function () {
 });
 
 //dashboard
-Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-Route::get('/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
+Route::get('/dashboard/admin', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
+Route::get('/dashboard/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
 
 //login
-Route::get('/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
+Route::get('dashboard/login', [LoginController::class, 'index'])->name('login')->middleware('guest');
 
-Route::post('/login', [LoginController::class, 'authenticate']);
+Route::post('/dashboard/login', [LoginController::class, 'authenticate']);
 
-Route::post('/logout', [LoginController::class, 'logout']);
+Route::post('/dashboard/logout', [LoginController::class, 'logout']);
 
 //kasir
 
-Route::resource('/kasir', KasirController::class)->middleware('isAdmin');
+Route::resource('/dashboard/kasir', KasirController::class)->middleware('isAdmin');
 
 //layanan
 
-Route::resource('/layanan', LayananController::class)->middleware('isAdmin');
+Route::resource('/dashboard/layanan', LayananController::class)->middleware('isAdmin');
 
-Route::get('/layananLog/history', [LayananController::class, 'history'])->name('layanan.history');
+Route::get('/dashboard/layananLog/history', [LayananController::class, 'history'])->name('layanan.history');
 
 //catat transaksi
-Route::get('/transaksiBaru', [CatatTransaksiController::class, 'index'])->middleware('notAdmin');
+Route::get('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'index'])->middleware('notAdmin');
 
-Route::post('/transaksiBaru', [CatatTransaksiController::class, 'catat'])->middleware('notAdmin');
+Route::post('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'catat'])->middleware('notAdmin');
 
 //tampil list layanan
-Route::get('/list-layanan', [CatatTransaksiController::class, 'layanan'])->middleware('notAdmin');
+Route::get('/dashboard/list-layanan', [CatatTransaksiController::class, 'layanan'])->middleware('notAdmin');
 
 //admin
-Route::resource('transaksi', TransaksiController::class)->middleware('isAdmin');
+Route::resource('dashboard/transaksi', TransaksiController::class)->middleware('isAdmin');
 
 //dateRange
-Route::get('/transaksiThisWeek', [TransaksiController::class, 'thisWeek'])->middleware('isAdmin')->name('transaksi.thisWeek');
-Route::get('/transaksiThisMonth', [TransaksiController::class, 'thisMonth'])->middleware('isAdmin')->name('transaksi.thisMonth');
-Route::get('/transaksiThisYear', [TransaksiController::class, 'thisYear'])->middleware('isAdmin')->name('transaksi.thisYear');
+Route::get('/dashboard/transaksiThisWeek', [TransaksiController::class, 'thisWeek'])->middleware('isAdmin')->name('transaksi.thisWeek');
+Route::get('/dashboard/transaksiThisMonth', [TransaksiController::class, 'thisMonth'])->middleware('isAdmin')->name('transaksi.thisMonth');
+Route::get('/dashboard/transaksiThisYear', [TransaksiController::class, 'thisYear'])->middleware('isAdmin')->name('transaksi.thisYear');
+
+//sisi pelanggan

@@ -46,7 +46,7 @@ class KasirController extends Controller
         
         User::create($validatedData);
 
-        return redirect('kasir')->with('success', 'Data kasir telah ditambah!');
+        return redirect('/dashboard/kasir')->with('success', 'Data kasir telah ditambah!');
     }
 
     /**
@@ -102,7 +102,7 @@ class KasirController extends Controller
 
         User::where('id', $request->id)->update($validatedData);
 
-        return redirect('kasir')->with('success', 'Data kasir telah diupdate!');
+        return redirect('/dashboard/kasir')->with('success', 'Data kasir telah diupdate!');
     }
 
     /**
@@ -112,6 +112,6 @@ class KasirController extends Controller
     {
         User::destroy($user);
 
-        return redirect('kasir')->with('success', 'Data kasir telah dihapus!');
+        return redirect('/dashboard/kasir')->with('success', 'Data kasir telah dihapus!');
     }
 }

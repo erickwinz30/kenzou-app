@@ -71,7 +71,7 @@ class CatatTransaksiController extends Controller
             // return redirect('/transaksi')->with('success', 'Data transaksi telah ditambah!!!');
             }
 
-            return redirect('/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
+            return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
         } catch (\Exception $e) {
             // Log the error
             Log::error('Transaction Creation Error:', ['message' => $e->getMessage()]);

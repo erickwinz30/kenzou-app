@@ -25,7 +25,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Edit Layanan</h5>
-            <form action="/layanan/{{ $layanan->id }}" method="POST">
+            <form action="/dashboard/layanan/{{ $layanan->id }}" method="POST">
               @method('put')
               @csrf
               <div class="mb-3">
@@ -58,7 +58,7 @@
                 @enderror
               </div>
               <div class="modal-footer">
-                <a href="/layanan" class="btn btn-secondary me-1">Batal</a>
+                <a href="/dashboard/layanan" class="btn btn-secondary me-1">Batal</a>
                 <button type="submit" class="btn btn-primary">Update</button>
               </div>
             </form>

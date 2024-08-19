@@ -5,9 +5,9 @@
     <h1>Transaksi</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/dashboard">Admin</a></li>
-        <li class="breadcrumb-item"><a href="/transaksi">Transaksi</a></li>
-        <li class="breadcrumb-item"><a href="/transaksi/{{ $transaksi->id }}/edit">Edit Transaksi</a></li>
+        <li class="breadcrumb-item"><a href="/dashboard/admin">Admin</a></li>
+        <li class="breadcrumb-item"><a href="/dashboard/transaksi">Transaksi</a></li>
+        <li class="breadcrumb-item"><a href="/dashboard/transaksi/{{ $transaksi->id }}/edit">Edit Transaksi</a></li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
@@ -27,7 +27,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Edit Transaksi</h5>
-            <form action="/transaksi/{{ $transaksi->id }}" method="POST">
+            <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST">
               @method('put')
               @csrf
               <div class="mb-2 d-flex">
@@ -146,7 +146,7 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <a href="/transaksi" class="btn btn-secondary me-1">Batal</a>
+                <a href="/dashboard/transaksi" class="btn btn-secondary me-1">Batal</a>
                 <button type="submit" class="btn btn-primary">Update</button>
               </div>
             </form>

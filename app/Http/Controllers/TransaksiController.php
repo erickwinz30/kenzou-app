@@ -125,7 +125,7 @@ class TransaksiController extends Controller
         } catch (\Exception $e) {
             Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
         }
     }
 
@@ -143,7 +143,7 @@ class TransaksiController extends Controller
         } catch (\Exception $e) {
             Log::error('Transaction Creation Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
         }
     }
 
@@ -164,7 +164,7 @@ class TransaksiController extends Controller
         } catch(\Exception $e) {
             Log::error('This Week Data Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
         }
         
     }
@@ -186,7 +186,7 @@ class TransaksiController extends Controller
         } catch(\Exception $e) {
             Log::error('This Month Data Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per bulan');
+            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per bulan');
         }
         
     }
@@ -208,7 +208,7 @@ class TransaksiController extends Controller
         } catch(\Exception $e) {
             Log::error('This Year Data Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
+            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
         }
         
     }

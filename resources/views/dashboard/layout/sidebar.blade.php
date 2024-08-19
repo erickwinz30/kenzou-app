@@ -19,7 +19,7 @@
       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-          <a href="/logout">Logout</a>
+          <a href="/dashboard/logout">Logout</a>
         </div>
       </div>
     </div>
@@ -37,14 +37,15 @@
       </li><!-- End Dashboard Kasir Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('transaksiBaru') ? '' : 'collapsed' }}" href="/transaksiBaru">
+        <a class="nav-link {{ Request::is('dashboard/transaksiBaru') ? '' : 'collapsed' }}"
+          href="/dashboard/transaksiBaru">
           <i class="bi bi-cart"></i>
           <span>Transaksi Baru</span>
         </a>
       </li><!-- End Transaksi Baru Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('list-layanan') ? '' : 'collapsed' }}" href="/list-layanan">
+        <a class="nav-link {{ Request::is('dashboard/list-layanan') ? '' : 'collapsed' }}" href="/dashboard/list-layanan">
           <i class="bi bi-collection"></i>
           <span>Layanan</span>
         </a>
@@ -73,29 +74,31 @@
       <li class="nav-heading">Admin</li>
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('dashboard') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}">
+        <a class="nav-link {{ Request::is('dashboard/admin') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}">
           <i class="bi bi-grid"></i>
           <span>Dashboard</span>
         </a>
       </li><!-- End Dashboard Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('transaksi') || Request::is('transaksi/*') ? '' : 'collapsed' }}"
-          href="/transaksi">
+        <a class="nav-link {{ Request::is('dashboard/transaksi') || Request::is('dashboard/transaksi/*') ? '' : 'collapsed' }}"
+          href="/dashboard/transaksi">
           <i class="bi bi-wallet2"></i>
           <span>Transaksi</span>
         </a>
       </li><!-- End Transaksi Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('kasir') || Request::is('kasir/*') ? '' : 'collapsed' }}" href="/kasir">
+        <a class="nav-link {{ Request::is('dashboard/kasir') || Request::is('dashboard/kasir/*') ? '' : 'collapsed' }}"
+          href="/dashboard/kasir">
           <i class="bi bi-person-gear"></i>
           <span>Kasir</span>
         </a>
       </li><!-- End Kasir Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('layanan') || Request::is('layanan/*') ? '' : 'collapsed' }}" href="/layanan">
+        <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') ? '' : 'collapsed' }}"
+          href="/dashboard/layanan">
           <i class="bi bi-collection"></i>
           <span>Layanan</span>
         </a>

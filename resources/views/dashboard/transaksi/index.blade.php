@@ -10,8 +10,8 @@
     <h1>Transaksi</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/dashboard">Admin</a></li>
-        <li class="breadcrumb-item active"><a href="/transaksi">Transaksi</a></li>
+        <li class="breadcrumb-item"><a href="/dashboard/admin">Admin</a></li>
+        <li class="breadcrumb-item active"><a href="/dashboard/transaksi">Transaksi</a></li>
       </ol>
     </nav>
   </div><!-- End Page Title -->
@@ -60,16 +60,16 @@
                   </div>
                   <div class="col-12 col-md-4 mt-3">
                     <div class="btn-group w-100 w-md-auto" role="group">
-                      <a href="/transaksi"
-                        class="btn btn-outline-primary {{ Request::is('transaksi') ? 'active' : '' }}">Today</a>
+                      <a href="/dashboard/transaksi"
+                        class="btn btn-outline-primary {{ Request::is('dashboard/transaksi') ? 'active' : '' }}">Today</a>
                       <a href="{{ route('transaksi.thisWeek') }}"
-                        class="btn btn-outline-primary {{ Request::is('transaksiThisWeek') ? 'active' : '' }}">This
+                        class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisWeek') ? 'active' : '' }}">This
                         Week</a>
                       <a href="{{ route('transaksi.thisMonth') }}"
-                        class="btn btn-outline-primary {{ Request::is('transaksiThisMonth') ? 'active' : '' }}">This
+                        class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisMonth') ? 'active' : '' }}">This
                         Month</a>
                       <a href="{{ route('transaksi.thisYear') }}"
-                        class="btn btn-outline-primary {{ Request::is('transaksiThisYear') ? 'active' : '' }}">This
+                        class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisYear') ? 'active' : '' }}">This
                         Year</a>
                     </div>
                   </div>
@@ -119,9 +119,9 @@
                         <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
                         <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
                         <td>
-                          <a href="/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
+                          <a href="/dashboard/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
                               class="bi bi-pencil"></i></a>
-                          <form action="/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
+                          <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
                             id="deleteForm{{ $transaksi->id }}">
                             @method('DELETE')
                             @csrf

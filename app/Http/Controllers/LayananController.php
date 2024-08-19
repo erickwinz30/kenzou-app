@@ -49,7 +49,7 @@ class LayananController extends Controller
 
         LayananLog::create($validatedData);
 
-        return redirect('/layanan')->with('success', 'Layanan baru telah tertambah!');
+        return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
     }
 
     /**
@@ -89,7 +89,7 @@ class LayananController extends Controller
 
         LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
 
-        return redirect('/layanan')->with('success', 'Layanan telah diupdate!!');
+        return redirect('/dashboard/layanan')->with('success', 'Layanan telah diupdate!!');
     }
 
     /**
@@ -103,7 +103,7 @@ class LayananController extends Controller
 
         Layanan::destroy($layanan->id);
 
-        return redirect('/layanan')->with('success', 'Layanan telah terhapus!');
+        return redirect('/dashboard/layanan')->with('success', 'Layanan telah terhapus!');
     }
 
     public function history()
