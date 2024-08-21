@@ -226,6 +226,21 @@
     // DataTables initialization
     $(document).ready(function() {
       var table = $('#tabelTransaksi').DataTable({
+        columns: [
+          null,
+          {
+            data: 'id', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+        ],
         layout: {
           topStart: {
             buttons: ['csv', 'excel', 'print', 'colvis']

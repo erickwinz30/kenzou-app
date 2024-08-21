@@ -7,6 +7,7 @@ use App\Models\Layanan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -80,5 +81,87 @@ class CatatTransaksiController extends Controller
         }
 
         // return redirect()->with('success', 'Data transaksi telah tertambah!!');
+    }
+
+    public function dashboardKasir(Request $request) {
+        $todayTransaksi = $this->countMobil();
+        $todaySales = $this->todaySales();
+        $recentTransaction = $this->recentTransaction();
+        // $dataPenjualanDashboard = $this->perHourSales($request);
+
+        return view('dashboard.kasir.dashboard', [
+            'todayTransaksi' => $todayTransaksi,
+            'todaySales' => $todaySales,
+            'recentTransactions' => $recentTransaction,
+            // 'salesData' => $dataPenjualanDashboard,
+        ]);
+    }
+
+    public function countMobil() {
+        $today = Carbon::today()->toDateString();
+
+        $todayTransaksi = Transaksi::whereDate('date', $today)->count();
+
+        return $todayTransaksi;
+    }
+
+    public function todaySales() {
+        $today = Carbon::today()->toDateString();
+
+        $todaySales = Transaksi::whereDate('date', $today)->sum('total_harga');
+
+        return $todaySales;
+    }
+
+    public function perHourSales(Request $request) {
+        $currentDate = Carbon::now()->format('Y-m-d');
+
+        $results = DB::table('transaksis')
+            ->select(
+                DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+                DB::raw('SUM(total_harga) as total_harga')
+            )
+            ->whereDate('date', $currentDate) // Filter by current date
+            ->whereTime('date', '>=', '07:30:00')
+            ->whereTime('date', '<=', '17:30:00')
+            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+            ->orderBy('hour')
+            ->get();
+
+        $data = [];
+        $startHour = Carbon::createFromTimeString('07:00:00');
+        $endHour = Carbon::createFromTimeString('17:00:00');
+        $currentHour = $startHour->copy();
+
+        while ($currentHour->lte($endHour)) {
+            $hourString = $currentHour->format('Y-m-d H:00:00');
+            $totalHarga = 0;
+
+            foreach ($results as $result) {
+                if ($result->hour === $hourString) {
+                    $totalHarga = $result->total_harga;
+                    break;
+                }
+            }
+
+            $data[] = [
+                'hour' => $hourString,
+                'total_harga' => $totalHarga,
+            ];
+
+            $currentHour->addHour();
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json($data);
+        }
+
+        return $data;
+    }
+
+    public function recentTransaction() {
+        $recentTransaction = Transaksi::orderBy('date', 'desc')->take(8)->get();
+
+        return $recentTransaction;
     }
 }

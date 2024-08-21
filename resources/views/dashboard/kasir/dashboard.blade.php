@@ -1,0 +1,222 @@
+@extends('dashboard.layout.main')
+
+@section('container')
+  <div class="pagetitle">
+    <h1>Dashboard</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Admin</li>
+        <li class="breadcrumb-item active">Dashboard</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  <section class="section dashboard">
+    <div class="row">
+
+      <!-- Left side columns -->
+      <div class="col-lg-8">
+        <div class="row">
+
+          <!-- Reports -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Penjualan Per Jam <span>/ Hari ini</span></h5>
+
+                <!-- Line Chart -->
+                <div id="reportsChart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch('/dashboard/fetch-sales-cashier', {
+                        headers: {
+                          'Accept': 'application/json'
+                        }
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Fetched data:', data); // Debug log
+
+                        const salesData = data.map(item => item.total_harga);
+                        const perJam = data.map(item => {
+                          const dateStr = item.hour.replace(' ', 'T'); // Ensure correct date format for parsing
+                          const parsedDate = new Date(dateStr);
+                          return parsedDate.getHours();
+                        });
+
+                        console.log('Sales Data:', salesData); // Debug log
+                        console.log('Jam:', perJam); // Debug log
+
+                        new ApexCharts(document.querySelector("#reportsChart"), {
+                          series: [{
+                            name: 'Sales',
+                            data: salesData,
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'area',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#2eca6a', '#ff771d', '#4154f1'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: perJam.map(hour => `${hour}:00`), // Display hours in a readable format
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format the x-axis labels to display hours
+                              }
+                            }
+                          },
+                          yaxis: {
+                            labels: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format y-axis labels to display currency
+                              }
+                            }
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'HH:mm'
+                            },
+                            y: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format tooltip to display currency
+                              }
+                            },
+                          }
+                        }).render();
+                      })
+                      .catch(error => {
+                        console.error('Error fetching data:', error);
+                      });
+                  });
+                </script>
+                <!-- End Line Chart -->
+
+              </div>
+
+            </div>
+            <!-- Top Selling -->
+            <div class="col-12">
+              <div class="card top-selling overflow-auto">
+
+                <div class="card-body pb-0">
+                  <h5 class="card-title">Penjualan <span>| Terbaru</span></h5>
+                  <table class="table table-borderless">
+                    <thead>
+                      <tr>
+                        <th scope="col">Transaksi ID</th>
+                        <th scope="col">No. Telp</th>
+                        <th scope="col">Layanan</th>
+                        <th scope="col">Kasir</th>
+                        <th scope="col">Tanggal Transaksi</th>
+                        <th scope="col">Total Harga</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @foreach ($recentTransactions as $transaksi)
+                        <tr>
+                          <td>{{ Str::limit($transaksi->id, 8) }}</td>
+                          <td>{{ $transaksi->nomor_telepon }}</td>
+                          <td>
+                            @php
+                              $namaLayanan = $transaksi->detail_layanan->pluck('layanan.nama_layanan')->toArray();
+                              echo implode(', ', $namaLayanan);
+                            @endphp
+                          </td>
+                          <td>{{ $transaksi->user->nama }}</td>
+                          <td class="text-center align-middle" style="padding: 0;">
+                            <span
+                              style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
+                              {{ \Carbon\Carbon::parse($transaksi->date)->locale('id')->diffForHumans() }}
+                            </span>
+                          </td>
+                          <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                        </tr>
+                      @endforeach
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+            </div><!-- End Top Selling -->
+          </div><!-- End Reports -->
+        </div>
+      </div><!-- End Left side columns -->
+
+      <!-- Right side columns -->
+      <div class="col-lg-4">
+
+        <!-- Jumlah Mobil -->
+        <div class="card info-card customers-card">
+          <div class="card-body">
+            <h5 class="card-title">Mobil <span>| Hari ini</span></h5>
+
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-car-front-fill"></i>
+              </div>
+              <div class="ps-3">
+                <h6>{{ $todayTransaksi }}</h6>
+                <span class="text-danger small pt-1 fw-bold">12%</span> <span
+                  class="text-muted small pt-2 ps-1">decrease</span>
+
+              </div>
+            </div>
+
+          </div>
+        </div><!-- End Jumlah Mobil -->
+
+        <!-- Penjualan Hari Ini -->
+        <div class="card info-card sales-card">
+          <div class="card-body">
+            <h5 class="card-title">Pendapatan <span>| Hari Ini</span></h5>
+
+            <div class="d-flex align-items-center">
+              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                <i class="bi bi-currency-dollar"></i>
+              </div>
+              <div class="ps-3">
+                <h6 class="fs-5">Rp {{ number_format($todaySales, 0, ',', '.') }}</h6>
+                <span class="text-success small pt-1 fw-bold">12%</span> <span
+                  class="text-muted small pt-2 ps-1">increase</span>
+
+              </div>
+            </div>
+          </div>
+        </div><!-- End Penjualan Hari Ini -->
+      </div><!-- End This Month Sales -->
+
+    </div><!-- End Right side columns -->
+
+    </div>
+  </section>
+@endsection

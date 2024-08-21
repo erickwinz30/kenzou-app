@@ -19,7 +19,14 @@
       <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne"
         data-bs-parent="#accordionExample">
         <div class="accordion-body">
-          <a href="/dashboard/logout">Logout</a>
+          <form action="/dashboard/logout" method="POST" id="logout-form" style="display: :none;">
+            @csrf
+          </form>
+          <a class="dropdown-item d-flex align-items-center" href="#"
+            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+            <i class="bi bi-box-arrow-right me-2"></i>
+            <span>Log Out</span>
+          </a>
         </div>
       </div>
     </div>
@@ -30,7 +37,8 @@
       <li class="nav-heading">Kasir</li>
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="index.html">
+        <a class="nav-link {{ Request::is('dashboard/dashboard-kasir') ? '' : 'collapsed' }}"
+          href="/dashboard/dashboard-kasir">
           <i class="bi bi-grid"></i>
           <span>Dashboard Kasir</span>
         </a>

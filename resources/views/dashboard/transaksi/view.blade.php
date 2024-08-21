@@ -109,6 +109,9 @@
             </div>
           </div>
         </div>
+        <div class="text-end">
+          <a href="/dashboard/transaksi" class="btn btn-primary">Kembali</a>
+        </div>
       </div>
     </div>
 

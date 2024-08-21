@@ -17,13 +17,10 @@ class DashboardController extends Controller
         $thisMonthSales = $this->thisMonthSales();
         $recentTransaction = $this->recentTransaction();
 
-        $dataPenjualanDashboard = $this->perHourSales($request);
-
         return view('dashboard.index', [
             'todayTransaksi' => $todayTransaksi,
             'todaySales' => $todaySales,
             'thisMonth' => $thisMonthSales,
-            'salesData' => $dataPenjualanDashboard,
             'recentTransactions' => $recentTransaction,
         ]);
     }
@@ -126,4 +123,139 @@ class DashboardController extends Controller
 
         return $recentTransaction;
     }
+
+    public function perDaySales(Request $request) {
+        // $currentMonth = Carbon::now()->format('Y-m'); // Get current month and year
+
+        // Query for total sales per day
+        $results = DB::table('transaksis')
+            ->select(
+                DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+                DB::raw('SUM(total_harga) as total_harga')
+            )
+            ->whereYear('date', Carbon::now()->year) // Filter by current year
+            ->whereMonth('date', Carbon::now()->month) // Filter by current month
+            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+            ->orderBy('day')
+            ->get();
+
+        // Initialize the data array
+        $data = [];
+        $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
+        $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
+        $currentDay = $startDay->copy();
+
+        while ($currentDay->lte($endDay)) {
+            $dayString = $currentDay->format('Y-m-d');
+            $totalHarga = 0;
+
+            foreach ($results as $result) {
+                if ($result->day === $dayString) {
+                    $totalHarga = $result->total_harga;
+                    break;
+                }
+            }
+
+            $data[] = [
+                'day' => $dayString,
+                'total_harga' => $totalHarga,
+            ];
+
+            $currentDay->addDay();
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json($data);
+        }
+
+        return $data;
+    }
+
+    public function perDayCars(Request $request) {
+        // Query for total transaction count per day
+        $results2 = DB::table('transaksis')
+            ->select(
+                DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+                DB::raw('COUNT(id) as transaksi_id')
+            )
+            ->whereYear('date', Carbon::now()->year) // Filter by current year
+            ->whereMonth('date', Carbon::now()->month) // Filter by current month
+            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+            ->orderBy('day')
+            ->get();
+
+        $data = [];
+        $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
+        $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
+        $currentDay = $startDay->copy();
+
+        while ($currentDay->lte($endDay)) {
+            $dayString = $currentDay->format('Y-m-d');
+            $transactionCount = 0;
+
+            foreach ($results2 as $result) {
+                if ($result->day === $dayString) {
+                    $transactionCount = $result->transaksi_id;
+                    break;
+                }
+            }
+
+            $data[] = [
+                'day' => $dayString,
+                'jumlah_transaksi' => $transactionCount,
+            ];
+
+            $currentDay->addDay();
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json($data);
+        }
+
+        return $data;
+    }
+
+    public function perMonthSales(Request $request) {
+    // Query for total sales per month
+    $results = DB::table('transaksis')
+        ->select(
+            DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
+            DB::raw('SUM(total_harga) as total_harga')
+        )
+        ->whereYear('date', Carbon::now()->year) // Filter by the current year
+        ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
+        ->orderBy('month')
+        ->get();
+
+    $data = [];
+    $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
+    $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
+    $currentMonth = $startYear->copy();
+
+    while ($currentMonth->lte($endYear)) {
+        $monthString = $currentMonth->format('Y-m');
+        $totalHarga = 0;
+
+        foreach ($results as $result) {
+            if ($result->month === $monthString) {
+                $totalHarga = $result->total_harga;
+                break;
+            }
+        }
+
+        $data[] = [
+            'month' => $monthString,
+            'total_harga' => $totalHarga,
+        ];
+
+        $currentMonth->addMonth(); // Move to the next month
+    }
+
+    if ($request->wantsJson()) {
+        return response()->json($data);
+    }
+
+    return $data;
+}
+
 }

@@ -127,7 +127,7 @@ class TransaksiController extends Controller
                 }
             }
         }   
-            return redirect('/transaksi')->with('success', 'Data transaksi telah diupdate!!');
+            return redirect('/dashboard/transaksi')->with('success', 'Data transaksi telah diupdate!!');
         } catch (\Exception $e) {
             Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
 

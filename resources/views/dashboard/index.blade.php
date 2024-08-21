@@ -266,6 +266,324 @@
             </div>
           </div><!-- End Top Selling -->
 
+          <!-- Penjualan Bulan Ini -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Penjualan Bulan Ini <span>/ per Hari</span></h5>
+
+                <!-- Line Chart -->
+                <div id="thisMonthSalesChart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch('/dashboard/fetch-sales-this-month', {
+                        headers: {
+                          'Accept': 'application/json'
+                        }
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Fetched data:', data); // Debug log
+
+                        const salesData = data.map(item => item.total_harga);
+                        const perHari = data.map(item => {
+                          const date = new Date(item.day);
+                          return date.getDate(); // This will return the day of the month as a number (1-31)
+                        });
+
+                        console.log('Sales Data:', salesData); // Debug log
+                        console.log('Tanggal:', perHari); // Debug log
+
+                        new ApexCharts(document.querySelector("#thisMonthSalesChart"), {
+                          series: [{
+                            name: 'Sales',
+                            data: salesData,
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'bar',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#ff6b6b', '#ffca3a', '#8ac926'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: perHari.map(date => `${date}`), // Display hours in a readable format
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format the x-axis labels to display hours
+                              }
+                            }
+                          },
+                          yaxis: {
+                            labels: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format y-axis labels to display currency
+                              }
+                            }
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'HH:mm'
+                            },
+                            y: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format tooltip to display currency
+                              }
+                            },
+                          }
+                        }).render();
+                      })
+                      .catch(error => {
+                        console.error('Error fetching data:', error);
+                      });
+                  });
+                </script>
+                <!-- End Line Chart -->
+
+              </div>
+
+            </div>
+          </div><!-- End Penjualan Bulan Ini -->
+
+          <!-- Jumlah Mobil Bulan Ini -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Jumlah Mobil Bulan Ini <span>/ per Hari</span></h5>
+
+                <!-- Line Chart -->
+                <div id="thisMonthCarChart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch('/dashboard/fetch-car-this-month', {
+                        headers: {
+                          'Accept': 'application/json'
+                        }
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Fetched data:', data); // Debug log
+
+                        const carData = data.map(item => item.jumlah_transaksi);
+                        const perHari = data.map(item => {
+                          const date = new Date(item.day);
+                          return date.getDate(); // This will return the day of the month as a number (1-31)
+                        });
+
+                        console.log('Car Data:', carData); // Debug log
+                        console.log('Tanggal:', perHari); // Debug log
+
+                        new ApexCharts(document.querySelector("#thisMonthCarChart"), {
+                          series: [{
+                            name: 'Mobil',
+                            data: carData,
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'bar',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#ffca3a', '#ff6b6b', '#8ac926'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: perHari.map(date => `${date}`), // Display hours in a readable format
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format the x-axis labels to display hours
+                              }
+                            }
+                          },
+                          yaxis: {
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format y-axis labels to display currency
+                              }
+                            }
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'DD'
+                            },
+                            y: {
+                              formatter: function(value) {
+                                return `${value}`; // Format tooltip to display currency
+                              }
+                            },
+                          }
+                        }).render();
+                      })
+                      .catch(error => {
+                        console.error('Error fetching data:', error);
+                      });
+                  });
+                </script>
+                <!-- End Line Chart -->
+
+              </div>
+
+            </div>
+          </div><!-- End Reports -->
+
+          <!-- Penjualan Bulan Ini -->
+          <div class="col-12">
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Penjualan Tahun Ini <span>/ per Bulan</span></h5>
+
+                <!-- Line Chart -->
+                <div id="thisYearSalesChart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch('/dashboard/fetch-sales-this-year', {
+                        headers: {
+                          'Accept': 'application/json'
+                        }
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Fetched data:', data); // Debug log
+
+                        const salesData = data.map(item => item.total_harga);
+                        const perBulan = data.map(item => {
+                          const date = new Date(item.month);
+                          return date.getMonth() + 1; // This will return the day of the month as a number (1-31)
+                        });
+
+                        console.log('Sales Data:', salesData); // Debug log
+                        console.log('Bulan:', perBulan); // Debug log
+
+                        new ApexCharts(document.querySelector("#thisYearSalesChart"), {
+                          series: [{
+                            name: 'Sales',
+                            data: salesData,
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'bar',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#ff6b6b', '#ffca3a', '#8ac926'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: perBulan.map(date => `${date}`), // Display hours in a readable format
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format the x-axis labels to display hours
+                              }
+                            }
+                          },
+                          yaxis: {
+                            labels: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format y-axis labels to display currency
+                              }
+                            }
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'MM'
+                            },
+                            y: {
+                              formatter: function(value) {
+                                return `Rp ${value.toLocaleString('id-ID')}`; // Format tooltip to display currency
+                              }
+                            },
+                          }
+                        }).render();
+                      })
+                      .catch(error => {
+                        console.error('Error fetching data:', error);
+                      });
+                  });
+                </script>
+                <!-- End Line Chart -->
+
+              </div>
+
+            </div>
+          </div><!-- End Penjualan Bulan Ini -->
+
         </div>
       </div><!-- End Left side columns -->
 
