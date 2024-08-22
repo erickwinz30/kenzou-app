@@ -83,7 +83,7 @@ class CatatTransaksiController extends Controller
         // return redirect()->with('success', 'Data transaksi telah tertambah!!');
     }
 
-    public function dashboardKasir(Request $request) {
+    public function dashboardKasir() {
         $todayTransaksi = $this->countMobil();
         $todaySales = $this->todaySales();
         $recentTransaction = $this->recentTransaction();
@@ -128,6 +128,18 @@ class CatatTransaksiController extends Controller
             ->orderBy('hour')
             ->get();
 
+        $results2 = DB::table('transaksis')
+            ->select(
+                DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+                DB::raw('COUNT(id) as transaksi_id')
+            )
+            ->whereDate('date', $currentDate) // Filter by current date
+            ->whereTime('date', '>=', '07:30:00')
+            ->whereTime('date', '<=', '17:30:00')
+            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+            ->orderBy('hour')
+            ->get();
+
         $data = [];
         $startHour = Carbon::createFromTimeString('07:00:00');
         $endHour = Carbon::createFromTimeString('17:00:00');
@@ -136,6 +148,7 @@ class CatatTransaksiController extends Controller
         while ($currentHour->lte($endHour)) {
             $hourString = $currentHour->format('Y-m-d H:00:00');
             $totalHarga = 0;
+            $transactionCount = 0;
 
             foreach ($results as $result) {
                 if ($result->hour === $hourString) {
@@ -144,9 +157,17 @@ class CatatTransaksiController extends Controller
                 }
             }
 
+            foreach ($results2 as $result) {
+                if ($result->hour === $hourString) {
+                    $transactionCount = $result->transaksi_id;
+                    break;
+                }
+            }
+
             $data[] = [
                 'hour' => $hourString,
                 'total_harga' => $totalHarga,
+                'jumlah_transaksi' => $transactionCount,
             ];
 
             $currentHour->addHour();

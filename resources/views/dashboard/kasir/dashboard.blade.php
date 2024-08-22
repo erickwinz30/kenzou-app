@@ -15,13 +15,51 @@
     <div class="row">
 
       <!-- Left side columns -->
-      <div class="col-lg-8">
+      <div class="col-12">
         <div class="row">
+
+          <!-- Right side columns -->
+          <!-- Jumlah Mobil -->
+          <div class="col-lg-6 col-md-6">
+            <div class="card info-card customers-card">
+              <div class="card-body">
+                <h5 class="card-title">Mobil <span>| Hari ini</span></h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-car-front-fill"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6>{{ $todayTransaksi }}</h6>
+                  </div>
+                </div>
+
+              </div>
+            </div><!-- End Jumlah Mobil -->
+          </div>
+
+          <!-- Penjualan Hari Ini -->
+          <div class="col-lg-6 col-md-6">
+            <div class="card info-card sales-card">
+              <div class="card-body">
+                <h5 class="card-title">Pendapatan <span>| Hari Ini</span></h5>
+
+                <div class="d-flex align-items-center">
+                  <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-currency-dollar"></i>
+                  </div>
+                  <div class="ps-3">
+                    <h6 class="fs-5">Rp {{ number_format($todaySales, 0, ',', '.') }}</h6>
+                  </div>
+                </div>
+              </div>
+            </div><!-- End Penjualan Hari Ini -->
+          </div>
 
           <!-- Reports -->
           <div class="col-12">
             <div class="card">
-
+              {{-- chart --}}
               <div class="card-body">
                 <h5 class="card-title">Penjualan Per Jam <span>/ Hari ini</span></h5>
 
@@ -121,9 +159,105 @@
                 <!-- End Line Chart -->
 
               </div>
+              {{-- end chart --}}
 
             </div>
-            <!-- Top Selling -->
+
+            <!-- Jumlah Mobil -->
+            <div class="card">
+
+              <div class="card-body">
+                <h5 class="card-title">Jumlah Mobil <span>/ Hari ini</span></h5>
+
+                <!-- Line Chart -->
+                <div id="perHourSalesChart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    fetch('/dashboard/fetch-sales-data', {
+                        headers: {
+                          'Accept': 'application/json'
+                        }
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                      })
+                      .then(data => {
+                        console.log('Fetched data:', data); // Debug log
+
+                        const perJam = data.map(item => {
+                          const dateStr = item.hour.replace(' ', 'T'); // Ensure correct date format for parsing
+                          const parsedDate = new Date(dateStr);
+                          return parsedDate.getHours();
+                        });
+                        const jumlahMobil = data.map(item => item.jumlah_transaksi);
+
+                        console.log('Jam:', perJam); // Debug log
+                        console.log('Jumlah Mobil:', jumlahMobil); // Debug log
+
+                        new ApexCharts(document.querySelector("#perHourSalesChart"), {
+                          series: [{
+                            name: 'Mobil',
+                            data: jumlahMobil,
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'area',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            categories: perJam.map(hour => `${hour}:00`), // Display hours in a readable format
+                            labels: {
+                              formatter: function(value) {
+                                return `${value}`; // Format the x-axis labels to display hours
+                              }
+                            }
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'HH:mm'
+                            },
+                          }
+                        }).render();
+                      })
+                      .catch(error => {
+                        console.error('Error fetching data:', error);
+                      });
+                  });
+                </script>
+                <!-- End Line Chart -->
+
+              </div>
+
+            </div>
+            <!-- End Jumlah Mobil -->
+
+            <!-- Recent Sale -->
             <div class="col-12">
               <div class="card top-selling overflow-auto">
 
@@ -167,53 +301,10 @@
                 </div>
 
               </div>
-            </div><!-- End Top Selling -->
+            </div><!-- End Recent Sale -->
           </div><!-- End Reports -->
         </div>
       </div><!-- End Left side columns -->
-
-      <!-- Right side columns -->
-      <div class="col-lg-4">
-
-        <!-- Jumlah Mobil -->
-        <div class="card info-card customers-card">
-          <div class="card-body">
-            <h5 class="card-title">Mobil <span>| Hari ini</span></h5>
-
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-car-front-fill"></i>
-              </div>
-              <div class="ps-3">
-                <h6>{{ $todayTransaksi }}</h6>
-                <span class="text-danger small pt-1 fw-bold">12%</span> <span
-                  class="text-muted small pt-2 ps-1">decrease</span>
-
-              </div>
-            </div>
-
-          </div>
-        </div><!-- End Jumlah Mobil -->
-
-        <!-- Penjualan Hari Ini -->
-        <div class="card info-card sales-card">
-          <div class="card-body">
-            <h5 class="card-title">Pendapatan <span>| Hari Ini</span></h5>
-
-            <div class="d-flex align-items-center">
-              <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
-                <i class="bi bi-currency-dollar"></i>
-              </div>
-              <div class="ps-3">
-                <h6 class="fs-5">Rp {{ number_format($todaySales, 0, ',', '.') }}</h6>
-                <span class="text-success small pt-1 fw-bold">12%</span> <span
-                  class="text-muted small pt-2 ps-1">increase</span>
-
-              </div>
-            </div>
-          </div>
-        </div><!-- End Penjualan Hari Ini -->
-      </div><!-- End This Month Sales -->
 
     </div><!-- End Right side columns -->
 
