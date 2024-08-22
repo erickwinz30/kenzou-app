@@ -27,10 +27,10 @@ Route::get('/', function () {
 
 //dashboard
 Route::get('/dashboard/admin', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-Route::get('/dashboard/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
-Route::get('/dashboard/fetch-sales-this-month', [DashboardController::class, 'perDaySales'])->name('fetch-sales-this-month');
-Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-sales-this-month');
-Route::get('/dashboard/fetch-sales-this-year', [DashboardController::class, 'perMonthSales'])->name('fetch-sales-this-year');
+Route::get('/dashboard/fetch-sales-data', [DashboardController::class, 'perHourSales'])->middleware('auth')->name('fetch-sales-data');
+Route::get('/dashboard/fetch-sales-this-month', [DashboardController::class, 'perDaySales'])->middleware('auth')->name('fetch-sales-this-month');
+Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->middleware('auth')->name('fetch-sales-this-month');
+Route::get('/dashboard/fetch-sales-this-year', [DashboardController::class, 'perMonthSales'])->middleware('auth')->name('fetch-sales-this-year');
 
 //login
 Route::get('dashboard/login', [LoginController::class, 'index'])->name('login')->middleware('guest');

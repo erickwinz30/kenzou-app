@@ -11,21 +11,27 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request) {
+    public function index() {
         $todayTransaksi = $this->countMobil();
+        $yesterdayCarPercentage = $this->yesterdayCountMobil();
         $todaySales = $this->todaySales();
+        $yesterdaySalesPercentage = $this->yesterdaySalesPercentage();
         $thisMonthSales = $this->thisMonthSales();
+        $lastMonthSales = $this->lastMonthSales();
         $recentTransaction = $this->recentTransaction();
 
         return view('dashboard.index', [
             'todayTransaksi' => $todayTransaksi,
+            'yesterdayCarPercentage' => round($yesterdayCarPercentage, 2),
             'todaySales' => $todaySales,
+            'yesterdaySalesPercentage' => round($yesterdaySalesPercentage, 2),
             'thisMonth' => $thisMonthSales,
+            'lastMonth' => round($lastMonthSales, 2),
             'recentTransactions' => $recentTransaction,
         ]);
     }
 
-    public function countMobil() {
+    private function countMobil() {
         $today = Carbon::today()->toDateString();
 
         $todayTransaksi = Transaksi::whereDate('date', $today)->count();
@@ -33,7 +39,25 @@ class DashboardController extends Controller
         return $todayTransaksi;
     }
 
-    public function todaySales() {
+    private function yesterdayCountMobil() {
+        $yesterday = Carbon::yesterday()->toDateString();
+        $yesterdayCar = Transaksi::whereDate('date', $yesterday)->count();
+
+        $todayCar = $this->countMobil();
+
+        // Calculate the percentage change
+        if ($yesterdayCar > 0) {
+            $yesterdayCarPercentage = (($todayCar - $yesterdayCar) / $yesterdayCar) * 100;
+
+            return $yesterdayCarPercentage;
+        } else {
+            // Handle cases where yesterday's sales were 0 to avoid division by zero
+            $yesterdayCarPercentage = $todayCar > 0 ? 100 : 0;
+            return $yesterdayCarPercentage;
+        }
+    }
+
+    private function todaySales() {
         $today = Carbon::today()->toDateString();
 
         $todaySales = Transaksi::whereDate('date', $today)->sum('total_harga');
@@ -41,7 +65,25 @@ class DashboardController extends Controller
         return $todaySales;
     }
 
-    public function thisMonthSales() {
+    private function yesterdaySalesPercentage() {
+        $yesterday = Carbon::yesterday()->toDateString();
+        $yesterdaySales = Transaksi::whereDate('date', $yesterday)->sum('total_harga');
+
+        $todaySales = $this->todaySales();
+
+        // Calculate the percentage change
+        if ($yesterdaySales > 0) {
+            $yesterdaySalesPercentage = (($todaySales - $yesterdaySales) / $yesterdaySales) * 100;
+
+            return $yesterdaySalesPercentage;
+        } else {
+            // Handle cases where yesterday's sales were 0 to avoid division by zero
+            $yesterdaySalesPercentage = $todaySales > 0 ? 100 : 0;
+            return $yesterdaySalesPercentage;
+        }
+    }
+
+    private function thisMonthSales() {
         //bulan ini
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
@@ -49,6 +91,27 @@ class DashboardController extends Controller
         $thisMonthSales = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])->sum('total_harga');
 
         return $thisMonthSales;
+    }
+
+    private function lastMonthSales() {
+        // Bulan kemarin
+        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+
+        $lastMonthSales = Transaksi::whereBetween('date', [$startOfLastMonth, $endOfLastMonth])->sum('total_harga');
+
+        $thisMonthSales = $this->thisMonthSales();
+
+        // Calculate the percentage change
+        if ($lastMonthSales > 0) {
+            $lastMonthSalesPercentage = (($thisMonthSales - $lastMonthSales) / $lastMonthSales) * 100;
+
+            return $lastMonthSalesPercentage;
+        } else {
+            // Handle cases where yesterday's sales were 0 to avoid division by zero
+            $lastMonthSalesPercentage = $thisMonthSales > 0 ? 100 : 0;
+            return $lastMonthSalesPercentage;
+        }
     }
 
     public function perHourSales(Request $request) {
@@ -118,7 +181,7 @@ class DashboardController extends Controller
         return $data;
     }
 
-    public function recentTransaction() {
+    private function recentTransaction() {
         $recentTransaction = Transaksi::orderBy('date', 'desc')->take(8)->get();
 
         return $recentTransaction;
@@ -216,46 +279,46 @@ class DashboardController extends Controller
     }
 
     public function perMonthSales(Request $request) {
-    // Query for total sales per month
-    $results = DB::table('transaksis')
-        ->select(
-            DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
-            DB::raw('SUM(total_harga) as total_harga')
-        )
-        ->whereYear('date', Carbon::now()->year) // Filter by the current year
-        ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
-        ->orderBy('month')
-        ->get();
+        // Query for total sales per month
+        $results = DB::table('transaksis')
+            ->select(
+                DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
+                DB::raw('SUM(total_harga) as total_harga')
+            )
+            ->whereYear('date', Carbon::now()->year) // Filter by the current year
+            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
+            ->orderBy('month')
+            ->get();
 
-    $data = [];
-    $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
-    $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
-    $currentMonth = $startYear->copy();
+        $data = [];
+        $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
+        $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
+        $currentMonth = $startYear->copy();
 
-    while ($currentMonth->lte($endYear)) {
-        $monthString = $currentMonth->format('Y-m');
-        $totalHarga = 0;
+        while ($currentMonth->lte($endYear)) {
+            $monthString = $currentMonth->format('Y-m');
+            $totalHarga = 0;
 
-        foreach ($results as $result) {
-            if ($result->month === $monthString) {
-                $totalHarga = $result->total_harga;
-                break;
+            foreach ($results as $result) {
+                if ($result->month === $monthString) {
+                    $totalHarga = $result->total_harga;
+                    break;
+                }
             }
+
+            $data[] = [
+                'month' => $monthString,
+                'total_harga' => $totalHarga,
+            ];
+
+            $currentMonth->addMonth(); // Move to the next month
         }
 
-        $data[] = [
-            'month' => $monthString,
-            'total_harga' => $totalHarga,
-        ];
+        if ($request->wantsJson()) {
+            return response()->json($data);
+        }
 
-        $currentMonth->addMonth(); // Move to the next month
+        return $data;
     }
-
-    if ($request->wantsJson()) {
-        return response()->json($data);
-    }
-
-    return $data;
-}
 
 }
