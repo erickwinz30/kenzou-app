@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+require_once '../vendor/autoload.php';
+
 use Carbon\Carbon;
 use App\Models\Layanan;
 use App\Models\Transaksi;
@@ -12,6 +14,7 @@ use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Twilio\Rest\Client;
 
 class CatatTransaksiController extends Controller
 {
@@ -71,6 +74,8 @@ class CatatTransaksiController extends Controller
 
             // return redirect('/transaksi')->with('success', 'Data transaksi telah ditambah!!!');
             }
+
+            // $this->sendMessage();
 
             return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
         } catch (\Exception $e) {
@@ -184,5 +189,21 @@ class CatatTransaksiController extends Controller
         $recentTransaction = Transaksi::orderBy('date', 'desc')->take(8)->get();
 
         return $recentTransaction;
+    }
+
+    private function sendMessage() {
+        $sid    = env('TWILIO_SID');
+        $token  = env('TWILIO_AUTH_TOKEN');
+        $twilio = new Client($sid, $token);
+
+        $message = $twilio->messages
+        ->create("whatsapp:+6285155431948", // to
+                array(
+                "from" => "whatsapp:+14155238886",
+                "body" => "Your Yummy Cupcakes Company order of 1 dozen frosted cupcakes has shipped and should be delivered on July 10, 2019. Details: http://www.yummycupcakes.com/",
+            )
+        );
+
+        print($message->sid);
     }
 }
