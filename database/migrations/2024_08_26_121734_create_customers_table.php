@@ -11,17 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('customers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->string('email')->unique();
             $table->string('nomor_telepon')->unique();
-            $table->datetime('tanggal_lahir');
-            $table->integer('experience_point')->nullable();
-            $table->integer('redeemable_point')->nullable();
-            // $table->string('referral_code')->unique();
-            $table->string('password');
-            $table->rememberToken();
+            $table->foreignUuid('member_id')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('members');
+        Schema::dropIfExists('customers');
     }
 };

@@ -55,5 +55,12 @@ class DatabaseSeeder extends Seeder
             'added_date' => Carbon::now('Asia/Jakarta'),
             'detail' => 'Pemberian cairan obat untuk cat pada mobil',
         ]);
+
+        Layanan::factory()->create([
+            'nama_layanan' => 'Fogging',
+            'harga' => '35000',
+            'added_date' => Carbon::now('Asia/Jakarta'),
+            'detail' => 'Pemberian asap/uap disinfektan',
+        ]);
     }
 }
