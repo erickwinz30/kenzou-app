@@ -9,46 +9,66 @@
     <i class="bi bi-list toggle-sidebar-btn"></i>
   </div><!-- End Logo -->
 
-  @if (Request::is('dashboard/transaksi'))
-    <div class="me-4">
-      <a href="/dashboard/transaksiBaru" class="btn btn-success">
-        <i class="bi bi-plus me-1"></i>Transaksi
-      </a>
-    </div>
-  @elseif(Request::is('dashboard/layanan'))
-    <div class="me-4">
-      <a href="/dashboard/layanan/create" type="button" class="btn btn-success d-inline">
-        <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
-      </a>
-      <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
-        <i class="bi bi-clock-history" style="margin-right: 2px;"></i>History
-      </a>
-    </div>
-  @elseif (Request::is('dashboard/kasir'))
-    <div class="me-4">
-      <button type="button" class="btn btn-success d-inline" data-bs-toggle='modal' data-bs-target='#inputModal'>
-        <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir
-      </button>
-    </div>
-  @endif
-
-  {{-- <div class="search-bar">
-    <form class="search-form d-flex align-items-center" method="POST" action="#">
-      <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-      <button type="submit" title="Search"><i class="bi bi-search"></i></button>
-    </form>
-  </div><!-- End Search Bar --> --}}
-
-  {{-- <nav class="header-nav ms-auto">
+  <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center">
 
-      <li class="nav-item d-block d-lg-none">
-        <a class="nav-link nav-icon search-bar-toggle " href="#">
-          <i class="bi bi-search"></i>
-        </a>
-      </li><!-- End Search Icon-->
+      <li class="nav-item dropdown pe-3">
+
+        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+          <span class="dropdown-toggle ps-2">{{ Str::limit(Auth::guard('member')->user()->nama, 12) }}</span>
+        </a><!-- End Profile Name -->
+
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+          <li class="dropdown-header">
+            <h6>{{ Auth::guard('member')->user()->nama }}</h6>
+            <span>Gold</span>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <i class="bi bi-person"></i>
+              <span>My Profile</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+              <i class="bi bi-gear"></i>
+              <span>Account Settings</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+              <i class="bi bi-question-circle"></i>
+              <span>Need Help?</span>
+            </a>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+
+          <li>
+            <a class="dropdown-item d-flex align-items-center" href="/logout">
+              <i class="bi bi-box-arrow-right"></i>
+              <span>Log Out</span>
+            </a>
+          </li>
+
+        </ul><!-- End Profile Dropdown Items -->
+      </li><!-- End Profile Nav -->
+
 
     </ul>
-  </nav><!-- End Icons Navigation --> --}}
+  </nav><!-- End Icons Navigation -->
 
 </header><!-- End Header -->

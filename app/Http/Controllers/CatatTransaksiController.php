@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-require_once '../vendor/autoload.php';
+require_once base_path('vendor/autoload.php');
 
 use Carbon\Carbon;
 use App\Models\Layanan;

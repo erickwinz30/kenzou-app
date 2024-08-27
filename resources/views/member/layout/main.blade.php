@@ -43,9 +43,9 @@
 
 <body>
 
-  @include('dashboard.layout.header')
+  @include('member.layout.header')
 
-  @include('dashboard.layout.sidebar')
+  @include('member.layout.sidebar')
 
   <main id="main" class="main">
     @yield('container')

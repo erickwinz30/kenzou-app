@@ -32,27 +32,13 @@ class MemberLoginController extends Controller
                     Log::info('message', "Log in success");
                 } catch(\Exception $e) {
                     Log::error('Log in Error: ', ['message' => $e->getMessage()]);
+
+                    return back()->with('error', 'Maaf, akun yang dimasukkan salah!!!');
                 }
                 
             } else {
                 return back()->with('error', 'Login failed!');
             }
-
-                // try {
-                //     $loginTesting = Auth::guard('member')->attempt($credentials);
-                //     Log::info('message', ['Login Testing:' => $loginTesting]);
-                //     Log::info('message', ['Credentials data:' => $credentials]);
-                //     $request->session()->regenerate();
-
-                //     // dd($request->email);
-        
-                //     return redirect()->route('homepage');
-
-                //     Log::info('message', "Log in success");
-                // } catch(\Exception $e) {
-                //     Log::error('Log in Error: ', ['message' => $e->getMessage()]);
-                // }
-            
 
         } catch(\Exception $e) {
             Log::error('Log in Error: ', ['message' => $e->getMessage()]);
