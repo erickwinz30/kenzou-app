@@ -15,11 +15,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('nama');
             $table->string('email')->unique();
-            $table->string('nomor_telepon')->unique();
-            $table->datetime('tanggal_lahir');
+            $table->string('nomor_telepon')->unique()->nullable();
+            $table->datetime('tanggal_lahir')->nullable();
             $table->integer('experience_point')->nullable();
             $table->integer('redeemable_point')->nullable();
-            // $table->string('referral_code')->unique();
+            $table->string('google_id')->nullable();
+            $table->string('referral_code')->unique()->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

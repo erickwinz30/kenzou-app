@@ -120,9 +120,17 @@
                     </div>
 
                     <div class="col-12">
-                      <p class="small mb-0">Don't have account? <a href="/register">Create an account</a></p>
+                      <p class="small mb-0">Belum memiliki akun? <a href="/register">Buat akun</a></p>
                     </div>
                   </form>
+
+                  <p class="small text-center mt-3">Atau</p>
+
+                  <div>
+                    <a href="/auth/google" class="btn btn-light w-100" style="border: 1px solid black"><i
+                        class="bi bi-google me-3"></i>Sign-in dengan
+                      Google</a>
+                  </div>
 
                 </div>
               </div>

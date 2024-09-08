@@ -36,17 +36,21 @@
               <div class="card-body">
                 <div class="layanan-header">
                   <h5 class="card-title">Pilih Layanan</h5>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3">
                     @foreach ($layanans as $layanan)
                       <div class="col">
                         <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body">
-                            <h5 class="card-title">{{ $layanan->nama_layanan }}</h5>
-                            <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
-                            <button href="#" class="btn btn-primary add-item" data-id="{{ $layanan->id }}"
-                              data-name="{{ $layanan->nama_layanan }}" data-price="{{ $layanan->harga }}">
-                              Tambah
-                            </button>
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
+                              <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary add-item" data-id="{{ $layanan->id }}"
+                                data-name="{{ $layanan->nama_layanan }}" data-price="{{ $layanan->harga }}">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>

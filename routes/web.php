@@ -4,6 +4,7 @@ use App\Models\LayananLog;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\DashboardController;
@@ -78,6 +79,10 @@ Route::get('/logout', [MemberLoginController::class, 'logout']);
 //register
 Route::get('/register', [MemberRegisterController::class, 'index'])->name('register')->middleware('guest');
 Route::post('/register', [MemberRegisterController::class, 'store']);
+
+//google login
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::middleware('member')->group(function () {
   Route::get('/', [MemberController::class, 'index'])->name('homepage');
