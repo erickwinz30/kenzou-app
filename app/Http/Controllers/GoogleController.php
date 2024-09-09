@@ -20,7 +20,14 @@ class GoogleController extends Controller
     public function handleGoogleCallback() {
         try {
             $member = Socialite::driver('google')->user();
+
+            // dd($member);
+
+            Log::info('$member: ', ['member' => $member]);
+
             $findMember = Member::where('email', $member->email)->first();
+
+            Log::info('Check if member is existing: ', ['findMember' => $findMember]);
 
             if ($findMember) {
                 Auth::guard('member')->login($findMember);
@@ -32,17 +39,21 @@ class GoogleController extends Controller
                 return redirect()->route('homepage');
             } else {
                 $newMember = Member::create([
-                    'nama' => $member->name,
+                    'nama' => $member->getName(),
                     'email' => $member->email,
-                    'google_id' => $member->id,
+                    'google_id' => $member->getId(),
                     'password' => Hash::make(Str::random(16)),
                 ]);
+
+                Log::info('Laravel Account Created: ', ['newMember' => $newMember]);
 
                 Auth::guard('member')->login($newMember);
 
                 session()->regenerate();
 
-                Log::info('Google Register Successful: ', ['member' => $newMember]);
+                Log::info('Google Register Successful: ', ['member' => $newMember->id]);
+
+                // Log::info('Google Register Successful: ', ['member_id' => $currentLoginId]);
 
                 return redirect()->route('homepage');
             }
@@ -51,5 +62,13 @@ class GoogleController extends Controller
             return redirect()->route('login')->with('error', 'Gagal sign in dengan Google.');
         }
         
+    }
+
+    public function viewAfterGoogleCallback() {
+        return view('member.login.next-google-registration');
+    }
+
+    private function nextRegisterForm(Request $request) {
+
     }
 }

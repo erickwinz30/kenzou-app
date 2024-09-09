@@ -83,6 +83,7 @@ Route::post('/register', [MemberRegisterController::class, 'store']);
 //google login
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('register/next', [GoogleController::class, 'viewAfterGoogleCallback']);
 
 Route::middleware('member')->group(function () {
   Route::get('/', [MemberController::class, 'index'])->name('homepage');

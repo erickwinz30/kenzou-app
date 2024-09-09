@@ -13,7 +13,7 @@ class Member extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $keyType = 'string';
-    protected $guarded = ['id'];
+    protected $guarded = ['id', 'google_id'];
 
     protected $fillable = [
         'nama',
@@ -22,6 +22,8 @@ class Member extends Authenticatable
         'tanggal_lahir',
         'experience_point',
         'redeemable_point',
+        'google_id',
+        'referral_code',
         'password',
     ];
 

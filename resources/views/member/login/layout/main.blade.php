@@ -5,14 +5,12 @@
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>Kenzou Drive Thru Car Wash Admin</title>
+  <title>Login - Kenzou Drive Thru Car Wash Admin</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
-  <meta name="theme-color" content="#000000" />
 
   <!-- Favicons -->
   <link href="{{ asset('img/icons/icon-72.png') }}" rel="icon">
-  <link rel="manifest" href="{{ asset('manifest.json') }}">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
@@ -30,7 +28,6 @@
   <link href="{{ asset('vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ asset('vendor/simple-datatables/style.css') }}" rel="stylesheet">
 
-
   <!-- Template Main CSS File -->
   <link href=" {{ asset('css/style.css') }}" rel="stylesheet">
 
@@ -45,13 +42,10 @@
 
 <body>
 
-  @include('dashboard.layout.header')
-
-  @include('dashboard.layout.sidebar')
-
-  <main id="main" class="main">
+  <main>
     @yield('container')
-  </main>
+  </main><!-- End #main -->
+
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
       class="bi bi-arrow-up-short"></i></a>
 
@@ -65,8 +59,7 @@
   <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ asset('vendor/php-email-form/validate.js') }}"></script>
 
-  {{-- swallfire --}}
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <!-- Template Main JS File -->
   <script src="{{ asset('js/main.js') }}"></script>
 
