@@ -8,9 +8,11 @@
   <title>Kenzou Drive Thru Car Wash Admin</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
+  <meta name="theme-color" content="#000000" />
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
+  <link rel="manifest" href="{{ asset('manifest.json') }}">
   <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
