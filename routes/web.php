@@ -84,7 +84,8 @@ Route::post('/register', [MemberRegisterController::class, 'store']);
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-Route::middleware('member')->group(function () {
+Route::middleware('auth:member')->group(function () {
   Route::get('/', [MemberController::class, 'index'])->name('homepage');
-  Route::get('/register/next', [GoogleController::class, 'viewAfterGoogleCallback']);
+  Route::get('/register/next', [GoogleController::class, 'viewAfterGoogleCallback'])->name('register-next');
+  Route::post('/register/next', [GoogleController::class, 'nextRegisterStore']);
 });

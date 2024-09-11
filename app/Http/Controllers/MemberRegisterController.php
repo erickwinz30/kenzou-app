@@ -26,12 +26,13 @@ class MemberRegisterController extends Controller
 
             $validatedData['password'] = Hash::make($validatedData['password']);
 
-            Member::create($validatedData);
+            $newMember = Member::create($validatedData);
 
             Log::info('Data member baru: ' , ['member' => $validatedData]);
+            Log::info('Check id Member baru: ' , ['member' => $newMember]);
 
             return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
-            
+
         } catch(\Exception $e) {
             Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
 

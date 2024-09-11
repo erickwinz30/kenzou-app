@@ -13,7 +13,7 @@ class Member extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
     protected $keyType = 'string';
-    protected $guarded = ['id', 'google_id'];
+    protected $guarded = ['id'];
 
     protected $fillable = [
         'nama',

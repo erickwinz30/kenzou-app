@@ -53,11 +53,10 @@
                     referral Anda.</p> --}}
                 </div>
 
-                <form action='/register/next/' method="POST" class="row g-3 needs-validation" novalidate>
-                  @method('put')
+                <form action='/register/next' method="POST" class="row g-3 needs-validation" novalidate>
                   @csrf
                   <div class="col-12">
-                    <label for="email" class="form-label">No. Telepon</label>
+                    <label for="nomor_telepon" class="form-label">No. Telepon</label>
                     <div class="input-group has-validation">
                       <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
                         id="nomor_telepon" placeholder="Masukkan no. telepon" @error('nomor_telepon') is-invalid @enderror

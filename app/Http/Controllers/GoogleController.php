@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Socialite\Facades\Socialite;
+use Illuminate\Support\Facades\Redirect;
 
 class GoogleController extends Controller
 {
@@ -20,8 +21,6 @@ class GoogleController extends Controller
     public function handleGoogleCallback() {
         try {
             $member = Socialite::driver('google')->user();
-
-            // dd($member);
 
             Log::info('$member: ', ['member' => $member]);
 
@@ -36,7 +35,11 @@ class GoogleController extends Controller
 
                 Log::info('Login Successful: ', ['member' => $findMember]);
 
-                return redirect()->route('homepage');
+                if($findMember->nomor_telepon) {
+                    return redirect()->route('homepage');
+                } else {
+                    return redirect()->route('register-next');
+                }
             } else {
                 $newMember = Member::create([
                     'nama' => $member->getName(),
@@ -45,30 +48,58 @@ class GoogleController extends Controller
                     'password' => Hash::make(Str::random(16)),
                 ]);
 
-                Log::info('Laravel Account Created: ', ['newMember' => $newMember]);
+                Log::info('Google Register Successful: ', ['member' => $newMember]);
 
-                Auth::guard('member')->login($newMember);
+                $memberCheck = Member::where('email', $newMember->email)->first();
+
+                Auth::guard('member')->login($memberCheck);
 
                 session()->regenerate();
 
-                Log::info('Google Register Successful: ', ['member' => $newMember->id]);
+                if (Auth::guard('member')->check()) {
+                    // Pengguna sudah login
+                    return redirect()->route('register-next');
+                } else {
+                    // Pengguna belum login
+                    return redirect()->with('error', 'Gagal sign in karena auth gagal dengan Google.');
+                }
 
-                // Log::info('Google Register Successful: ', ['member_id' => $currentLoginId]);
-
-                return redirect()->route('homepage');
             }
         } catch (\Exception $e) {
-            Log::error('Error during Google sign-in: ', ['message' => $e->getMessage()]);
+            $errorMessage = $e->getMessage();
+            $errorTrace = $e->getTraceAsString();
+            Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
             return redirect()->route('login')->with('error', 'Gagal sign in dengan Google.');
         }
-        
+
     }
 
     public function viewAfterGoogleCallback() {
         return view('member.login.next-google-registration');
     }
 
-    private function nextRegisterForm(Request $request) {
+    public function nextRegisterStore(Request $request) {
+        // dd($request);
+        try{
+            $validatedData = $request->validate([
+                'nomor_telepon' => 'required|unique:members',
+                'tanggal_lahir' => 'required',
+                // 'referral_code' => 'max:8',
+            ]);
+
+            $currentLoginUser = Auth::guard('member')->user()->id;
+
+            $dataMember = Member::where('id', $currentLoginUser)->update($validatedData);
+
+            Log::info('Update data success', $dataMember->toArray());
+
+            return redirect()->route('homepage');
+        } catch (\Exception $e) {
+            $errorMessage = $e->getMessage();
+            $errorTrace = $e->getTraceAsString();
+            Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+            return redirect()->route('register-next')->with('error', $errorMessage);
+        }
 
     }
 }
