@@ -41,11 +41,19 @@ class GoogleController extends Controller
                     return redirect()->route('register-next');
                 }
             } else {
+                do {
+                    $referralCode = strtoupper(Str::random(8));
+
+                    // Optionally, filter out lowercase letters (if they appear)
+                    $referralCode = preg_replace('/[^A-Z0-9]/', '', $referralCode);
+                } while (Member::where('referral_code', $referralCode)->exists());
+
                 $newMember = Member::create([
                     'nama' => $member->getName(),
                     'email' => $member->email,
                     'google_id' => $member->getId(),
                     'password' => Hash::make(Str::random(16)),
+                    'referral_code' => $referralCode,
                 ]);
 
                 Log::info('Google Register Successful: ', ['member' => $newMember]);
@@ -89,9 +97,9 @@ class GoogleController extends Controller
 
             $currentLoginUser = Auth::guard('member')->user()->id;
 
-            $dataMember = Member::where('id', $currentLoginUser)->update($validatedData);
+            Member::where('id', $currentLoginUser)->update($validatedData);
 
-            Log::info('Update data success', $dataMember->toArray());
+            // Log::info('Update data success', $dataMember->toArray());
 
             return redirect()->route('homepage');
         } catch (\Exception $e) {
