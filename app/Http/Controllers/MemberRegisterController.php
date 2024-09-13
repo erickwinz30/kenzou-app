@@ -36,13 +36,38 @@ class MemberRegisterController extends Controller
 
             $validatedData['referral_code'] = $referralCode;
 
-            $newMember = Member::create($validatedData);
+            if($request->referral_code) {
+                $findMember = Member::where('referral_code', $request->referral_code)->first();
+                if($findMember) {
+                    $memberCurrentExperiencePoint = $findMember->experience_point;
+                    $memberCurrentRedeemablePoint = $findMember->redeemable_point;
 
-            Log::info('Data member baru: ' , ['member' => $validatedData]);
-            Log::info('Check id Member baru: ' , ['member' => $newMember]);
+                    $afterRegisterExperiencePoint = $memberCurrentExperiencePoint + 25;
+                    $afterRegisterRedeemablePoint = $memberCurrentRedeemablePoint + 25;
 
-            return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
+                    $findMember->update(['experience_point' => $afterRegisterExperiencePoint, 'redeemable_point' => $afterRegisterRedeemablePoint]);
 
+                    Log::info('Perolehan Point Member: ' , ['member' => $afterRegisterExperiencePoint]);
+
+                    $newMember = Member::create($validatedData);
+
+                    Member::where('email', $newMember->email)->update(['experience_point' => 25, 'redeemable_point' => 25]);
+
+                    Log::info('Data member baru: ' , ['member' => $validatedData]);
+                    Log::info('Check id Member baru: ' , ['member' => $newMember]);
+
+                    return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
+                } else {
+                    return back()->with('error', 'Kode referral tidak ditemukan!!!');
+                }
+            } else {
+                $newMember = Member::create($validatedData);
+
+                Log::info('Data member baru: ' , ['member' => $validatedData]);
+                Log::info('Check id Member baru: ' , ['member' => $newMember]);
+
+                return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
+            }
         } catch(\Exception $e) {
             Log::error('Register Member Error: ', ['message' => $e->getMessage()]);
 

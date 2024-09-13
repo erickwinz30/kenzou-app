@@ -46,7 +46,8 @@
                     <label for="nama" class="form-label">Nama</label>
                     <div class="input-group has-validation">
                       <input type="text" name="nama" class="form-control" id="nama"
-                        placeholder="Masukkan nama..." @error('nama') is-invalid @enderror required>
+                        placeholder="Masukkan nama..." @error('nama') is-invalid @enderror required
+                        value="{{ old('nama') }}">
                       @error('nama')
                         <div class="invalid-feedback">
                           {{ $message }}
@@ -59,7 +60,8 @@
                     <label for="email" class="form-label">Email</label>
                     <div class="input-group has-validation">
                       <input type="email" name="email" class="form-control" id="email"
-                        placeholder="Masukkan email..." @error('email') is-invalid @enderror required>
+                        placeholder="Masukkan email..." @error('email') is-invalid @enderror required
+                        value="{{ old('email') }}">
                       @error('email')
                         <div class="invalid-feedback">
                           {{ $message }}
@@ -73,7 +75,7 @@
                     <div class="input-group has-validation">
                       <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
                         id="nomor_telepon" placeholder="Masukkan no. telepon..."
-                        @error('nomor_telepon') is-invalid @enderror required>
+                        @error('nomor_telepon') is-invalid @enderror required value="{{ old('nomor_telepon') }}">
                       @error('nomor_telepon')
                         <div class="invalid-feedback">
                           {{ $message }}
@@ -86,7 +88,8 @@
                     <label for="tanggal_lahir" class="form-label">Tgl Lahir</label>
                     <div class="input-group has-validation">
                       <input type="date" name="tanggal_lahir" class="form-control" id="tanggal_lahir"
-                        placeholder="Masukkan tanggal_lahir..." @error('tanggal_lahir') is-invalid @enderror required>
+                        placeholder="Masukkan tanggal_lahir..." @error('tanggal_lahir') is-invalid @enderror required
+                        value="{{ old('tanggal_lahir') }}">
                       @error('tanggal_lahir')
                         <div class="invalid-feedback">
                           {{ $message }}
@@ -104,13 +107,28 @@
                         style="margin-left: 6px; border-radius: 0.375rem; padding: 0.375rem 0.75rem;">
                         <i class="bi bi-eye"></i>
                       </button>
+                      @error('password')
+                        <div class="invalid-feedback">
+                          {{ $message }}
+                        </div>
+                      @enderror
                     </div>
-                    @error('password')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
                   </div>
+
+                  <div class="col-12">
+                    <label for="referral_code" class="form-label">Referral Code</label>
+                    <div class="input-group has-validation">
+                      <input type="text" name="referral_code" class="form-control" id="referral_code"
+                        placeholder="Masukkan referral code (optional)..." @error('referral_code') is-invalid @enderror
+                        value="{{ old('referral_code') }}">
+                      @error('referral_code')
+                        <div class="invalid-feedback">
+                          {{ $message }}
+                        </div>
+                      @enderror
+                    </div>
+                  </div>
+
                   <div class="col-12">
                     <button class="btn btn-primary w-100" type="submit">Buat Account</button>
                   </div>

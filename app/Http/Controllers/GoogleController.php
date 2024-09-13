@@ -88,25 +88,27 @@ class GoogleController extends Controller
 
     public function nextRegisterStore(Request $request) {
         // dd($request);
-        try{
-            $validatedData = $request->validate([
-                'nomor_telepon' => 'required|unique:members',
-                'tanggal_lahir' => 'required',
-                // 'referral_code' => 'max:8',
-            ]);
-
-            $currentLoginUser = Auth::guard('member')->user()->id;
-
-            Member::where('id', $currentLoginUser)->update($validatedData);
-
-            // Log::info('Update data success', $dataMember->toArray());
-
+        if(Auth::guard('member')->user()->nomor_telepon) {
             return redirect()->route('homepage');
-        } catch (\Exception $e) {
-            $errorMessage = $e->getMessage();
-            $errorTrace = $e->getTraceAsString();
-            Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
-            return redirect()->route('register-next')->with('error', $errorMessage);
+        } else {
+            try{
+                $validatedData = $request->validate([
+                    'nomor_telepon' => 'required|unique:members',
+                    'tanggal_lahir' => 'required',
+                    // 'referral_code' => 'max:8',
+                ]);
+
+                $currentLoginUser = Auth::guard('member')->user()->id;
+
+                Member::where('id', $currentLoginUser)->update($validatedData);
+
+                return redirect()->route('homepage');
+            } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
+                $errorTrace = $e->getTraceAsString();
+                Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+                return redirect()->route('register-next')->with('error', $errorMessage);
+            }
         }
 
     }
