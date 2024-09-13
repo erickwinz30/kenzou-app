@@ -20,7 +20,8 @@
             <div class="d-flex justify-content-center py-4">
               <a href="index.html" class="logo d-flex align-items-center w-auto">
                 <img src="{{ asset('img/icons/icon-152.png') }}" alt="" style="max-height: 6em">
-                <span class="d-none d-lg-block text-center">Kenzou Drive Thru Car Wash</span>
+                <span class="d-none d-lg-block text-center">Kenzou Drive Thru Car
+                  Wash</span>
               </a>
             </div><!-- End Logo -->
 
@@ -36,8 +37,10 @@
               <div class="card-body">
 
                 <div class="pt-4 pb-2">
-                  <h5 class="card-title text-center pb-0 fs-4">Buat Akun Member</h5>
-                  <p class="text-center small">Masukkan data diri anda untuk membuat akun</p>
+                  <h5 class="card-title text-center pb-0 fs-4">Buat Akun Member
+                  </h5>
+                  <p class="text-center small">Masukkan data diri anda untuk
+                    membuat akun</p>
                 </div>
 
                 <form action="/register" method="POST" class="row g-3 needs-validation" novalidate>
@@ -71,7 +74,8 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="nomor_telepon" class="form-label">No. Telepon</label>
+                    <label for="nomor_telepon" class="form-label">No.
+                      Telepon</label>
                     <div class="input-group has-validation">
                       <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
                         id="nomor_telepon" placeholder="Masukkan no. telepon..."
@@ -85,7 +89,8 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="tanggal_lahir" class="form-label">Tgl Lahir</label>
+                    <label for="tanggal_lahir" class="form-label">Tgl
+                      Lahir</label>
                     <div class="input-group has-validation">
                       <input type="date" name="tanggal_lahir" class="form-control" id="tanggal_lahir"
                         placeholder="Masukkan tanggal_lahir..." @error('tanggal_lahir') is-invalid @enderror required
@@ -116,7 +121,8 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="referral_code" class="form-label">Referral Code</label>
+                    <label for="referral_code" class="form-label">Referral
+                      Code</label>
                     <div class="input-group has-validation">
                       <input type="text" name="referral_code" class="form-control" id="referral_code"
                         placeholder="Masukkan referral code (optional)..." @error('referral_code') is-invalid @enderror
@@ -130,7 +136,8 @@
                   </div>
 
                   <div class="col-12">
-                    <button class="btn btn-primary w-100" type="submit">Buat Account</button>
+                    <button class="btn btn-primary w-100" type="submit">Buat
+                      Account</button>
                   </div>
                   <div class="col-12">
                     <p class="small mb-0">Sudah memiliki akun? <a href="{{ route('login') }}">Log in</a></p>
@@ -155,18 +162,19 @@
 
   <script>
     //tombol tampilkan password
-    document.getElementById('togglePassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('password');
-      const icon = this.querySelector('i');
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
-      }
-    });
+    document.getElementById('togglePassword').addEventListener('click',
+      function() {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('bi-eye');
+          icon.classList.add('bi-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('bi-eye-slash');
+          icon.classList.add('bi-eye');
+        }
+      });
   </script>
 @endsection
