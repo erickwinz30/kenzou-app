@@ -1,4 +1,4 @@
-@extends('member.layout.main');
+@extends('member.layout.main')
 
 @section('container')
   Homepage for Customer

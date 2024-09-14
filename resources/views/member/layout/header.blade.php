@@ -2,11 +2,15 @@
 <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
 
   <div class="d-flex align-items-center justify-content-between">
-    <a href="index.html" class="logo d-flex align-items-center">
-      <img src="assets/img/logo.png" alt="">
-      <span class="d-none d-lg-block">Kenzou</span>
+    <i class="bi bi-list toggle-sidebar-btn ps-0 pe-2 d-none d-lg-block"></i>
+    <a href="{{ route('homepage') }}" class="logo d-flex align-items-center">
+      <img src="{{ asset('img/icons/icon-152.png') }}" alt="Kenzou Logo">
+      <span>
+        @if (Request::is('/'))
+          Home
+        @endif
+      </span>
     </a>
-    <i class="bi bi-list toggle-sidebar-btn"></i>
   </div><!-- End Logo -->
 
   <nav class="header-nav ms-auto">
