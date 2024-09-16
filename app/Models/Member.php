@@ -11,38 +11,42 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Member extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
-    protected $keyType = 'string';
-    protected $guarded = ['id'];
+  use HasApiTokens, HasFactory, Notifiable;
+  protected $keyType = 'string';
+  protected $guarded = ['id'];
 
-    protected $fillable = [
-        'nama',
-        'email',
-        'nomor_telepon',
-        'tanggal_lahir',
-        'experience_point',
-        'redeemable_point',
-        'google_id',
-        'referral_code',
-        'password',
-    ];
+  // public function scopeFilter($query, array $filters) {
 
-    protected static function boot()
-    {
-        parent::boot();
+  // }
 
-        static::creating(function ($model) {
-            $model->{$model->getKeyName()} = (string) Str::uuid();
-        });
-    }
+  protected $fillable = [
+    'nama',
+    'email',
+    'nomor_telepon',
+    'tanggal_lahir',
+    'experience_point',
+    'redeemable_point',
+    'google_id',
+    'referral_code',
+    'password',
+  ];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+  protected static function boot()
+  {
+    parent::boot();
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    static::creating(function ($model) {
+      $model->{$model->getKeyName()} = (string) Str::uuid();
+    });
+  }
+
+  protected $hidden = [
+    'password',
+    'remember_token',
+  ];
+
+  protected $casts = [
+    'email_verified_at' => 'datetime',
+    'password' => 'hashed',
+  ];
 }

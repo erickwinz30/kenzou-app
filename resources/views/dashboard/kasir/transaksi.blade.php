@@ -1,6 +1,24 @@
 @extends('dashboard.layout.main')
 
 @section('container')
+  <style>
+    #pelanggan-container {
+      position: absolute;
+      max-height: 150px;
+      overflow-y: auto;
+      background-color: white;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      left: 0;
+      /* right: 20px; */
+      width: 100%;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+  </style>
+
   <div class="pagetitle">
     <h1>Transaksi Baru</h1>
   </div><!-- End Page Title -->
@@ -68,18 +86,19 @@
           <!-- Pelanggan Select -->
           <div class="col-12">
             <div class="card">
-              <div class="card-body">
+              <div class="card-body" style="box-sizing: border-box" id="container-informasi-pelanggan">
                 <div class="layanan-header">
                   <h5 class="card-title">Informasi Pelanggan</h5>
-                  <div class="item">
-                    <div class="input-group flex-nowrap">
-                      <span class="input-group-text" id="addon-wrapping">+62</span>
-                      <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon"
-                        placeholder="No. telepon" aria-label="Username" aria-describedby="addon-wrapping">
-                      <button class="btn btn-primary" id="tambahNoPelanggan">Tambah</button>
-                    </div>
+                </div>
+                <div class="item">
+                  <div class="input-group flex-nowrap">
+                    <span class="input-group-text" id="addon-wrapping">+62</span>
+                    <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon"
+                      placeholder="No. telepon" aria-label="Username" aria-describedby="addon-wrapping" maxlength="15">
+                    <button class="btn btn-primary" id="tambahNoPelanggan">Tambah</button>
                   </div>
                 </div>
+
               </div>
             </div>
           </div><!-- End Pelanggan Select -->
@@ -97,13 +116,13 @@
               <h5 class="card-title">Detail Transaksi</h5>
               {{-- Container detail layanan pada transaksi --}}
               <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="card-text fw-semibold">Tgl Transaksi</h6>
+                <h6 class="card-text fw-semibold my-auto">Tgl Transaksi</h6>
                 <p class="card-text">{{ $tanggal_transaksi }}</p>
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
-                <h6 class="card-text fw-semibold my-auto">No. Pelanggan</h6>
+                <h6 class="card-text fw-semibold my-auto">No. Telp Pelanggan</h6>
               </div>
-              <h6 class="card-text fw-semibold" id="card_item">Item</h6>
+              <h6 class="card-text fw-semibold " id="card_item">Item</h6>
               <div class="item_transaksi mb-3" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
               </div>
@@ -122,17 +141,17 @@
                   <h6 class="card-text fw-semibold mt-3">Metode Pembayaran: </h6>
                   <div class="d-flex justify-content-end align-items-center">
                     <div class="form-check">
-                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
-                        value="tunai" checked>
-                      <label class="form-check-label" for="exampleRadios1">
-                        Tunai
+                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
+                        value="qris" checked>
+                      <label class="form-check-label" for="exampleRadios2">
+                        QRIS
                       </label>
                     </div>
                     <div class="form-check ms-3">
-                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
-                        value="qris">
-                      <label class="form-check-label" for="exampleRadios2">
-                        QRIS
+                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
+                        value="tunai">
+                      <label class="form-check-label" for="exampleRadios1">
+                        Tunai
                       </label>
                     </div>
                   </div>
@@ -157,6 +176,7 @@
       const addNoPelanggan = document.getElementById('tambahNoPelanggan');
       const containerItem = document.getElementById('item_transaksi');
       const subtotalElement = document.getElementById('subtotal_value');
+      const inputNomorTelepon = document.getElementById('nomor_telepon');
       let inputHarga = document.getElementById('inputHarga');
 
       let subtotal = 0;
@@ -215,9 +235,7 @@
         event.preventDefault();
 
         let noHp = document.getElementById('nomor_telepon').value;
-
         let infoPelanggan = document.createElement('div');
-
         infoPelanggan.classList.add('d-flex', 'justify-content-end', 'align-items-center')
 
         infoPelanggan.innerHTML = `
@@ -237,6 +255,65 @@
           infoPelanggan.remove();
         });
       });
+
+      inputNomorTelepon.addEventListener('input', function(event) {
+        event.preventDefault();
+        let noHp = document.getElementById('nomor_telepon').value;
+
+        fetch('/dashboard/transaksiBaru/nomor_telepon', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+              nomor_telepon: noHp
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (inputNomorTelepon.value !== '') {
+              const containerNoPelanggan = document.getElementById('container-informasi-pelanggan');
+
+              // Periksa apakah elemen dengan id 'pelanggan-container' sudah ada
+              let pelangganContainer = document.getElementById('pelanggan-container');
+
+              // Jika tidak ada, buat elemen baru
+              if (!pelangganContainer) {
+                pelangganContainer = document.createElement('div');
+                pelangganContainer.classList.add('pelanggan-container');
+                pelangganContainer.setAttribute('id', 'pelanggan-container');
+                containerNoPelanggan.appendChild(pelangganContainer);
+              } else {
+                // Kosongkan isi pelangganContainer jika sudah ada
+                pelangganContainer.innerHTML = '';
+              }
+
+              // Tambahkan data ke pelangganContainer
+              data.forEach(item => {
+                const containerDataPelanggan = document.createElement('div');
+                console.log(item.nama);
+
+                containerDataPelanggan.innerHTML = `
+                  <div class="d-flex justify-content-between align-items-center my-2">
+                    <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
+                    <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
+                  </div>
+                `;
+
+                pelangganContainer.appendChild(containerDataPelanggan);
+              });
+            } else {
+              // Hapus pelangganContainer jika inputNomorTelepon kosong
+              let pelangganContainer = document.getElementById('pelanggan-container');
+              if (pelangganContainer) {
+                pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
+              }
+            }
+          })
+          .catch(error => console.error('Error Fetching Data:', error));
+      });
+
     });
   </script>
 @endsection

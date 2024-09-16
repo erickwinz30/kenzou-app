@@ -58,6 +58,7 @@ Route::get('/dashboard/fetch-sales-cashier', [CatatTransaksiController::class, '
 Route::get('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'index'])->middleware('notAdmin');
 
 Route::post('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'catat'])->middleware('notAdmin');
+Route::post('/dashboard/transaksiBaru/nomor_telepon', [CatatTransaksiController::class, 'searchPhoneNumber'])->middleware('notAdmin');
 
 //tampil list layanan
 Route::get('/dashboard/list-layanan', [CatatTransaksiController::class, 'layanan'])->middleware('notAdmin');
