@@ -248,6 +248,8 @@
 
         document.getElementById('containerNoPelanggan').appendChild(infoPelanggan);
 
+        document.getElementById('nomor_telepon').value = '';
+
         document.getElementById('remove-pelanggan').addEventListener('click', function() {
           // event.preventDefault();
           let noHp = document.getElementById('nomor_telepon');
@@ -295,7 +297,7 @@
                 console.log(item.nama);
 
                 containerDataPelanggan.innerHTML = `
-                  <div class="d-flex justify-content-between align-items-center my-2">
+                  <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
                     <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
                     <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
                   </div>
@@ -312,6 +314,39 @@
             }
           })
           .catch(error => console.error('Error Fetching Data:', error));
+      });
+
+      document.getElementById('container-informasi-pelanggan').addEventListener('click', function(event) {
+        event.preventDefault();
+        const target = event.target;
+        const containerDataPelanggan = target.closest('[data-nomor-telepon]');
+        if (containerDataPelanggan) {
+          const nomorTelepon = containerDataPelanggan.getAttribute('data-nomor-telepon');
+
+          let infoPelanggan = document.createElement('div');
+          infoPelanggan.classList.add('d-flex', 'justify-content-end', 'align-items-center')
+
+          infoPelanggan.innerHTML = `
+          <input type="hidden" name="nomor_telepon" value="${nomorTelepon}">
+          <p class="card-text my-auto">${nomorTelepon}</p>
+          <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        `;
+
+          document.getElementById('containerNoPelanggan').appendChild(infoPelanggan);
+
+          document.getElementById('nomor_telepon').value = '';
+
+          document.getElementById('remove-pelanggan').addEventListener('click', function() {
+            // event.preventDefault();
+            let noHp = document.getElementById('nomor_telepon');
+            noHp.value = "";
+            infoPelanggan.remove();
+          });
+
+          console.log(nomorTelepon);
+        }
       });
 
     });
