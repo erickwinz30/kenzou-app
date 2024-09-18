@@ -170,16 +170,17 @@
   </section>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function() {
       // Select all the "Tambah" buttons
-      const addItemButtons = document.querySelectorAll('.add-item');
-      const addNoPelanggan = document.getElementById('tambahNoPelanggan');
-      const containerItem = document.getElementById('item_transaksi');
-      const subtotalElement = document.getElementById('subtotal_value');
-      const inputNomorTelepon = document.getElementById('nomor_telepon');
-      let inputHarga = document.getElementById('inputHarga');
+      const addItemButtons = document.querySelectorAll(".add-item");
+      const addNoPelanggan = document.getElementById("tambahNoPelanggan");
+      const containerItem = document.getElementById("item_transaksi");
+      const subtotalElement = document.getElementById("subtotal_value");
+      const inputNomorTelepon = document.getElementById("nomor_telepon");
+      let inputHarga = document.getElementById("inputHarga");
 
       let subtotal = 0;
+      let timeoutId;
 
       // fuction untuk update subtotal
       function updateSubtotal(amount) {
@@ -189,18 +190,18 @@
       }
 
       // Add click event listeners to each button
-      addItemButtons.forEach(button => {
-        button.addEventListener('click', function(event) {
+      addItemButtons.forEach((button) => {
+        button.addEventListener("click", function(event) {
           event.preventDefault();
 
           // Retrieve data attributes from the clicked button
-          const itemId = this.getAttribute('data-id');
-          const itemName = this.getAttribute('data-name');
-          const itemPrice = parseInt(this.getAttribute('data-price'));
+          const itemId = this.getAttribute("data-id");
+          const itemName = this.getAttribute("data-name");
+          const itemPrice = parseInt(this.getAttribute("data-price"));
 
           // Create a new div to hold the item details
-          const itemDiv = document.createElement('div');
-          itemDiv.classList.add('item', 'd-flex', 'justify-content-between', 'align-items-center');
+          const itemDiv = document.createElement("div");
+          itemDiv.classList.add("item", "d-flex", "justify-content-between", "align-items-center");
 
           // Add the item name and price to the new div
           itemDiv.innerHTML = `
@@ -223,7 +224,7 @@
           updateSubtotal(itemPrice);
 
           // Add event listener to the remove button
-          itemDiv.querySelector('.remove-item').addEventListener('click', function() {
+          itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             itemDiv.remove();
             updateSubtotal(-itemPrice);
             button.disabled = false;
@@ -231,12 +232,12 @@
         });
       });
 
-      addNoPelanggan.addEventListener('click', function(event) {
+      addNoPelanggan.addEventListener("click", function(event) {
         event.preventDefault();
 
-        let noHp = document.getElementById('nomor_telepon').value;
-        let infoPelanggan = document.createElement('div');
-        infoPelanggan.classList.add('d-flex', 'justify-content-end', 'align-items-center')
+        let noHp = document.getElementById("nomor_telepon").value;
+        let infoPelanggan = document.createElement("div");
+        infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
 
         infoPelanggan.innerHTML = `
           <input type="hidden" name="nomor_telepon" value="${noHp}">
@@ -246,101 +247,106 @@
           </button>
         `;
 
-        document.getElementById('containerNoPelanggan').appendChild(infoPelanggan);
+        document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
 
-        document.getElementById('nomor_telepon').value = '';
+        document.getElementById("nomor_telepon").value = "";
 
-        document.getElementById('remove-pelanggan').addEventListener('click', function() {
+        document.getElementById("remove-pelanggan").addEventListener("click", function() {
           // event.preventDefault();
-          let noHp = document.getElementById('nomor_telepon');
+          let noHp = document.getElementById("nomor_telepon");
           noHp.value = "";
           infoPelanggan.remove();
         });
       });
 
-      inputNomorTelepon.addEventListener('input', function(event) {
+      inputNomorTelepon.addEventListener("input", function(event) {
         event.preventDefault();
-        let noHp = document.getElementById('nomor_telepon').value;
+        clearTimeout(timeoutId); // Hentikan timeout sebelumnya, jika ada
 
-        fetch('/dashboard/transaksiBaru/nomor_telepon', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({
-              nomor_telepon: noHp
+        timeoutId = setTimeout(() => {
+          let noHp = document.getElementById("nomor_telepon").value;
+
+          fetch("/dashboard/transaksiBaru/nomor_telepon", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+              },
+              body: JSON.stringify({
+                nomor_telepon: noHp,
+              }),
             })
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (inputNomorTelepon.value !== '') {
-              const containerNoPelanggan = document.getElementById('container-informasi-pelanggan');
+            .then((response) => response.json())
+            .then((data) => {
+              if (inputNomorTelepon.value !== "") {
+                const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
 
-              // Periksa apakah elemen dengan id 'pelanggan-container' sudah ada
-              let pelangganContainer = document.getElementById('pelanggan-container');
+                // Periksa apakah elemen dengan id 'pelanggan-container' sudah ada
+                let pelangganContainer = document.getElementById("pelanggan-container");
 
-              // Jika tidak ada, buat elemen baru
-              if (!pelangganContainer) {
-                pelangganContainer = document.createElement('div');
-                pelangganContainer.classList.add('pelanggan-container');
-                pelangganContainer.setAttribute('id', 'pelanggan-container');
-                containerNoPelanggan.appendChild(pelangganContainer);
+                // Jika tidak ada, buat elemen baru
+                if (!pelangganContainer) {
+                  pelangganContainer = document.createElement("div");
+                  pelangganContainer.classList.add("pelanggan-container");
+                  pelangganContainer.setAttribute("id", "pelanggan-container");
+                  containerNoPelanggan.appendChild(pelangganContainer);
+                } else {
+                  // Kosongkan isi pelangganContainer jika sudah ada
+                  pelangganContainer.innerHTML = "";
+                }
+
+                // Tambahkan data ke pelangganContainer
+                data.forEach((item) => {
+                  const containerDataPelanggan = document.createElement("div");
+                  console.log(item.nama);
+
+                  containerDataPelanggan.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
+              <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
+              <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
+            </div>
+          `;
+
+                  pelangganContainer.appendChild(containerDataPelanggan);
+                });
               } else {
-                // Kosongkan isi pelangganContainer jika sudah ada
-                pelangganContainer.innerHTML = '';
+                // Hapus pelangganContainer jika inputNomorTelepon kosong
+                let pelangganContainer = document.getElementById("pelanggan-container");
+                if (pelangganContainer) {
+                  pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
+                }
               }
-
-              // Tambahkan data ke pelangganContainer
-              data.forEach(item => {
-                const containerDataPelanggan = document.createElement('div');
-                console.log(item.nama);
-
-                containerDataPelanggan.innerHTML = `
-                  <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
-                    <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
-                    <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
-                  </div>
-                `;
-
-                pelangganContainer.appendChild(containerDataPelanggan);
-              });
-            } else {
-              // Hapus pelangganContainer jika inputNomorTelepon kosong
-              let pelangganContainer = document.getElementById('pelanggan-container');
-              if (pelangganContainer) {
-                pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
-              }
-            }
-          })
-          .catch(error => console.error('Error Fetching Data:', error));
+            })
+            .catch((error) => console.error("Error Fetching Data:", error));
+        }, 800); // Delay selama 1 detik
       });
 
-      document.getElementById('container-informasi-pelanggan').addEventListener('click', function(event) {
+
+      document.getElementById("container-informasi-pelanggan").addEventListener("click", function(event) {
         event.preventDefault();
         const target = event.target;
-        const containerDataPelanggan = target.closest('[data-nomor-telepon]');
+        const containerDataPelanggan = target.closest("[data-nomor-telepon]");
         if (containerDataPelanggan) {
-          const nomorTelepon = containerDataPelanggan.getAttribute('data-nomor-telepon');
+          const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
 
-          let infoPelanggan = document.createElement('div');
-          infoPelanggan.classList.add('d-flex', 'justify-content-end', 'align-items-center')
+          let infoPelanggan = document.createElement("div");
+          infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
 
           infoPelanggan.innerHTML = `
-          <input type="hidden" name="nomor_telepon" value="${nomorTelepon}">
-          <p class="card-text my-auto">${nomorTelepon}</p>
-          <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
-            <i class="bi bi-x-circle"></i>
-          </button>
-        `;
+            <input type="hidden" name="nomor_telepon" value="${nomorTelepon}">
+            <p class="card-text my-auto">${nomorTelepon}</p>
+            <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          `;
 
-          document.getElementById('containerNoPelanggan').appendChild(infoPelanggan);
+          document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
 
-          document.getElementById('nomor_telepon').value = '';
+          document.getElementById("nomor_telepon").value = "";
 
-          document.getElementById('remove-pelanggan').addEventListener('click', function() {
+          document.getElementById("remove-pelanggan").addEventListener("click", function() {
             // event.preventDefault();
-            let noHp = document.getElementById('nomor_telepon');
+            let noHp = document.getElementById("nomor_telepon");
             noHp.value = "";
             infoPelanggan.remove();
           });
@@ -348,7 +354,6 @@
           console.log(nomorTelepon);
         }
       });
-
     });
   </script>
 @endsection
