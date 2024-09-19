@@ -14,10 +14,7 @@ class Member extends Authenticatable
   use HasApiTokens, HasFactory, Notifiable;
   protected $keyType = 'string';
   protected $guarded = ['id'];
-
-  // public function scopeFilter($query, array $filters) {
-
-  // }
+  protected $with = ['pelanggan'];
 
   protected $fillable = [
     'nama',
@@ -49,4 +46,9 @@ class Member extends Authenticatable
     'email_verified_at' => 'datetime',
     'password' => 'hashed',
   ];
+
+  public function pelanggan()
+  {
+    return $this->hasOne(Pelanggan::class, 'member_id', 'id');
+  }
 }

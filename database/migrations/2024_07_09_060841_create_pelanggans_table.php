@@ -6,25 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('pelanggans', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('nama');
-            $table->string('nomor_telepon')->unique();
-            $table->timestamps();
-        });
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('pelanggans', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->string('nomor_telepon')->unique();
+      $table->foreignUuid('member_id')->nullable();
+      $table->timestamps();
+    });
+  }
 
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('pelanggans');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('pelanggans');
+  }
 };

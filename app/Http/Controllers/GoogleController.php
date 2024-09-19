@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Redirect;
+use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
 {
@@ -84,12 +85,18 @@ class GoogleController extends Controller
 
   public function viewAfterGoogleCallback()
   {
-    return view('member.login.next-google-registration');
+    if (Auth::guard('member')->user()->nomor_telepon) {
+      return redirect()->route('homepage');
+    } else {
+      return view('member.login.next-google-registration');
+    }
   }
 
   public function nextRegisterStore(Request $request)
   {
-    if (Auth::guard('member')->user()->nomor_telepon) {
+    $member = Auth::guard('member')->user()->nomor_telepon;
+
+    if ($member) {
       return redirect()->route('homepage');
     } else {
       try {
@@ -100,7 +107,7 @@ class GoogleController extends Controller
 
         if ($request->referral_code) {
           $findMember = Member::where('referral_code', $request->referral_code)->first();
-          $findCurrentMember = Auth::guard('member')->user()->email;
+          $findCurrentMember = Auth::guard('member')->id();
 
           if ($findMember) {
             $memberCurrentExperiencePoint = $findMember->experience_point;
@@ -108,20 +115,37 @@ class GoogleController extends Controller
 
             $afterRegisterExperiencePoint = $memberCurrentExperiencePoint + 25;
             $afterRegisterRedeemablePoint = $memberCurrentRedeemablePoint + 25;
+            Log::info('Perolehan Point Member: ', ['member' => $afterRegisterExperiencePoint]);
 
             $findMember->update(['experience_point' => $afterRegisterExperiencePoint, 'redeemable_point' => $afterRegisterRedeemablePoint]);
 
-            Member::where('email', $findCurrentMember)->update(['experience_point' => 25, 'redeemable_point' => 25]);
+            $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->first();
 
-            Log::info('Perolehan Point Member: ', ['member' => $afterRegisterExperiencePoint]);
+            if ($findPhoneNumber) {
+              Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->update(['member_id' => $findCurrentMember]);
+              Member::where('id', $findCurrentMember)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'tanggal_lahir' => $validatedData['tanggal_lahir'], 'experience_point' => 25, 'redeemable_point' => 25]);
+            } else {
+              Pelanggan::create(['member_id' => $findCurrentMember, 'nomor_telepon' => $validatedData['nomor_telepon']]);
+              Member::where('id', $findCurrentMember)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'tanggal_lahir' => $validatedData['tanggal_lahir'], 'experience_point' => 25, 'redeemable_point' => 25]);
+            }
 
             return redirect()->route('homepage');
           } else {
             return back()->with('error', 'Kode referral tidak ditemukan!!!');
           }
         } else {
-          $currentLoginUser = Auth::guard('member')->user()->id;
-          Member::where('id', $currentLoginUser)->update($validatedData);
+          $currentLoginUser = Auth::guard('member')->id();
+          Member::where('id', $currentLoginUser)->update(['tanggal_lahir' => $validatedData['tanggal_lahir']]);
+
+          $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->first();
+
+          if ($findPhoneNumber) {
+            Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->update(['member_id' => $currentLoginUser]);
+            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon']]);
+          } else {
+            Pelanggan::create(['member_id' => $currentLoginUser, 'nomor_telepon' => $validatedData['nomor_telepon']]);
+            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon']]);
+          }
 
           return redirect()->route('homepage');
         }

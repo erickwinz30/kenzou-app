@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -22,9 +23,12 @@ class MemberRegisterController extends Controller
       $validatedData = $request->validate([
         'nama' => 'required|min:3|max:255',
         'email' => 'required|min:5|max:255|unique:members|email:dns',
-        'nomor_telepon' => 'required|min:10|max:15|unique:members',
         'tanggal_lahir' => 'required',
         'password' => 'required|min:5|max:255',
+      ]);
+
+      $validatedPhoneNumber = $request->validate([
+        'nomor_telepon' => 'required|min:10|max:15|unique:pelanggans',
       ]);
 
       $validatedData['password'] = Hash::make($validatedData['password']);
@@ -52,11 +56,20 @@ class MemberRegisterController extends Controller
           Log::info('Perolehan Point Member: ', ['member' => $afterRegisterExperiencePoint]);
 
           $newMember = Member::create($validatedData);
+          $newMemberId = Member::where('email', $newMember->email)->first();
+
+          $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
 
           Member::where('email', $newMember->email)->update(['experience_point' => 25, 'redeemable_point' => 25]);
 
           Log::info('Data member baru: ', ['member' => $validatedData]);
           Log::info('Check id Member baru: ', ['member' => $newMember]);
+
+          if ($findPhoneNumber) {
+            Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->update(['member_id' => $newMemberId->id]);
+          } else {
+            Pelanggan::create(['member_id' => $newMemberId->id, 'nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
+          }
 
           return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
         } else {
@@ -64,16 +77,25 @@ class MemberRegisterController extends Controller
         }
       } else {
         $newMember = Member::create($validatedData);
+        $newMemberId = Member::where('email', $newMember->email)->first();
 
         Log::info('Data member baru: ', ['member' => $validatedData]);
         Log::info('Check id Member baru: ', ['member' => $newMember]);
+
+        $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
+
+        if ($findPhoneNumber) {
+          Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->update(['member_id' => $newMemberId->id]);
+        } else {
+          Pelanggan::create(['member_id' => $newMemberId->id, 'nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
+        }
 
         return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
       }
     } catch (\Exception $e) {
       Log::error('Register Member Error: ', ['message' => $e->getMessage()]);
 
-      return redirect('/registrasi')->with('error', 'Terjadi kesalahan saat menambahkan akun baru');
+      return redirect('/register')->with('error', 'Terjadi kesalahan saat menambahkan akun baru');
     }
   }
 }
