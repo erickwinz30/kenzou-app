@@ -72,7 +72,7 @@ class GoogleController extends Controller
           return redirect()->route('register-next');
         } else {
           // Pengguna belum login
-          return redirect()->with('error', 'Gagal sign in karena auth gagal dengan Google.');
+          return redirect()->with('error', 'Terjadi kesalahan saat sign-in menggunakan Google');
         }
       }
     } catch (\Exception $e) {

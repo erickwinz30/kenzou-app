@@ -23,11 +23,11 @@ class Pelanggan extends Model
 
   public function transaksi()
   {
-    return $this->hasMany(Transaksi::class);
+    return $this->hasMany(Transaksi::class, 'pelanggan_id', 'id');
   }
 
   public function member()
   {
-    return $this->belongsTo(Member::class, 'member_id');
+    return $this->belongsTo(Member::class, 'member_id', 'id');
   }
 }

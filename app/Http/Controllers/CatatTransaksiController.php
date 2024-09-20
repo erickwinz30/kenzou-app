@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Layanan;
 use Twilio\Rest\Client;
+use App\Models\Pelanggan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
@@ -50,11 +51,17 @@ class CatatTransaksiController extends Controller
       // Log validated data
       Log::info('Validated Data:', $validatedData);
 
+      //Check If Pelanggan Number Entered
+      $checkPelangganNumber = Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->first();
+
+      if (!$checkPelangganNumber) {
+        $pelanggan = Pelanggan::create(['nomor_telepon' => $validatedData['nomor_telepon']]);
+        Log::info('Pelaggan Number Created', $pelanggan->toArray());
+      }
+
       // Create new transaction
       $transaction = Transaksi::create($validatedData);
       // Log created transaction
-
-      // dd($transaction->id);
 
       Log::info('Created Transaction:', $transaction->toArray());
 
@@ -102,6 +109,8 @@ class CatatTransaksiController extends Controller
       $searchResult =
         Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
 
+        $data = [];
+
       foreach ($searchResult as $result) {
         Log::info('Search Result:', ['search_result' => $result]);
 
@@ -113,7 +122,12 @@ class CatatTransaksiController extends Controller
       }
 
       if ($request->wantsJson()) {
-        return response()->json($data);
+        // Pastikan kita mengembalikan array kosong jika tidak ada hasil
+        if ($searchResult->isEmpty()) {
+          return response()->json([]);
+        } else {
+          return response()->json($data, 200);
+        }
       }
 
       return $data;

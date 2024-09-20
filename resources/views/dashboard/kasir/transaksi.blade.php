@@ -98,7 +98,6 @@
                     <button class="btn btn-primary" id="tambahNoPelanggan">Tambah</button>
                   </div>
                 </div>
-
               </div>
             </div>
           </div><!-- End Pelanggan Select -->
@@ -177,8 +176,8 @@
       const containerItem = document.getElementById("item_transaksi");
       const subtotalElement = document.getElementById("subtotal_value");
       const inputNomorTelepon = document.getElementById("nomor_telepon");
+      const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
       let inputHarga = document.getElementById("inputHarga");
-
       let subtotal = 0;
       let timeoutId;
 
@@ -278,54 +277,61 @@
             })
             .then((response) => response.json())
             .then((data) => {
+              let pelangganContainer = document.getElementById("pelanggan-container");
+
               if (inputNomorTelepon.value !== "") {
-                const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
+                if (data && data.length > 0) { // Periksa apakah data tidak kosong
+                  // Jika elemen pelangganContainer tidak ada, buat elemen baru
+                  if (!pelangganContainer) {
+                    pelangganContainer = document.createElement("div");
+                    pelangganContainer.classList.add("pelanggan-container");
+                    pelangganContainer.setAttribute("id", "pelanggan-container");
+                    containerNoPelanggan.appendChild(pelangganContainer);
+                  } else {
+                    // Kosongkan isi pelangganContainer jika sudah ada
+                    pelangganContainer.innerHTML = "";
+                  }
 
-                // Periksa apakah elemen dengan id 'pelanggan-container' sudah ada
-                let pelangganContainer = document.getElementById("pelanggan-container");
+                  // Tambahkan data ke pelangganContainer
+                  data.forEach((item) => {
+                    const containerDataPelanggan = document.createElement("div");
+                    console.log(item.nama);
 
-                // Jika tidak ada, buat elemen baru
-                if (!pelangganContainer) {
-                  pelangganContainer = document.createElement("div");
-                  pelangganContainer.classList.add("pelanggan-container");
-                  pelangganContainer.setAttribute("id", "pelanggan-container");
-                  containerNoPelanggan.appendChild(pelangganContainer);
+                    containerDataPelanggan.innerHTML = `
+                          <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
+                            <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
+                            <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
+                          </div>
+                        `;
+
+                    pelangganContainer.appendChild(containerDataPelanggan);
+                  });
+
                 } else {
-                  // Kosongkan isi pelangganContainer jika sudah ada
-                  pelangganContainer.innerHTML = "";
+                  // Jika data kosong, hapus pelangganContainer jika sudah ada
+                  if (pelangganContainer) {
+                    pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
+                  }
                 }
-
-                // Tambahkan data ke pelangganContainer
-                data.forEach((item) => {
-                  const containerDataPelanggan = document.createElement("div");
-                  console.log(item.nama);
-
-                  containerDataPelanggan.innerHTML = `
-            <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
-              <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
-              <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
-            </div>
-          `;
-
-                  pelangganContainer.appendChild(containerDataPelanggan);
-                });
               } else {
-                // Hapus pelangganContainer jika inputNomorTelepon kosong
-                let pelangganContainer = document.getElementById("pelanggan-container");
+                // Jika input kosong, hapus pelangganContainer jika sudah ada
                 if (pelangganContainer) {
                   pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
                 }
               }
             })
             .catch((error) => console.error("Error Fetching Data:", error));
-        }, 800); // Delay selama 1 detik
+        }, 800); // Delay selama 800ms
       });
+
 
 
       document.getElementById("container-informasi-pelanggan").addEventListener("click", function(event) {
         event.preventDefault();
         const target = event.target;
         const containerDataPelanggan = target.closest("[data-nomor-telepon]");
+        let pelangganContainer = document.getElementById("pelanggan-container");
+
         if (containerDataPelanggan) {
           const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
 
@@ -344,11 +350,14 @@
 
           document.getElementById("nomor_telepon").value = "";
 
+          pelangganContainer.remove();
+
           document.getElementById("remove-pelanggan").addEventListener("click", function() {
             // event.preventDefault();
             let noHp = document.getElementById("nomor_telepon");
             noHp.value = "";
             infoPelanggan.remove();
+            pelangganContainer.remove();
           });
 
           console.log(nomorTelepon);
