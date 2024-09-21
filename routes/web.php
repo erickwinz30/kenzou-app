@@ -60,7 +60,7 @@ Route::middleware('isAdmin')->group(function () {
 
 Route::middleware('notAdmin')->group(function () {
   //dashboard kasir
-  Route::get('/dashboard/dashboard-kasir', [CatatTransaksiController::class, 'dashboardKasir'])->name('dashboard-kasir');
+  Route::get('/dashboard', [CatatTransaksiController::class, 'dashboardKasir'])->name('dashboard-kasir');
   Route::get('/dashboard/fetch-sales-cashier', [CatatTransaksiController::class, 'perHourSales'])->name('fetch-sales-cashier');
 
   //catat transaksi
