@@ -113,7 +113,7 @@
       </li><!-- End Layanan Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') ? '' : 'collapsed' }}"
+        <a class="nav-link {{ Request::is('dashboard/pelanggan') || Request::is('dashboard/pelanggan/*') ? '' : 'collapsed' }}"
           href="/dashboard/pelanggan">
           <i class="bi bi-person"></i>
           <span>Pelanggan</span>

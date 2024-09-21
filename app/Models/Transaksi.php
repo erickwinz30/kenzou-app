@@ -11,9 +11,7 @@ class Transaksi extends Model
   use HasFactory;
 
   protected $keyType = 'string';
-
   protected $guarded = ['id'];
-
   protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan'];
 
   public $incrementing = false;

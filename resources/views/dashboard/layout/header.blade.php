@@ -2,9 +2,9 @@
 <header id="header" class="header fixed-top d-flex align-items-center justify-content-between">
 
   <div class="d-flex align-items-center justify-content-between">
-    <a href="index.html" class="logo d-flex align-items-center">
-      <img src="assets/img/logo.png" alt="">
-      <span class="d-none d-lg-block">Kenzou</span>
+    <a href="{{ route('homepage') }}" class="logo d-flex align-items-center">
+      <img src="{{ asset('img/icons/icon-152.png') }}" alt="Kenzou Logo">
+      <span>Kenzou</span>
     </a>
     <i class="bi bi-list toggle-sidebar-btn"></i>
   </div><!-- End Logo -->

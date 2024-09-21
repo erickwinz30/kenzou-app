@@ -11,6 +11,8 @@ class Pelanggan extends Model
   use HasFactory;
   protected $keyType = 'string';
   protected $guarded = ['id'];
+  protected $with = ['member'];
+
 
   protected static function boot()
   {

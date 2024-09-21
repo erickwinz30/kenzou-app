@@ -12,7 +12,10 @@ class PelangganController extends Controller
    */
   public function index()
   {
-    return view('dashboard.pelanggan.index');
+    return view('dashboard.pelanggan.index', [
+      'pelanggans' => Pelanggan::all(),
+    ]);
+    // dd(Pelanggan::all());
   }
 
   /**

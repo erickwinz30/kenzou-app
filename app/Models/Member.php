@@ -14,7 +14,6 @@ class Member extends Authenticatable
   use HasApiTokens, HasFactory, Notifiable;
   protected $keyType = 'string';
   protected $guarded = ['id'];
-  protected $with = ['pelanggan'];
 
   protected $fillable = [
     'nama',
