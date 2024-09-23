@@ -85,7 +85,7 @@
                   <tr>
                     <th>No</th>
                     <th>Transaksi ID</th>
-                    <th>No. Telp Pelanggan</th>
+                    <th>Pelanggan</th>
                     <th>Nama Layanan</th>
                     <th>Kasir</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Transaksi</th>
@@ -101,7 +101,13 @@
                       <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ Str::limit($transaksi->id, 15) }}</td>
-                        <td>{{ $transaksi->nomor_telepon }}</td>
+                        <td>
+                          @if ($transaksi->pelanggan->member_id)
+                            {{ $transaksi->pelanggan->member->nama }}
+                          @elseif (!$transaksi->pelanggan->member_id)
+                            {{ $transaksi->pelanggan->nomor_telepon }}
+                          @endif
+                        </td>
                         <td>
                           @php
                             $namaLayanan = $transaksi->detail_layanan->pluck('layanan.nama_layanan')->toArray();

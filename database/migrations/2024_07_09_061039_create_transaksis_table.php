@@ -6,29 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('transaksis', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            // $table->foreignUuid('pelanggan_id');
-            $table->string('nomor_telepon');
-            $table->foreignUuid('user_id');
-            $table->datetime('date');
-            $table->decimal('total_harga');
-            $table->string('metode_pembayaran');
-            $table->string('keterangan')->nullable();
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('transaksis', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->foreignUuid('pelanggan_id');
+      $table->foreignUuid('user_id');
+      $table->datetime('date');
+      $table->decimal('total_harga');
+      $table->string('metode_pembayaran');
+      $table->string('keterangan')->nullable();
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('transaksis');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('transaksis');
+  }
 };

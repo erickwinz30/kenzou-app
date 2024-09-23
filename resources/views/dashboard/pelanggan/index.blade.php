@@ -76,7 +76,8 @@
                         <td>{{ $pelanggan->member->redeemable_point }}</td>
                         <td>{{ $pelanggan->member->referral_code }}</td>
                         <td>
-                          <button class="btn btn-warning" id="edit-button"><i class="bi bi-pencil"></i></button>
+                          <a href="/dashboard/pelanggan/{{ $pelanggan->id }}/edit" class="btn btn-warning"
+                            id="edit-button"><i class="bi bi-pencil"></i></a>
                           <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST" class="d-inline"
                             id="deleteForm{{ $pelanggan->id }}">
                             @method('DELETE')
@@ -94,18 +95,7 @@
                         <td>-</td>
                         <td>-</td>
                         <td>-</td>
-                        <td>
-                          <button class="btn btn-warning" id="edit-button"><i class="bi bi-pencil"></i></button>
-                          <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST" class="d-inline"
-                            id="deleteForm{{ $pelanggan->id }}">
-                            @method('DELETE')
-                            @csrf
-                            <button type="button" class="btn btn-danger"
-                              onclick="deleteConfirmation('{{ $pelanggan->id }}')">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </td>
+                        <td>-</td>
                       @endif
                     </tr>
                   @endforeach

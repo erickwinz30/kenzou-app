@@ -8,17 +8,27 @@ use Symfony\Component\HttpFoundation\Response;
 
 class isAdmin
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
-    public function handle(Request $request, Closure $next): Response
-    {
-        if(auth()->guest() || !auth()->user()->is_admin) {
-            abort(403);
-        }
-        
-        return $next($request);
+  /**
+   * Handle an incoming request.
+   *
+   * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+   */
+  public function handle(Request $request, Closure $next): Response
+  {
+    // if (auth()->guest() || !auth()->user()->is_admin) {
+    //   abort(403);
+    // } else if (!auth()->check()) {
+    //   return redirect()->route('dashboard-login');
+    // }
+
+    // return $next($request);
+
+    if (!auth()->check()) {
+      return redirect()->route('dashboard-login');
+    } else if (auth()->guest() || !auth()->user()->is_admin) {
+      abort(403);
     }
+
+    return $next($request);
+  }
 }

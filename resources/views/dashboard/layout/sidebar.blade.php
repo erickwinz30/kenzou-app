@@ -37,8 +37,7 @@
       <li class="nav-heading">Kasir</li>
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('dashboard/dashboard-kasir') ? '' : 'collapsed' }}"
-          href="/dashboard/dashboard-kasir">
+        <a class="nav-link {{ Request::is('dashboard') ? '' : 'collapsed' }}" href="/dashboard">
           <i class="bi bi-grid"></i>
           <span>Dashboard Kasir</span>
         </a>
@@ -121,19 +120,11 @@
       </li><!-- End Kasir Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-register.html">
-          <i class="bi bi-bar-chart"></i>
-          <span>Laporan</span>
-        </a>
-      </li><!-- End Laporan Page Nav -->
-
-      <li class="nav-item">
         <a class="nav-link collapsed" href="pages-contact.html">
           <i class="bi bi-envelope"></i>
           <span>Feedback</span>
         </a>
       </li><!-- End Feedback Page Nav -->
-
 
       <li class="nav-item">
         <a class="nav-link collapsed" href="pages-error-404.html">

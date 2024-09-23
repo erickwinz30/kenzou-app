@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Member;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
 
 class PelangganController extends Controller
 {
@@ -47,7 +50,9 @@ class PelangganController extends Controller
    */
   public function edit(Pelanggan $pelanggan)
   {
-    //
+    return view('dashboard.pelanggan.edit', [
+      'pelanggan' => $pelanggan,
+    ]);
   }
 
   /**
@@ -63,6 +68,18 @@ class PelangganController extends Controller
    */
   public function destroy(Pelanggan $pelanggan)
   {
-    //
+    try {
+      if ($pelanggan->member_id) {
+        Member::destroy($pelanggan->member->id);
+      }
+      // Pelanggan::destroy($pelanggan->id);
+      Pelanggan::where('id', $pelanggan->id)->update(['member_id' => null]);
+
+      return redirect('/dashboard/pelanggan')->with('success', 'Data pelanggan telah dihapus!');
+    } catch (\Exception $e) {
+      Log::info("Delete Error: " . $e->getMessage());
+      Log::info("Delete Error: " . $e->getTraceAsString());
+      return redirect('/dashboard/pelanggan')->with('error', 'Data pelanggan gagal dihapus!');
+    }
   }
 }

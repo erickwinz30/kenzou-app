@@ -110,7 +110,7 @@ class KasirController extends Controller
    */
   public function destroy($user)
   {
-    User::destroy($user);
+    User::destroy($user->id);
 
     return redirect('/dashboard/kasir')->with('success', 'Data kasir telah dihapus!');
   }

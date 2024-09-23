@@ -27,7 +27,7 @@ class Transaksi extends Model
 
   public function pelanggan()
   {
-    return $this->belongsTo(Pelanggan::class, 'pelanggan_id', 'id');
+    return $this->belongsTo(Pelanggan::class, 'pelanggan_id');
   }
 
   public function layanan()

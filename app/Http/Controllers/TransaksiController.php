@@ -4,218 +4,226 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Member;
 use App\Models\Layanan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 
 class TransaksiController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        $today = Carbon::today()->toDateString();
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    $today = Carbon::today()->toDateString();
 
-        return view('dashboard.transaksi.index', [
-            'transaksis' => Transaksi::whereDate('date', $today)
-            ->orderBy('date', 'desc')
-            ->get(),
-        ]);
-    }
+    return view('dashboard.transaksi.index', [
+      'transaksis' => Transaksi::whereDate('date', $today)
+        ->orderBy('date', 'desc')
+        ->get(),
+    ]);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+    // $transaksis = Transaksi::orderBy('date', 'desc')->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+    // foreach ($transaksis as $transaksi) {
+    //   echo ($transaksi->pelanggan->nomor_telepon);
+    //   // echo $transaksi->total_harga = number_format($transaksi->total_harga, 0, ',', '.');
+    // }
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Transaksi $transaksi)
-    {
-        $detailLayanan = DetailLayanan::where('transaksi_id', $transaksi->id)->get();
-        Log::info('Detail Layanan:', ['layanan' => $detailLayanan]);
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    //
+  }
 
-        return view('dashboard.transaksi.view', [
-            'transaksi' => $transaksi,
-            'detailLayanans' => $detailLayanan,
-        ]);
-    }
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(Request $request)
+  {
+    //
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Transaksi $transaksi)
-    {
-        return view('dashboard.transaksi.edit', [
-            'transaksi' => $transaksi,
-            'users' => User::all(),
-            'layanans' => Layanan::all(),
-        ]);
-    }
+  /**
+   * Display the specified resource.
+   */
+  public function show(Transaksi $transaksi)
+  {
+    $detailLayanan = DetailLayanan::where('transaksi_id', $transaksi->id)->get();
+    Log::info('Detail Layanan:', ['layanan' => $detailLayanan]);
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Transaksi $transaksi)
-    {
-        try {
-            $rules = [
-                'user_id' => 'required',
-                'nomor_telepon' => 'required|min:10|max:15',
-                'date' => 'required',
-                'metode_pembayaran' => 'required',
-                'keterangan' => 'max:255',
-                'total_harga' => 'required',
-            ];
+    return view('dashboard.transaksi.view', [
+      'transaksi' => $transaksi,
+      'detailLayanans' => $detailLayanan,
+    ]);
+  }
 
-            $validatedDataTransaksi = $request->validate($rules);
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(Transaksi $transaksi)
+  {
+    return view('dashboard.transaksi.edit', [
+      'transaksi' => $transaksi,
+      'users' => User::all(),
+      'layanans' => Layanan::all(),
+    ]);
+  }
 
-            Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(Request $request, Transaksi $transaksi)
+  {
+    try {
+      $rules = [
+        'user_id' => 'required',
+        'nomor_telepon' => 'required|min:10|max:15',
+        'date' => 'required',
+        'metode_pembayaran' => 'required',
+        'keterangan' => 'max:255',
+        'total_harga' => 'required',
+      ];
 
-            // Retrieve the updated transaction
-            $updatedTransaction = Transaksi::find($transaksi->id);
+      $validatedDataTransaksi = $request->validate($rules);
 
-            Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
-            
-            $rules2 = [
-                'layanan' => 'array',
-                'layanan.*' => 'nullable|:layanans,id',
-            ];
+      Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
 
-            $validatedDataLayanan = $request->validate($rules2);
+      // Retrieve the updated transaction
+      $updatedTransaction = Transaksi::find($transaksi->id);
 
-            $existingDetailLayanan = $transaksi->detail_layanan;
+      Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
 
-            foreach ($validatedDataLayanan['layanan'] as $index => $layananId) {
-            if (isset($existingDetailLayanan[$index])) {
-                if (empty($layananId)) {
-                    // Delete the detail_layanan entry if the option is empty
-                    $existingDetailLayanan[$index]->delete();
-                    Log::info('Detail Layanan Deleted: ', ['id' => $existingDetailLayanan[$index]->id]);
-                } else {
-                    // Update the detail_layanan entry if the option is not empty
-                    $existingDetailLayanan[$index]->update([
-                        'layanan_id' => $layananId,
-                    ]);
-                    Log::info('Detail Layanan Updated: ', ['layanan' => $existingDetailLayanan[$index]->toArray()]);
-                }
-            } else {
-                if (!empty($layananId)) {
-                    // Create a new detail_layanan entry if it does not exist and the option is not empty
-                    $newDetailLayanan = $transaksi->detail_layanan()->create([
-                        'layanan_id' => $layananId,
-                        'transaksi_id' => $transaksi->id, // Ensure the correct transaksi_id is assigned
-                    ]);
-                    Log::info('Detail Layanan Created: ', ['layanan' => $newDetailLayanan->toArray()]);
-                }
-            }
-        }   
-            return redirect('/dashboard/transaksi')->with('success', 'Data transaksi telah diupdate!!');
-        } catch (\Exception $e) {
-            Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
+      $rules2 = [
+        'layanan' => 'array',
+        'layanan.*' => 'nullable|:layanans,id',
+      ];
 
-            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
-        }
-    }
+      $validatedDataLayanan = $request->validate($rules2);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Transaksi $transaksi)
-    {
-        try {
-            $deletedTransaction = Transaksi::destroy($transaksi->id);
+      $existingDetailLayanan = $transaksi->detail_layanan;
 
-            Log::info('Transaction Deleted: ', ['transaction' => $deletedTransaction]);
-
-            return redirect('/transaksi')->with('success', 'Transaksi telah terhapus!!!');
-        } catch (\Exception $e) {
-            Log::error('Transaction Creation Error: ', ['message' => $e->getMessage()]);
-
-            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
-        }
-    }
-
-    public function thisWeek() {
-        try {
-            // Menentukan awal dan akhir minggu ini
-            $startOfWeek = Carbon::now()->startOfWeek();
-            $endOfWeek = Carbon::now()->endOfWeek();
-
-            // Mengambil data transaksi dalam rentang tanggal minggu ini
-            $transaksis = Transaksi::whereBetween('date', [$startOfWeek, $endOfWeek])
-                ->orderBy('date', 'desc')
-                ->get();
-
-            return view('dashboard.transaksi.index', [
-                'transaksis' => $transaksis,
+      foreach ($validatedDataLayanan['layanan'] as $index => $layananId) {
+        if (isset($existingDetailLayanan[$index])) {
+          if (empty($layananId)) {
+            // Delete the detail_layanan entry if the option is empty
+            $existingDetailLayanan[$index]->delete();
+            Log::info('Detail Layanan Deleted: ', ['id' => $existingDetailLayanan[$index]->id]);
+          } else {
+            // Update the detail_layanan entry if the option is not empty
+            $existingDetailLayanan[$index]->update([
+              'layanan_id' => $layananId,
             ]);
-        } catch(\Exception $e) {
-            Log::error('This Week Data Error: ', ['message' => $e->getMessage()]);
-
-            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
-        }
-        
-    }
-
-    public function thisMonth() {
-        try {
-            // Menentukan awal dan akhir minggu ini
-            $startOfMonth = Carbon::now()->startOfMonth();
-            $endOfMonth = Carbon::now()->endOfMonth();
-
-            // Mengambil data transaksi dalam rentang tanggal minggu ini
-            $transaksis = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])
-                ->orderBy('date', 'desc')
-                ->get();
-
-            return view('dashboard.transaksi.index', [
-                'transaksis' => $transaksis,
+            Log::info('Detail Layanan Updated: ', ['layanan' => $existingDetailLayanan[$index]->toArray()]);
+          }
+        } else {
+          if (!empty($layananId)) {
+            // Create a new detail_layanan entry if it does not exist and the option is not empty
+            $newDetailLayanan = $transaksi->detail_layanan()->create([
+              'layanan_id' => $layananId,
+              'transaksi_id' => $transaksi->id, // Ensure the correct transaksi_id is assigned
             ]);
-        } catch(\Exception $e) {
-            Log::error('This Month Data Error: ', ['message' => $e->getMessage()]);
-
-            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per bulan');
+            Log::info('Detail Layanan Created: ', ['layanan' => $newDetailLayanan->toArray()]);
+          }
         }
-        
+      }
+      return redirect('/dashboard/transaksi')->with('success', 'Data transaksi telah diupdate!!');
+    } catch (\Exception $e) {
+      Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
+
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
     }
+  }
 
-    public function thisYear() {
-        try {
-            // Menentukan awal dan akhir minggu ini
-            $startOfYear = Carbon::now()->startOfYear();
-            $endOfYear = Carbon::now()->endOfYear();
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(Transaksi $transaksi)
+  {
+    try {
+      $deletedTransaction = Transaksi::destroy($transaksi->id);
 
-            // Mengambil data transaksi dalam rentang tanggal minggu ini
-            $transaksis = Transaksi::whereBetween('date', [$startOfYear, $endOfYear])
-                ->orderBy('date', 'desc')
-                ->get();
+      Log::info('Transaction Deleted: ', ['transaction' => $deletedTransaction]);
 
-            return view('dashboard.transaksi.index', [
-                'transaksis' => $transaksis,
-            ]);
-        } catch(\Exception $e) {
-            Log::error('This Year Data Error: ', ['message' => $e->getMessage()]);
+      return redirect('/transaksi')->with('success', 'Transaksi telah terhapus!!!');
+    } catch (\Exception $e) {
+      Log::error('Transaction Creation Error: ', ['message' => $e->getMessage()]);
 
-            return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
-        }
-        
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
     }
+  }
+
+  public function thisWeek()
+  {
+    try {
+      // Menentukan awal dan akhir minggu ini
+      $startOfWeek = Carbon::now()->startOfWeek();
+      $endOfWeek = Carbon::now()->endOfWeek();
+
+      // Mengambil data transaksi dalam rentang tanggal minggu ini
+      $transaksis = Transaksi::whereBetween('date', [$startOfWeek, $endOfWeek])
+        ->orderBy('date', 'desc')
+        ->get();
+
+      return view('dashboard.transaksi.index', [
+        'transaksis' => $transaksis,
+      ]);
+    } catch (\Exception $e) {
+      Log::error('This Week Data Error: ', ['message' => $e->getMessage()]);
+
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+    }
+  }
+
+  public function thisMonth()
+  {
+    try {
+      // Menentukan awal dan akhir minggu ini
+      $startOfMonth = Carbon::now()->startOfMonth();
+      $endOfMonth = Carbon::now()->endOfMonth();
+
+      // Mengambil data transaksi dalam rentang tanggal minggu ini
+      $transaksis = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])
+        ->orderBy('date', 'desc')
+        ->get();
+
+      return view('dashboard.transaksi.index', [
+        'transaksis' => $transaksis,
+      ]);
+    } catch (\Exception $e) {
+      Log::error('This Month Data Error: ', ['message' => $e->getMessage()]);
+
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per bulan');
+    }
+  }
+
+  public function thisYear()
+  {
+    try {
+      // Menentukan awal dan akhir minggu ini
+      $startOfYear = Carbon::now()->startOfYear();
+      $endOfYear = Carbon::now()->endOfYear();
+
+      // Mengambil data transaksi dalam rentang tanggal minggu ini
+      $transaksis = Transaksi::whereBetween('date', [$startOfYear, $endOfYear])
+        ->orderBy('date', 'desc')
+        ->get();
+
+      return view('dashboard.transaksi.index', [
+        'transaksis' => $transaksis,
+      ]);
+    } catch (\Exception $e) {
+      Log::error('This Year Data Error: ', ['message' => $e->getMessage()]);
+
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
+    }
+  }
 }

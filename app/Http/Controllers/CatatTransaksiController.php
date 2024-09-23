@@ -38,12 +38,29 @@ class CatatTransaksiController extends Controller
   public function catat(Request $request)
   {
     try {
-      $validatedData = $request->validate([
+      $validatedPhoneNumber = $request->validate([
         'nomor_telepon' => 'required|min:10|max:15',
+      ]);
+
+      $validatedData = $request->validate([
         'keterangan' => 'max:255',
         'total_harga' => 'required',
         'metode_pembayaran' => 'required',
       ]);
+
+      $findPelanggan = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
+
+      if ($findPelanggan) {
+        $validatedData['pelanggan_id'] = $findPelanggan->id;
+        Log::info('Found Pelanggan Number:', $findPelanggan->toArray());
+      } else {
+        $newPelanggan = Pelanggan::create(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
+        $findNewPelanggan = Pelanggan::where('nomor_telepon', $newPelanggan->nomor_telepon)->first();
+
+        Log::info('Pelaggan Number Created', $newPelanggan->toArray());
+
+        $validatedData['pelanggan_id'] = $findNewPelanggan->id;
+      }
 
       $validatedData['user_id'] = Auth::user()->id;
       $validatedData['date'] = Carbon::now('Asia/Jakarta');
@@ -51,22 +68,12 @@ class CatatTransaksiController extends Controller
       // Log validated data
       Log::info('Validated Data:', $validatedData);
 
-      //Check If Pelanggan Number Entered
-      $checkPelangganNumber = Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->first();
-
-      if (!$checkPelangganNumber) {
-        $pelanggan = Pelanggan::create(['nomor_telepon' => $validatedData['nomor_telepon']]);
-        Log::info('Pelaggan Number Created', $pelanggan->toArray());
-      }
-
       // Create new transaction
       $transaction = Transaksi::create($validatedData);
       // Log created transaction
-
       Log::info('Created Transaction:', $transaction->toArray());
 
       //catat detail layanan
-
       $validatedData2 = $request->validate([
         'layanan_id' => 'required|array',
         'layanan_id.*' => 'exists:layanans,id',
@@ -103,13 +110,11 @@ class CatatTransaksiController extends Controller
   {
     try {
       $nomor_telepon = $request->nomor_telepon;
-
       Log::info('Input Nomor Telepon:', ['search_result' => $nomor_telepon]);
 
-      $searchResult =
-        Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
+      $searchResult = Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
 
-        $data = [];
+      $data = [];
 
       foreach ($searchResult as $result) {
         Log::info('Search Result:', ['search_result' => $result]);
@@ -131,7 +136,6 @@ class CatatTransaksiController extends Controller
       }
 
       return $data;
-
       // Log::info('Search Result:', ['search_result' => $searchResult]);
     } catch (\Exception $e) {
       $errorMessage = $e->getMessage();

@@ -28,7 +28,7 @@ class MemberRegisterController extends Controller
       ]);
 
       $validatedPhoneNumber = $request->validate([
-        'nomor_telepon' => 'required|min:10|max:15|unique:pelanggans',
+        'nomor_telepon' => 'required|min:10|max:15|unique:members',
       ]);
 
       $validatedData['password'] = Hash::make($validatedData['password']);
@@ -47,7 +47,6 @@ class MemberRegisterController extends Controller
         if ($findMember) {
           $memberCurrentExperiencePoint = $findMember->experience_point;
           $memberCurrentRedeemablePoint = $findMember->redeemable_point;
-
           $afterRegisterExperiencePoint = $memberCurrentExperiencePoint + 25;
           $afterRegisterRedeemablePoint = $memberCurrentRedeemablePoint + 25;
 
@@ -57,10 +56,9 @@ class MemberRegisterController extends Controller
 
           $newMember = Member::create($validatedData);
           $newMemberId = Member::where('email', $newMember->email)->first();
-
           $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
 
-          Member::where('email', $newMember->email)->update(['experience_point' => 25, 'redeemable_point' => 25]);
+          Member::where('email', $newMember->email)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon'], 'experience_point' => 25, 'redeemable_point' => 25]);
 
           Log::info('Data member baru: ', ['member' => $validatedData]);
           Log::info('Check id Member baru: ', ['member' => $newMember]);
@@ -78,6 +76,7 @@ class MemberRegisterController extends Controller
       } else {
         $newMember = Member::create($validatedData);
         $newMemberId = Member::where('email', $newMember->email)->first();
+        Member::where('email', $newMemberId->email)->update(['nomor_telepon' => $validatedPhoneNumber, 'experience_point' => 10, 'redeemable_point' => 10]);
 
         Log::info('Data member baru: ', ['member' => $validatedData]);
         Log::info('Check id Member baru: ', ['member' => $newMember]);
@@ -94,8 +93,9 @@ class MemberRegisterController extends Controller
       }
     } catch (\Exception $e) {
       Log::error('Register Member Error: ', ['message' => $e->getMessage()]);
+      Log::error('Register Member Error Trace: ', ['message' => $e->getTraceAsString()]);
 
-      return redirect('/register')->with('error', 'Terjadi kesalahan saat menambahkan akun baru');
+      return redirect('/register')->with('error', $e->getMessage());
     }
   }
 }
