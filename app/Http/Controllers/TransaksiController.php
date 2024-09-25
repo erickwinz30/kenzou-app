@@ -27,13 +27,6 @@ class TransaksiController extends Controller
         ->orderBy('date', 'desc')
         ->get(),
     ]);
-
-    // $transaksis = Transaksi::orderBy('date', 'desc')->get();
-
-    // foreach ($transaksis as $transaksi) {
-    //   echo ($transaksi->pelanggan->nomor_telepon);
-    //   // echo $transaksi->total_harga = number_format($transaksi->total_harga, 0, ',', '.');
-    // }
   }
 
   /**

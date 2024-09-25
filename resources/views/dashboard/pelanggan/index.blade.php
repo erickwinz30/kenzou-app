@@ -36,6 +36,14 @@
           <div class="card-body">
             <div class="d-flex align-items-center justify-content-between">
               <h5 class="card-title">Data Pelanggan</h5>
+              <div class="d-flex justify-content-end">
+                <a href="/dashboard/pelanggan" class="btn btn-primary me-2"
+                  style="background-color: #4154f1; color:white">All</a>
+                <a href="/dashboard/memberFetch" class="btn btn-primary me-2"
+                  style="background-color: #4154f1; color:white" id="memberButton">Member</a>
+                <a href="/dashboard/pelangganMember" class="btn btn-primary"
+                  style="background-color: #4154f1; color:white" id="pelangganButton">Non Member</a>
+              </div>
             </div>
 
             <!-- Table with stripped rows -->
@@ -111,6 +119,85 @@
   </section>
 
   <script>
+    document.getElementById('memberButton').addEventListener('click', function(event) {
+      event.preventDefault();
+
+      document.querySelector("tbody").innerHTML = "";
+
+      fetch("/dashboard/memberFetch", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+          }
+        })
+        .then(response => response.json())
+        .then((data) => {
+          console.log(data);
+          let iteration = 1;
+          data.forEach(pelanggan => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${iteration}</td>
+              <td>${pelanggan.nomor_telepon}</td>
+              <td>${pelanggan.nama}</td>
+              <td>${pelanggan.email}</td>
+              <td>${pelanggan.tanggal_lahir} / ${pelanggan.umur}</td>
+              <td>${pelanggan.experience_point}</td>
+              <td>${pelanggan.redeemable_point}</td>
+              <td>${pelanggan.referral_code}</td>
+              <td>
+                <a href="/dashboard/pelanggan/${pelanggan.id}/edit" class="btn btn-warning" id="edit-button"><i class="bi bi-pencil"></i></a>
+                <form action="/dashboard/pelanggan/${pelanggan.id}" method="POST" class="d-inline" id="deleteForm${pelanggan.id}">
+                @method('DELETE')
+                @csrf
+                <button type="button" class="btn btn-danger" onclick="deleteConfirmation('${pelanggan.id}')"><i class="bi bi-trash"></i></button>
+                </form>
+              </td>
+            `;
+            iteration++;
+            document.querySelector("tbody").appendChild(row);
+          });
+        })
+        .catch(error => console.error(error));
+    });
+
+    document.getElementById('pelangganButton').addEventListener('click', function(event) {
+      event.preventDefault();
+
+      document.querySelector("tbody").innerHTML = "";
+
+      fetch("/dashboard/pelangganFetch", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+          }
+        })
+        .then(response => response.json())
+        .then((data) => {
+          console.log(data);
+          let iteration = 1;
+          data.forEach(pelanggan => {
+            let row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${iteration}</td>
+              <td>${pelanggan.nomor_telepon}</td>
+              <td>${pelanggan.nama}</td>
+              <td>${pelanggan.email}</td>
+              <td>${pelanggan.tanggal_lahir} / ${pelanggan.umur}</td>
+              <td>${pelanggan.experience_point}</td>
+              <td>${pelanggan.redeemable_point}</td>
+              <td>${pelanggan.referral_code}</td>
+              <td>-</td>
+            `;
+            iteration++;
+            document.querySelector("tbody").appendChild(row);
+          });
+        })
+        .catch(error => console.error(error));
+    });
+
     //konfirmasi hapus data
     function deleteConfirmation(id) {
       Swal.fire({

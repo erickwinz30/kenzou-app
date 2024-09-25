@@ -7,6 +7,7 @@ use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 
 class PelangganController extends Controller
 {
@@ -81,5 +82,68 @@ class PelangganController extends Controller
       Log::info("Delete Error: " . $e->getTraceAsString());
       return redirect('/dashboard/pelanggan')->with('error', 'Data pelanggan gagal dihapus!');
     }
+  }
+
+  public function memberFetch(Request $request)
+  {
+    $dataPelanggan = [];
+    $pelanggans = Pelanggan::with('member')->whereNotNull('member_id')->get();
+
+    foreach ($pelanggans as $pelanggan) {
+      $umur = Carbon::parse($pelanggan->member->tanggal_lahir)->age;
+      $dataPelanggan[] = [
+        'id' => $pelanggan->id,
+        'nomor_telepon' => $pelanggan->nomor_telepon,
+        'nama' => $pelanggan->member->nama,
+        'email' => $pelanggan->member->email,
+        'tanggal_lahir' => $pelanggan->member->tanggal_lahir,
+        'umur' => $umur,
+        'experience_point' => $pelanggan->member->experience_point,
+        'redeemable_point' => $pelanggan->member->redeemable_point,
+        'referral_code' => $pelanggan->member->referral_code,
+      ];
+    }
+    // echo ($dataPelanggan);
+
+    if ($request->wantsJson()) {
+      if ($pelanggans->isEmpty()) {
+        return response()->json([]);
+      } else {
+        return response()->json($dataPelanggan, 200);
+      }
+    }
+
+    return $dataPelanggan;
+  }
+
+  public function pelangganFetch(Request $request)
+  {
+    $dataPelanggan = [];
+    $pelanggans = Pelanggan::with('member')->whereNull('member_id')->get();
+
+    foreach ($pelanggans as $pelanggan) {
+      $dataPelanggan[] = [
+        'id' => $pelanggan->id,
+        'nomor_telepon' => $pelanggan->nomor_telepon,
+        'nama' => "-",
+        'email' => "-",
+        'tanggal_lahir' => "-",
+        'umur' => "-",
+        'experience_point' => "-",
+        'redeemable_point' => "-",
+        'referral_code' => "-",
+      ];
+    }
+    // echo ($dataPelanggan);
+
+    if ($request->wantsJson()) {
+      if ($pelanggans->isEmpty()) {
+        return response()->json([]);
+      } else {
+        return response()->json($dataPelanggan, 200);
+      }
+    }
+
+    return $dataPelanggan;
   }
 }

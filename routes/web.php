@@ -39,7 +39,7 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-sales-this-month');
   Route::get('/dashboard/fetch-sales-this-year', [DashboardController::class, 'perMonthSales'])->name('fetch-sales-this-year');
 
-  //dashboard admin
+  //dashboard transaksi
   Route::resource('dashboard/transaksi', TransaksiController::class);
 
   //dateRange
@@ -56,6 +56,8 @@ Route::middleware('isAdmin')->group(function () {
 
   //pelanggan
   Route::resource('/dashboard/pelanggan', PelangganController::class);
+  Route::get('/dashboard/memberFetch', [PelangganController::class, 'memberFetch'])->name('member.fetch');
+  Route::get('/dashboard/pelangganFetch', [PelangganController::class, 'pelangganFetch'])->name('pelanggan.fetch');
 });
 
 Route::middleware('notAdmin')->group(function () {
