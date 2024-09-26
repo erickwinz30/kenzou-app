@@ -48,6 +48,11 @@ class Member extends Authenticatable
 
   public function pelanggan()
   {
-    return $this->hasOne(Pelanggan::class, 'member_id', 'id');
+    return $this->hasOne(Pelanggan::class, 'member_id');
+  }
+
+  public function pointLogs()
+  {
+    return $this->hasMany(PointLog::class, 'member_id', 'id');
   }
 }
