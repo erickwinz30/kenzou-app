@@ -93,7 +93,7 @@ class CatatTransaksiController extends Controller
         // return redirect('/transaksi')->with('success', 'Data transaksi telah ditambah!!!');
       }
 
-      // $this->sendMessage();
+
 
       return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
     } catch (\Exception $e) {

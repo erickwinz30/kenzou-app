@@ -30,6 +30,11 @@ class PointLog extends Model
     });
   }
 
+  public function transaksi()
+  {
+    return $this->hasOne(Transaksi::class, 'transaksi_id', 'id');
+  }
+
   public function member()
   {
     return $this->belongsTo(Member::class, 'member_id', 'id');
