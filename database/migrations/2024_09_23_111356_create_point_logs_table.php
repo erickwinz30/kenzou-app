@@ -13,10 +13,11 @@ return new class extends Migration
   {
     Schema::create('point_logs', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignUuid('member_id')->constrained('members');
+      $table->foreignUuid('transaksi_id')->nullable();
+      $table->foreignUuid('member_id');
       $table->integer('point');
       $table->string('status');
-      $table->string('point_from');
+      $table->foreignUuid('point_from');
       $table->dateTime('date');
       $table->timestamps();
     });

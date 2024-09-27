@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('transaksis', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignUuid('pelanggan_id')->constrained('pelanggans');
-      $table->foreignUuid('user_id')->constrained('users');
+      $table->foreignUuid('pelanggan_id');
+      $table->foreignUuid('user_id');
       $table->datetime('date');
       $table->decimal('total_harga');
       $table->string('metode_pembayaran');

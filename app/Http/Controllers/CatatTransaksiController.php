@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Layanan;
 use Twilio\Rest\Client;
+use App\Models\PointLog;
 use App\Models\Pelanggan;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
@@ -72,6 +73,21 @@ class CatatTransaksiController extends Controller
       $transaction = Transaksi::create($validatedData);
       // Log created transaction
       Log::info('Created Transaction:', $transaction->toArray());
+
+      //Create Point Logs for Member
+      if ($findPelanggan->member_id) {
+        $transactionId = $transaction->id;
+        Member::where('id', $findPelanggan->member_id)->increment(['experience_point' => 3, 'redeemable_point' => 3]);
+
+        $pointLog = PointLog::create([
+          'member_id' => $findPelanggan->member_id,
+          'point' => 3,
+          'transaksi_id' => $transactionId,
+          'status' => 'Transaksi',
+        ]);
+
+        Log::info('Point Log Created:', $pointLog->toArray());
+      }
 
       //catat detail layanan
       $validatedData2 = $request->validate([
