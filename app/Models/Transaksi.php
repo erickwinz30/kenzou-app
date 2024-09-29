@@ -42,7 +42,7 @@ class Transaksi extends Model
 
   public function detail_layanan()
   {
-    return $this->hasMany(DetailLayanan::class);
+    return $this->hasMany(DetailLayanan::class, 'transaksi_id');
   }
 
   public function pointLogs()

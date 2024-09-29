@@ -17,8 +17,8 @@ return new class extends Migration
       $table->string('email')->unique();
       $table->string('nomor_telepon')->unique()->nullable();
       $table->datetime('tanggal_lahir')->nullable();
-      $table->integer('experience_point')->nullable();
-      $table->integer('redeemable_point')->nullable();
+      $table->integer('experience_point')->nullable()->default(0);
+      $table->integer('redeemable_point')->nullable()->default(0);
       $table->string('google_id')->nullable();
       $table->string('referral_code')->unique()->nullable();
       $table->string('password');

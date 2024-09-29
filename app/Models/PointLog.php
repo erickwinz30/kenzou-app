@@ -14,6 +14,7 @@ class PointLog extends Model
   protected $guarded = ['id'];
 
   protected $fillable = [
+    'transaksi_id',
     'member_id',
     'point',
     'status',
@@ -38,5 +39,10 @@ class PointLog extends Model
   public function member()
   {
     return $this->belongsTo(Member::class, 'member_id', 'id');
+  }
+
+  public function pointFrom()
+  {
+    return $this->belongsTo(Member::class, 'point_from');
   }
 }

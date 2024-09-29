@@ -74,6 +74,8 @@
                           @php
                             $tanggalLahir = $pelanggan->member->tanggal_lahir;
                             $umur = \Carbon\Carbon::parse($tanggalLahir)->age;
+
+                            $tanggalLahir = \Carbon\Carbon::parse($tanggalLahir)->format('Y-m-d');
                           @endphp
                           <span
                             style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
@@ -142,7 +144,11 @@
               <td>${pelanggan.nomor_telepon}</td>
               <td>${pelanggan.nama}</td>
               <td>${pelanggan.email}</td>
-              <td>${pelanggan.tanggal_lahir} / ${pelanggan.umur}</td>
+              <td>
+                <span style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                  ${pelanggan.tanggal_lahir} / ${pelanggan.umur}
+                </span>
+              </td>
               <td>${pelanggan.experience_point}</td>
               <td>${pelanggan.redeemable_point}</td>
               <td>${pelanggan.referral_code}</td>

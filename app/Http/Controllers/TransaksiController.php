@@ -23,7 +23,8 @@ class TransaksiController extends Controller
     $today = Carbon::today()->toDateString();
 
     return view('dashboard.transaksi.index', [
-      'transaksis' => Transaksi::whereDate('date', $today)
+      'transaksis' => Transaksi::with(['pelanggan', 'detail_layanan'])
+        ->whereDate('date', $today)
         ->orderBy('date', 'desc')
         ->get(),
     ]);
@@ -142,11 +143,12 @@ class TransaksiController extends Controller
   public function destroy(Transaksi $transaksi)
   {
     try {
+      $deletedDetailLayanan = DetailLayanan::where('transaksi_id', $transaksi->id)->delete();
+      Log::info('Detail Layanan Deleted: ', ['Detail Layanan' => $deletedDetailLayanan]);
       $deletedTransaction = Transaksi::destroy($transaksi->id);
-
       Log::info('Transaction Deleted: ', ['transaction' => $deletedTransaction]);
 
-      return redirect('/transaksi')->with('success', 'Transaksi telah terhapus!!!');
+      return redirect('/dashboard/transaksi')->with('success', 'Transaksi telah terhapus!!!');
     } catch (\Exception $e) {
       Log::error('Transaction Creation Error: ', ['message' => $e->getMessage()]);
 

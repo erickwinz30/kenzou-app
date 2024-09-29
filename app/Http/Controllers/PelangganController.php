@@ -17,7 +17,7 @@ class PelangganController extends Controller
   public function index()
   {
     return view('dashboard.pelanggan.index', [
-      'pelanggans' => Pelanggan::all(),
+      'pelanggans' => Pelanggan::with('member')->get(),
     ]);
     // dd(Pelanggan::all());
   }
@@ -96,7 +96,7 @@ class PelangganController extends Controller
         'nomor_telepon' => $pelanggan->nomor_telepon,
         'nama' => $pelanggan->member->nama,
         'email' => $pelanggan->member->email,
-        'tanggal_lahir' => $pelanggan->member->tanggal_lahir,
+        'tanggal_lahir' => Carbon::parse($pelanggan->member->tanggal_lahir)->format('Y-m-d'),
         'umur' => $umur,
         'experience_point' => $pelanggan->member->experience_point,
         'redeemable_point' => $pelanggan->member->redeemable_point,

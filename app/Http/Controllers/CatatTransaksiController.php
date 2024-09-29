@@ -51,17 +51,8 @@ class CatatTransaksiController extends Controller
 
       $findPelanggan = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
 
-      if ($findPelanggan) {
-        $validatedData['pelanggan_id'] = $findPelanggan->id;
-        Log::info('Found Pelanggan Number:', $findPelanggan->toArray());
-      } else {
-        $newPelanggan = Pelanggan::create(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
-        $findNewPelanggan = Pelanggan::where('nomor_telepon', $newPelanggan->nomor_telepon)->first();
-
-        Log::info('Pelaggan Number Created', $newPelanggan->toArray());
-
-        $validatedData['pelanggan_id'] = $findNewPelanggan->id;
-      }
+      //check if pelanggan exists
+      $validatedData = $this->checkRegisteredPelanggan($findPelanggan, $validatedPhoneNumber, $validatedData);
 
       $validatedData['user_id'] = Auth::user()->id;
       $validatedData['date'] = Carbon::now('Asia/Jakarta');
@@ -74,21 +65,6 @@ class CatatTransaksiController extends Controller
       // Log created transaction
       Log::info('Created Transaction:', $transaction->toArray());
 
-      //Create Point Logs for Member
-      if ($findPelanggan->member_id) {
-        $transactionId = $transaction->id;
-        Member::where('id', $findPelanggan->member_id)->increment(['experience_point' => 3, 'redeemable_point' => 3]);
-
-        $pointLog = PointLog::create([
-          'member_id' => $findPelanggan->member_id,
-          'point' => 3,
-          'transaksi_id' => $transactionId,
-          'status' => 'Transaksi',
-        ]);
-
-        Log::info('Point Log Created:', $pointLog->toArray());
-      }
-
       //catat detail layanan
       $validatedData2 = $request->validate([
         'layanan_id' => 'required|array',
@@ -97,29 +73,76 @@ class CatatTransaksiController extends Controller
 
       Log::info('Detail Layanan Created:', ['detail_layanan' => $validatedData2]);
 
+      $totalPoint = 0;
+
       foreach ($validatedData2['layanan_id'] as $layananId) {
         $detailLayanan = DetailLayanan::create([
           'transaksi_id' => $transaction->id, // UUID
           'layanan_id' => $layananId,
         ]);
-
         // Log each detail layanan
         Log::info('Detail Layanan Created:', ['detail_layanan' => $detailLayanan]);
 
-        // return redirect('/transaksi')->with('success', 'Data transaksi telah ditambah!!!');
+        $layananPoint = Layanan::where('id', $layananId)->first()->point;
+        $totalPoint = $totalPoint + $layananPoint;
+        Log::info('Layanan Point:', ['point' => $totalPoint]);
       }
 
-
+      //check if member exists
+      if ($findPelanggan) {
+        if ($findPelanggan->member_id) {
+          // $totalPoint = intval($totalPoint);
+          $this->checkRegisteredMember($transaction, $findPelanggan->member_id, $totalPoint);
+        }
+      }
 
       return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
     } catch (\Exception $e) {
       // Log the error
       Log::error('Transaction Creation Error:', ['message' => $e->getMessage()]);
 
-      return Redirect::back()->withErrors('Terjadi kesalahan saat mencatat transaksi.');
+      return redirect()->back()->with('error', 'Terjadi kesalahan saat mencatat transaksi.');
     }
 
     // return redirect()->with('success', 'Data transaksi telah tertambah!!');
+  }
+
+  private function checkRegisteredPelanggan($findPelanggan, $validatedPhoneNumber, $validatedData)
+  {
+    if ($findPelanggan) {
+      $validatedData['pelanggan_id'] = $findPelanggan->id;
+      Log::info('Found Pelanggan Number:', $findPelanggan->toArray());
+    } else {
+      $newPelanggan = Pelanggan::create(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
+      $findNewPelanggan = Pelanggan::where('nomor_telepon', $newPelanggan->nomor_telepon)->first();
+
+      Log::info('Pelaggan Number Created', $newPelanggan->toArray());
+
+      $validatedData['pelanggan_id'] = $findNewPelanggan->id;
+    }
+
+    return $validatedData;
+  }
+
+  private function checkRegisteredMember($transaction, $memberId, $totalPoint)
+  {
+    if (!is_numeric($totalPoint)) {
+      Log::error('Non-numeric value passed to increment method.', ['totalPoint' => $totalPoint]);
+      throw new \InvalidArgumentException('Total point must be a numeric value.');
+    }
+
+    Member::where('nomor_telepon', $transaction->pelanggan->nomor_telepon)->increment('experience_point', $totalPoint);
+    Member::where('nomor_telepon', $transaction->pelanggan->nomor_telepon)->increment('redeemable_point', $totalPoint);
+
+    $pointLog = PointLog::create([
+      'member_id' => $memberId,
+      'point' => $totalPoint,
+      'transaksi_id' => $transaction->id,
+      'status' => 'Transaksi',
+      'date' => Carbon::now('Asia/Jakarta'),
+    ]);
+
+    Log::info('Point Log Created:', $pointLog->toArray());
   }
 
   public function searchPhoneNumber(Request $request)

@@ -55,4 +55,9 @@ class Member extends Authenticatable
   {
     return $this->hasMany(PointLog::class, 'member_id', 'id');
   }
+
+  public function pointLogsFrom()
+  {
+    return $this->hasMany(PointLog::class, 'point_from');
+  }
 }

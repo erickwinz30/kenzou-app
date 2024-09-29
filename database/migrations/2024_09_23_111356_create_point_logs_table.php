@@ -17,7 +17,7 @@ return new class extends Migration
       $table->foreignUuid('member_id');
       $table->integer('point');
       $table->string('status');
-      $table->foreignUuid('point_from');
+      $table->foreignUuid('point_from')->nullable();
       $table->dateTime('date');
       $table->timestamps();
     });

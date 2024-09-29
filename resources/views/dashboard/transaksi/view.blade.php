@@ -42,7 +42,7 @@
           @if ($transaksi->metode_pembayaran == 'tunai')
             <h1 class="card-text fw-semibold p-0 fs-6" style="color: #012970;">Tunai</h1>
           @elseif($transaksi->metode_pembayaran == 'qris')
-            <h1 class="card-text fw-semibold p-0" style="color: #012970;">QRis</h1>
+            <h1 class="card-text fw-semibold p-0 fs-6" style="color: #012970;">QRis</h1>
           @endif
         </div>
         <div class="row justify-content-center">
@@ -53,7 +53,7 @@
                   <div class="col-12 col-md-6 mt-4">
                     <div class="d-flex justify-content-between">
                       <p><strong>No. Pelanggan: </strong></p>
-                      <p>{{ $transaksi->nomor_telepon }}</p>
+                      <p>{{ $transaksi->pelanggan->nomor_telepon }}</p>
                     </div>
                     <div class="d-flex justify-content-between">
                       <p><strong>Keterangan: </strong></p>
