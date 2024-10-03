@@ -7,39 +7,46 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function index() {
-        return view('dashboard.login.login');
+  public function index()
+  {
+    return view('dashboard.login.login');
+  }
+
+  public function adminRegisterIndex()
+  {
+    return view('dashboard.login.admin-register');
+  }
+
+  public function authenticate(Request $request)
+  {
+    $credentials = $request->validate([
+      'username' => 'required|min:3|max:255',
+      'password' => 'required|min:5|max:255',
+    ]);
+
+    // dd($credentials);
+
+    if (Auth::attempt($credentials)) {
+      $request->session()->regenerate();
+
+      if (Auth::user()->is_admin == 0) {
+        return redirect()->route('dashboard-kasir');
+      } else if (Auth::user()->is_admin == 1) {
+        return redirect()->route('dashboard');
+      }
     }
 
-    public function authenticate(Request $request) {
-        $credentials = $request->validate([
-            'username' => 'required|min:3|max:255',
-            'password' => 'required|min:5|max:255',
-        ]);
+    return back()->with('loginError', 'Login failed!');
+  }
 
-        // dd($credentials);
+  public function logout(Request $request)
+  {
+    Auth::logout();
 
-        if(Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+    $request->session()->invalidate();
 
-            if(Auth::user()->is_admin == 0) {
-                return redirect()->route('dashboard-kasir');
-            } else if(Auth::user()->is_admin == 1) {
-                return redirect()->route('dashboard');
-            }
+    $request->session()->regenerateToken();
 
-        }
-
-        return back()->with('loginError', 'Login failed!');
-    }
-
-    public function logout(Request $request) {
-        Auth::logout();
-
-        $request->session()->invalidate();
-
-        $request->session()->regenerateToken();
-
-        return redirect()->route('dashboard-login');
-    }
+    return redirect()->route('dashboard-login');
+  }
 }

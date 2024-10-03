@@ -33,16 +33,13 @@
             @endif
 
             <div class="card mb-3">
-
               <div class="card-body">
-
                 <div class="pt-4 pb-2">
                   <h5 class="card-title text-center pb-0 fs-4">Buat Akun Member
                   </h5>
                   <p class="text-center small">Masukkan data diri anda untuk
                     membuat akun</p>
                 </div>
-
                 <form action="/register" method="POST" class="row g-3 needs-validation" novalidate>
                   @csrf
                   <div class="col-12">

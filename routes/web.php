@@ -2,6 +2,7 @@
 
 use App\Models\LayananLog;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\GoogleController;
@@ -25,10 +26,6 @@ use App\Http\Controllers\MemberRegisterController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
 
 Route::middleware('isAdmin')->group(function () {
   //dashboard
@@ -78,6 +75,8 @@ Route::middleware('notAdmin')->group(function () {
 //login
 Route::get('dashboard/login', [LoginController::class, 'index'])->name('dashboard-login')->middleware('guest');
 Route::post('/dashboard/login', [LoginController::class, 'authenticate']);
+Route::get('dashboard/admin-register', [AdminController::class, 'index'])->name('admin-register')->middleware('guest');
+Route::post('dashboard/admin-register', [AdminController::class, 'authenticate']);
 Route::post('/dashboard/logout', [LoginController::class, 'logout']);
 
 

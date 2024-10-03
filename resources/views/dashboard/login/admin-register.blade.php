@@ -44,24 +44,6 @@
 
     <main>
       <div class="container">
-        @if (session()->has('success'))
-          <div class="row justify-content-center">
-            <div class="alert alert-success alert-dismissible fade show col-lg-12 justify-content-center"
-              role="alert">
-              {{ session('success') }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </div>
-        @endif
-
-        @if (session()->has('error'))
-          <div class="row justify-content-center">
-            <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center" role="alert">
-              {{ session('error') }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </div>
-        @endif
 
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
           <div class="container">
@@ -75,20 +57,40 @@
                   </a>
                 </div><!-- End Logo -->
 
+                @if (session()->has('loginError'))
+                  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ session('loginError') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>
+                @endif
+
                 <div class="card mb-3">
+
                   <div class="card-body">
+
                     <div class="pt-4 pb-2">
-                      <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
-                      <p class="text-center small">Masukkan username & password untuk login</p>
+                      <h5 class="card-title text-center pb-0 fs-4">Register Admin</h5>
+                      <p class="text-center small">Masukkan username, email & password untuk register menjadi admin</p>
                     </div>
 
-                    <form action='/dashboard/login' method="POST" class="row g-3 needs-validation" novalidate>
+                    <form action='/dashboard/admin-register' method="POST" class="row g-3 needs-validation" novalidate>
                       @csrf
+                      <div class="col-12">
+                        <label for="nama" class="form-label">Nama</label>
+                        <div class="input-group has-validation">
+                          <input type="text" name="nama" class="form-control" id="nama"
+                            placeholder="Masukkan nama..." @error('nama') is-invalid @enderror required>
+                          {{-- <div class="invalid-feedback">Please enter your nama.</div> --}}
+                          @error('nama')
+                            <div class="invalid-feedback">
+                              {{ $message }}
+                            </div>
+                          @enderror
+                        </div>
+                      </div>
                       <div class="col-12">
                         <label for="username" class="form-label">Username</label>
                         <div class="input-group has-validation">
-                          <span class="input-group-text" id="inputGroupPrepend"
-                            style="border-radius: 5px 0 0 5px">@</span>
                           <input type="text" name="username" class="form-control" id="username"
                             placeholder="Masukkan username..." @error('username') is-invalid @enderror required>
                           {{-- <div class="invalid-feedback">Please enter your username.</div> --}}
@@ -99,7 +101,35 @@
                           @enderror
                         </div>
                       </div>
-
+                      <div class="col-12">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="input-group has-validation">
+                          <input type="text" name="email" class="form-control" id="email"
+                            placeholder="Masukkan email..." @error('email') is-invalid @enderror required>
+                          {{-- <div class="invalid-feedback">Please enter your email.</div> --}}
+                          @error('email')
+                            <div class="invalid-feedback">
+                              {{ $message }}
+                            </div>
+                          @enderror
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <label for="nomor_telepon" class="form-label">Nomor Telepon</label>
+                        <div class="input-group has-validation">
+                          <span class="input-group-text flex-nowrap" id="addon-wrapping"
+                            style="border-radius: 5px 0 0 5px">+62</span>
+                          <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
+                            id="nomor_telepon" placeholder="Masukkan nomor telepon..."
+                            @error('nomor_telepon') is-invalid @enderror required>
+                          {{-- <div class="invalid-feedback">Please enter your nomor_telepon.</div> --}}
+                          @error('nomor_telepon')
+                            <div class="invalid-feedback">
+                              {{ $message }}
+                            </div>
+                          @enderror
+                        </div>
+                      </div>
                       <div class="col-12">
                         <label for="yourPassword" class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" id="yourPassword"
@@ -107,7 +137,7 @@
                         <div class="invalid-feedback">Please enter your password!</div>
                       </div>
                       <div class="col-12">
-                        <button class="btn btn-primary w-100" type="submit">Login</button>
+                        <button class="btn btn-primary w-100" type="submit">Daftar</button>
                       </div>
                     </form>
                   </div>
