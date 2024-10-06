@@ -142,9 +142,9 @@
                       </tr>
                     @endforeach
                   @else
-                    <tr>
+                    {{-- <tr>
                       <td colspan="10" class="text-center">No transactions found for the selected date range.</td>
-                    </tr>
+                    </tr> --}}
                   @endif
                 </tbody>
                 <tfoot>
@@ -164,7 +164,7 @@
   </section>
 
   <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
-  <script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
   <script src="https://cdn.datatables.net/2.1.3/js/dataTables.bootstrap5.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
@@ -232,20 +232,47 @@
     // DataTables initialization
     $(document).ready(function() {
       var table = $('#tabelTransaksi').DataTable({
-        columns: [
-          null,
+        scrollX: true,
+        columns: [{
+            data: 'no', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
           {
             data: 'id', // can be null or undefined
             defaultContent: '<i>Not set</i>'
           },
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
+          {
+            data: 'pelanggan', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'nama_layanan', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'kasir', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'tanggal_transaksi', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'metode_pembayaran', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'keterangan', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'total_harga', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'action', // can be null or undefined
+            defaultContent: '<i>Not set</i>'
+          },
         ],
         layout: {
           topStart: {

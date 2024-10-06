@@ -98,4 +98,9 @@ Route::middleware('auth:member')->group(function () {
   Route::get('/', [MemberController::class, 'index'])->name('homepage');
   Route::get('/register/next', [GoogleController::class, 'viewAfterGoogleCallback'])->name('register-next');
   Route::post('/register/next', [GoogleController::class, 'nextRegisterStore']);
+
+  //account information page
+  Route::get('/account', [MemberController::class, 'account'])->name('account');
+  Route::get('/account/transaction-history', [MemberController::class, 'pointHistory'])->name('point-history');
+  Route::get('/account/point-history', [MemberController::class, 'pointHistory'])->name('point-history');
 });

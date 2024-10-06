@@ -27,7 +27,8 @@
       </a>
     </li><!-- End Dashboard Nav -->
     <li class="nav-item">
-      <a class="nav-link collapsed" href="index.html">
+      <a class="nav-link {{ Request::is('account') || Request::is('account/*') ? '' : 'collapsed' }}"
+        href="{{ route('account') }}">
         <i class="bi bi-three-dots me-0"></i>
         <span class="d-none d-lg-block ms-2">More</span>
       </a>
