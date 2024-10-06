@@ -27,7 +27,8 @@
               <div class="d-flex flex-column">
                 <a href="#" class="card-text fs-5 text-decoration-none text-reset mt-3">Informasi Akun</a>
                 <hr class="my-2">
-                <a href="#" class="card-text fs-5 text-decoration-none text-reset">Riwayat Transaksi</a>
+                <a href="{{ route('transaction-history') }}"
+                  class="card-text fs-5 text-decoration-none text-reset">Riwayat Transaksi</a>
                 <hr class="my-2">
                 <a href="{{ route('point-history') }}" class="card-text fs-5 text-decoration-none text-reset">Riwayat
                   Point</a>

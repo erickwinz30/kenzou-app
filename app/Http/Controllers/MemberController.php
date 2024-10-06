@@ -26,7 +26,7 @@ class MemberController extends Controller
     $member = Auth::guard('member')->user();
 
     return view('member.more.transactionHistory', [
-      // 'informations' => $member->transactions()->orderBy('created_at', 'desc')->get(),
+      'transactions' => $member->pelanggan->transaksi()->orderBy('created_at', 'desc')->get(),
     ]);
   }
 
