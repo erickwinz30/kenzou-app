@@ -15,22 +15,27 @@
             <div class="col">
               <div class="card shadow" style="border-radius: 15px">
                 <div class="d-flex justify-content-between align-items-center">
-                  <div class="card-title p-3 m-0">ID: {{ Str::limit($transaction->id, 12) }}</div>
-                  <div class="card-text p-3 m-0"><strong style="color: #012970">Metode:
-                    </strong>
-                    @if ($transaction->metode_pembayaran == 'qris')
-                      QRis
-                    @else
-                      Tunai
-                    @endif
+                  <div class="card-title p-3 pb-0 m-0">ID: {{ Str::limit($transaction->id, 12) }}</div>
+                  <div class="card-text p-3 pb-0 m-0 fs-7">
+                    @php
+                      $formattedDateTime = \Carbon\Carbon::parse($transaction->date)->translatedFormat('j F Y, H:i');
+                    @endphp
+                    {{ $formattedDateTime }}
                   </div>
                 </div>
-                <div class="d-flex justify-content-between align-items-center p-3">
-                  <div class="card-text"><strong style="color: #012970">Tgl Transaksi: </strong> {{ $transaction->date }}
-                  </div>
-                  <div class="card-text"><strong style="color: #012970">Total harga: </strong>
-                    Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}
-                  </div>
+                <div class="layanan-item d-flex p-3 pb-0">
+                  @php
+                    $layananNames = $transaction->detail_layanan
+                        ->map(function ($detailLayanan) {
+                            return $detailLayanan->layanan->nama_layanan;
+                        })
+                        ->toArray();
+                  @endphp
+                  <p class="p-0 mb-1">{{ implode(', ', $layananNames) }}</p>
+                </div>
+                <div class="card-text p-3">
+                  <strong style="color: #012970">Total harga: </strong>
+                  Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}
                 </div>
               </div>
             </div>
