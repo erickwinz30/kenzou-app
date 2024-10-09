@@ -1,12 +1,6 @@
 @extends('member.layout.main')
 
 @section('container')
-  <style>
-    .back-to-top {
-      bottom: 80px;
-    }
-  </style>
-
   <div class="pagetitle d-flex justify-content-between align-items-center">
     <h1>Riwayat Transaksi</h1>
     <a href="{{ route('account') }}" class="btn btn-primary"
@@ -17,18 +11,30 @@
     <div class="col-12">
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         @foreach ($transactions as $transaction)
-          <div class="col">
-            <div class="card shadow" style="border-radius: 15px">
-              <div class="card-title p-3 m-0">ID: {{ Str::limit($transaction->id, 15) }}</div>
-              <div class="d-flex justify-content-between align-items-center p-3">
-                <div class="card-text"><strong style="color: #012970">Tgl & Waktu: </strong> {{ $transaction->date }}
+          <a href="/account/view-transaction-history/{{ $transaction->id }}">
+            <div class="col">
+              <div class="card shadow" style="border-radius: 15px">
+                <div class="d-flex justify-content-between align-items-center">
+                  <div class="card-title p-3 m-0">ID: {{ Str::limit($transaction->id, 12) }}</div>
+                  <div class="card-text p-3 m-0"><strong style="color: #012970">Metode:
+                    </strong>
+                    @if ($transaction->metode_pembayaran == 'qris')
+                      QRis
+                    @else
+                      Tunai
+                    @endif
+                  </div>
                 </div>
-                <div class="card-text"><strong style="color: #012970">Total harga: </strong>
-                  Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}
+                <div class="d-flex justify-content-between align-items-center p-3">
+                  <div class="card-text"><strong style="color: #012970">Tgl Transaksi: </strong> {{ $transaction->date }}
+                  </div>
+                  <div class="card-text"><strong style="color: #012970">Total harga: </strong>
+                    Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </a>
         @endforeach
       </div>
     </div>

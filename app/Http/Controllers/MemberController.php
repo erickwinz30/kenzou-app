@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PointLog;
+use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\PointLog;
 use Illuminate\Support\Facades\Auth;
 
 class MemberController extends Controller
@@ -27,6 +28,13 @@ class MemberController extends Controller
 
     return view('member.more.transactionHistory', [
       'transactions' => $member->pelanggan->transaksi()->orderBy('created_at', 'desc')->get(),
+    ]);
+  }
+
+  public function viewTransactionHistory(Transaksi $transaksi)
+  {
+    return view('member.more.viewTransactionHistory', [
+      'transaction' => $transaksi,
     ]);
   }
 

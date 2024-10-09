@@ -39,6 +39,11 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+    <style>
+      .back-to-top {
+        bottom: 80px;
+      }
+    </style>
   </head>
 
   <body>

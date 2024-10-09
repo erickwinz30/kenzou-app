@@ -102,5 +102,6 @@ Route::middleware('auth:member')->group(function () {
   //account information page
   Route::get('/account', [MemberController::class, 'account'])->name('account');
   Route::get('/account/transaction-history', [MemberController::class, 'transactionHistory'])->name('transaction-history');
+  Route::get('/account/view-transaction-history/{transaksi:id}', [MemberController::class, 'viewTransactionHistory']);
   Route::get('/account/point-history', [MemberController::class, 'pointHistory'])->name('point-history');
 });

@@ -13,7 +13,10 @@
         @foreach ($informations as $information)
           <div class="col">
             <div class="card shadow" style="border-radius: 15px">
-              <div class="card-title p-3 m-0">{{ $information->status }}</div>
+              @php
+                $formattedDate = \Carbon\Carbon::parse($information->date)->translatedFormat('j F Y, H:i');
+              @endphp
+              <div class="card-title p-3 m-0">{{ $formattedDate }}</div>
               <div class="d-flex justify-content-between align-items-center p-3">
                 <div class="card-text"><strong style="color: #012970">Dari: </strong> {{ $information->status }}</div>
                 <div class="card-text"><strong style="color: #012970">Point: </strong> {{ $information->point }}</div>
