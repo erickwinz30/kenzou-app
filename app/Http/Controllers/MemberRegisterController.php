@@ -76,7 +76,7 @@ class MemberRegisterController extends Controller
       } else {
         $newMember = Member::create($validatedData);
         $newMemberId = Member::where('email', $newMember->email)->first();
-        Member::where('email', $newMemberId->email)->update(['nomor_telepon' => $validatedPhoneNumber, 'experience_point' => 10, 'redeemable_point' => 10]);
+        Member::where('email', $newMemberId->email)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon'], 'experience_point' => 10, 'redeemable_point' => 10]);
 
         Log::info('Data member baru: ', ['member' => $validatedData]);
         Log::info('Check id Member baru: ', ['member' => $newMember]);
