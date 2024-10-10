@@ -36,7 +36,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">Edit Pelanggan</h5>
-            <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST">
+            <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST" id="editForm">
               @method('put')
               @csrf
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
@@ -133,7 +133,7 @@
               </div>
               <div class="modal-footer">
                 <a href="/dashboard/pelanggan" class="btn btn-secondary me-1">Batal</a>
-                <button type="submit" class="btn btn-primary">Update</button>
+                <button type="button" class="btn btn-primary" onclick="editConfirmation()">Update</button>
               </div>
             </form>
           </div>
@@ -141,4 +141,23 @@
       </div>
     </div>
   </section>
+
+  <script>
+    //konfirmasi edit data
+    function editConfirmation() {
+      Swal.fire({
+        title: "Yakin ingin mengubah data member?",
+        text: "Aksi ini tidak bisa mengembalikan data!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2980B9",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, update it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('editForm').submit();
+        }
+      });
+    };
+  </script>
 @endsection

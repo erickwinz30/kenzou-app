@@ -39,7 +39,7 @@ class MemberController extends Controller
   {
     try {
       if (!Auth::guard('member')->user()->id) {
-        return view('error-404');
+        return view('error-404-dashboard');
       }
 
       $member = Auth::guard('member')->user();

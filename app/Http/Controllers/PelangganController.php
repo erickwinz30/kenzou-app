@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class PelangganController extends Controller
 {
@@ -61,7 +63,49 @@ class PelangganController extends Controller
    */
   public function update(Request $request, Pelanggan $pelanggan)
   {
-    //
+    try {
+      if (Auth::user()->is_admin !== 1) {
+        return view('error-404-dashboard');
+      }
+
+      $member = $pelanggan->member;
+
+      if ($request->nama !== $member->nama) {
+        $rules['nama'] = 'required|min:3|max:255';
+      }
+
+      if (!$member->google_id) {
+        if ($request->email !== $member->email) {
+          $rules['email'] = 'required|min:5|max:255|unique:members|email:dns';
+        }
+      }
+
+      if ($request->nomor_telepon !== $member->nomor_telepon) {
+        $rules['nomor_telepon'] = 'required|min:10|max:15|unique:members';
+      }
+
+      if (date('Y-m-d', strtotime($request->tanggal_lahir)) !== date('Y-m-d', strtotime($member->tanggal_lahir))) {
+        $rules['tanggal_lahir'] = 'required|date';
+      }
+
+      if ($request->experiece_point !== $member->experience_point) {
+        $rules['experience_point'] = 'required|numeric';
+      }
+
+      if ($request->redeemable_point !== $member->redeemable_point) {
+        $rules['redeemable_point'] = 'required|numeric';
+      }
+
+      $validatedData = $request->validate($rules);
+
+      Member::where('id', $member->id)->update($validatedData);
+
+      return redirect('/dashboard/pelanggan')->with('success', 'Data pelanggan telah diubah!');
+    } catch (\Exception $e) {
+      Log::info("Update Error: " . $e->getMessage());
+      Log::info("Update Error: " . $e->getTraceAsString());
+      return redirect('/dashboard/pelanggan')->with('error', 'Data pelanggan gagal diubah!');
+    }
   }
 
   /**

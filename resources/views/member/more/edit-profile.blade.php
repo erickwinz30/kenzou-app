@@ -6,8 +6,8 @@
   </div><!-- End Page Title -->
 
   @if (session()->has('success'))
-    <div class="row justify-content-center">
-      <div class="col-md-10 col-lg-8">
+    <div class="row d-flex justify-content-center">
+      <div class="col-md-10 col-lg-10">
         <div class="alert alert-success alert-dismissible fade show col-lg-10" role="alert">
           {{ session('success') }}
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -32,7 +32,7 @@
       <div class="col-md-10 col-lg-8">
         <div class="card">
           <div class="card-body">
-            <form action="/account/edit/post" method="POST" id="deleteForm">
+            <form action="/account/edit/post" method="POST" id="editForm">
               @csrf
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3 mt-4">
                 <div class="mb-3">
@@ -128,7 +128,7 @@
               @endif
               <div class="modal-footer">
                 <a href="/account" class="btn btn-secondary me-1">Batal</a>
-                <button type="button" class="btn btn-primary" onclick="deleteConfirmation()">Update</button>
+                <button type="button" class="btn btn-primary" onclick="editConfirmation()">Update</button>
               </div>
             </form>
           </div>
@@ -155,7 +155,7 @@
       });
 
     //konfirmasi hapus data
-    function deleteConfirmation() {
+    function editConfirmation() {
       Swal.fire({
         title: "Yakin ingin mengubah data diri?",
         text: "Aksi ini tidak bisa mengembalikan data!",
@@ -166,7 +166,7 @@
         confirmButtonText: "Yes, update it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          document.getElementById('deleteForm').submit();
+          document.getElementById('editForm').submit();
         }
       });
     };
