@@ -16,6 +16,7 @@
       width: 100%;
       margin-top: 10px;
       box-sizing: border-box;
+      z-index: 999;
     }
   </style>
 
@@ -302,6 +303,7 @@
                             <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
                             <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
                           </div>
+                          <hr>
                         `;
 
                     pelangganContainer.appendChild(containerDataPelanggan);
@@ -323,8 +325,6 @@
             .catch((error) => console.error("Error Fetching Data:", error));
         }, 800); // Delay selama 800ms
       });
-
-
 
       document.getElementById("container-informasi-pelanggan").addEventListener("click", function(event) {
         event.preventDefault();

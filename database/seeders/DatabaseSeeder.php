@@ -6,6 +6,7 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Layanan;
+use App\Models\LayananLog;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -35,36 +36,47 @@ class DatabaseSeeder extends Seeder
       'password' => bcrypt('hanyang123'),
     ]);
 
-    Layanan::factory()->create([
-      'nama_layanan' => 'Cuci Eksterior',
-      'harga' => '60000',
-      'point' => 2,
-      'added_date' => Carbon::now('Asia/Jakarta'),
-      'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
-    ]);
+    $layanans = [
+      [
+        'nama_layanan' => 'Cuci Eksterior',
+        'harga' => '60000',
+        'point' => 2,
+        'added_date' => Carbon::now('Asia/Jakarta'),
+        'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
+      ],
+      [
+        'nama_layanan' => 'Cuci Interior',
+        'harga' => '40000',
+        'point' => 2,
+        'added_date' => Carbon::now('Asia/Jakarta'),
+        'detail' => 'Pembersihan interior dengan cairan pembersih dan vacuum',
+      ],
+      [
+        'nama_layanan' => 'Wax',
+        'harga' => '70000',
+        'point' => 5,
+        'added_date' => Carbon::now('Asia/Jakarta'),
+        'detail' => 'Pemberian cairan obat untuk cat pada mobil',
+      ],
+      [
+        'nama_layanan' => 'Fogging',
+        'harga' => '35000',
+        'point' => 3,
+        'added_date' => Carbon::now('Asia/Jakarta'),
+        'detail' => 'Pemberian asap/uap disinfektan',
+      ],
+    ];
 
-    Layanan::factory()->create([
-      'nama_layanan' => 'Cuci Interior',
-      'harga' => '40000',
-      'point' => 2,
-      'added_date' => Carbon::now('Asia/Jakarta'),
-      'detail' => 'Pembersihan interior dengan cairan pembersih dan vacuum',
-    ]);
-
-    Layanan::factory()->create([
-      'nama_layanan' => 'Wax',
-      'harga' => '70000',
-      'point' => 5,
-      'added_date' => Carbon::now('Asia/Jakarta'),
-      'detail' => 'Pemberian cairan obat untuk cat pada mobil',
-    ]);
-
-    Layanan::factory()->create([
-      'nama_layanan' => 'Fogging',
-      'harga' => '35000',
-      'point' => 3,
-      'added_date' => Carbon::now('Asia/Jakarta'),
-      'detail' => 'Pemberian asap/uap disinfektan',
-    ]);
+    foreach ($layanans as $layananData) {
+      $layanan = Layanan::factory()->create($layananData);
+      $layananId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
+      LayananLog::factory()->create([
+        'layanan_id' => $layananId,
+        'nama_layanan' => $layanan->nama_layanan,
+        'harga' => $layanan->harga,
+        'point' => $layanan->point,
+        'detail' => $layanan->detail,
+      ]);
+    }
   }
 }

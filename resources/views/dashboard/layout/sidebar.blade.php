@@ -104,7 +104,7 @@
       </li><!-- End Kasir Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') ? '' : 'collapsed' }}"
+        <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') || Request::is('dashboard/layananLog') ? '' : 'collapsed' }}"
           href="/dashboard/layanan">
           <i class="bi bi-collection"></i>
           <span>Layanan</span>

@@ -46,7 +46,7 @@ Route::middleware('isAdmin')->group(function () {
 
   //layanan
   Route::resource('/dashboard/layanan', LayananController::class);
-  Route::get('/dashboard/layananLog/history', [LayananController::class, 'history'])->name('layanan.history');
+  Route::get('/dashboard/layananLog', [LayananController::class, 'history'])->name('layanan.history');
 
   //kasir
   Route::resource('/dashboard/kasir', KasirController::class);

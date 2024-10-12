@@ -10,106 +10,108 @@ use App\Models\LayananLog;
 
 class LayananController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return view('dashboard.layanan.index', [
-            'layanans' => Layanan::all(),
-        ]);
-    }
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    return view('dashboard.layanan.index', [
+      'layanans' => Layanan::all(),
+    ]);
+  }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('dashboard.layanan.create');
-    }
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    return view('dashboard.layanan.create');
+  }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'nama_layanan' => 'required|min:3|max:255',
-            'harga' => 'required',
-            'detail' => 'required|max:255',
-        ]);
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(Request $request)
+  {
+    $validatedData = $request->validate([
+      'nama_layanan' => 'required|min:3|max:255',
+      'harga' => 'required',
+      'point' => 'required',
+      'detail' => 'required|max:255',
+    ]);
 
-        $validatedData['added_date'] = Carbon::now('Asia/Jakarta');
+    $validatedData['added_date'] = Carbon::now('Asia/Jakarta');
 
-        // dd($validatedData);
+    // dd($validatedData);
 
-        $layanan = Layanan::create($validatedData);
+    $layanan = Layanan::create($validatedData);
 
-        $validatedData['layanan_id'] = $layanan->id;
+    $validatedData['layanan_id'] = $layanan->id;
 
-        LayananLog::create($validatedData);
+    LayananLog::create($validatedData);
 
-        return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
-    }
+    return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
+  }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Layanan $layanan)
-    {
-        //
-    }
+  /**
+   * Display the specified resource.
+   */
+  public function show(Layanan $layanan)
+  {
+    //
+  }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Layanan $layanan)
-    {
-        return view('dashboard.layanan.edit', [
-            'layanan' => $layanan,
-        ]);
-    }
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(Layanan $layanan)
+  {
+    return view('dashboard.layanan.edit', [
+      'layanan' => $layanan,
+    ]);
+  }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Layanan $layanan)
-    {
-        $rules = [
-            'nama_layanan' => 'required|min:3|max:255',
-            'harga' => 'required',
-            'detail' => 'required|max:255',
-        ];
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(Request $request, Layanan $layanan)
+  {
+    $rules = [
+      'nama_layanan' => 'required|min:3|max:255',
+      'harga' => 'required|numeric',
+      'point' => 'required|numeric',
+      'detail' => 'required|max:255',
+    ];
 
-        $validatedData = $request->validate($rules);
-        
-        Layanan::where('id', $layanan->id)->update($validatedData);
+    $validatedData = $request->validate($rules);
 
-        $validatedData['updated_date'] = Carbon::now('Asia/Jakarta');
+    Layanan::where('id', $layanan->id)->update($validatedData);
 
-        LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
+    $validatedData['updated_date'] = Carbon::now('Asia/Jakarta');
 
-        return redirect('/dashboard/layanan')->with('success', 'Layanan telah diupdate!!');
-    }
+    LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Layanan $layanan)
-    {
-        $validatedData['deleted_date'] = Carbon::now('Asia/Jakarta');
+    return redirect('/dashboard/layanan')->with('success', 'Layanan telah diupdate!!');
+  }
 
-        LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(Layanan $layanan)
+  {
+    $validatedData['deleted_at'] = Carbon::now('Asia/Jakarta');
 
-        Layanan::destroy($layanan->id);
+    LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
 
-        return redirect('/dashboard/layanan')->with('success', 'Layanan telah terhapus!');
-    }
+    Layanan::destroy($layanan->id);
 
-    public function history()
-    {
-        return view('dashboard.layanan.history', [
-            'layanans' => LayananLog::all(),
-        ]);
-    }
+    return redirect('/dashboard/layanan')->with('success', 'Layanan telah terhapus!');
+  }
+
+  public function history()
+  {
+    return view('dashboard.layanan.history', [
+      'layanans' => LayananLog::all(),
+    ]);
+  }
 }

@@ -74,7 +74,6 @@
                           @php
                             $tanggalLahir = $pelanggan->member->tanggal_lahir;
                             $umur = \Carbon\Carbon::parse($tanggalLahir)->age;
-
                             $tanggalLahir = \Carbon\Carbon::parse($tanggalLahir)->format('Y-m-d');
                           @endphp
                           <span

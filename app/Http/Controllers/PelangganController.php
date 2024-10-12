@@ -18,10 +18,23 @@ class PelangganController extends Controller
    */
   public function index()
   {
+    $pelanggans = Pelanggan::with('member')->get();
+    // $pelanggans = Pelanggan::all();
     return view('dashboard.pelanggan.index', [
-      'pelanggans' => Pelanggan::with('member')->get(),
+      'pelanggans' => $pelanggans,
     ]);
-    // dd(Pelanggan::all());
+    // Debugging: Menampilkan ID dari setiap pelanggan
+
+    // $listPelanggan = [];
+    // foreach ($pelanggans as $pelanggan) {
+    //   $listPelanggan[] = [
+    //     'id' => $pelanggan->id,
+    //     'nomor_telepon' => $pelanggan->nomor_telepon,
+    //     'nama' => $pelanggan->member ? $pelanggan->member->nama : '-',
+    //   ];
+    // }
+
+    // dd($listPelanggan);
   }
 
   /**

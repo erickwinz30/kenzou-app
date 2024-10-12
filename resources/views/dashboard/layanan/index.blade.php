@@ -54,8 +54,8 @@
                       <td>{{ Str::limit($layanan->detail, 20) }}</td>
                       <td class="text-center align-middle" style="padding: 0;">
                         <span
-                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                          {{ $layanan->added_date }}
+                          style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                          {{ $layanan->created_at }}
                         </span>
                       </td>
                       <td>

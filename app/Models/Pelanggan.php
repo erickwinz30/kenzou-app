@@ -2,13 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Member;
+use App\Models\Transaksi;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Pelanggan extends Model
 {
-  use HasFactory;
+  use
+    HasApiTokens,
+    HasFactory,
+    Notifiable;
+
   protected $keyType = 'string';
   protected $guarded = ['id'];
   protected $with = ['member'];

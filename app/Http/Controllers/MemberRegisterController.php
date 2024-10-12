@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Member;
+use App\Models\PointLog;
 use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class MemberRegisterController extends Controller
@@ -60,8 +62,25 @@ class MemberRegisterController extends Controller
 
           Member::where('email', $newMember->email)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon'], 'experience_point' => 25, 'redeemable_point' => 25]);
 
+          $pointLogNewMember = PointLog::create([
+            'member_id' => $newMemberId->id,
+            'point' => 25,
+            'status' => 'Pendaftaran Member Baru',
+            'date' => Carbon::now('Asia/Jakarta'),
+          ]);
+
+          $pointLogMemberReferred = PointLog::create([
+            'member_id' => $findMember->id,
+            'point' => 25,
+            'status' => 'Referral dari Member Baru',
+            'point_from' => $newMemberId->id,
+            'date' => Carbon::now('Asia/Jakarta'),
+          ]);
+
           Log::info('Data member baru: ', ['member' => $validatedData]);
           Log::info('Check id Member baru: ', ['member' => $newMember]);
+          Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
+          Log::info('Point Log Member Referred: ', ['Referred Member' => $pointLogMemberReferred]);
 
           if ($findPhoneNumber) {
             Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->update(['member_id' => $newMemberId->id]);
@@ -78,8 +97,16 @@ class MemberRegisterController extends Controller
         $newMemberId = Member::where('email', $newMember->email)->first();
         Member::where('email', $newMemberId->email)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon'], 'experience_point' => 10, 'redeemable_point' => 10]);
 
+        $pointLogNewMember = PointLog::create([
+          'member_id' => $newMemberId->id,
+          'point' => 10,
+          'status' => 'Pendaftaran Member Baru',
+          'date' => Carbon::now('Asia/Jakarta'),
+        ]);
+
         Log::info('Data member baru: ', ['member' => $validatedData]);
         Log::info('Check id Member baru: ', ['member' => $newMember]);
+        Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
 
         $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
 

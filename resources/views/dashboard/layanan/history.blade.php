@@ -47,24 +47,24 @@
                       <td>
                         <span
                           style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                          {{ $layanan->added_date }}
+                          {{ $layanan->created_at }}
                         </span>
                       </td>
                       <td>
-                        @if ($layanan->updated_date)
+                        @if ($layanan->updated_at)
                           <span
                             style="color:#FFB22C; background-color: #F3FEB8; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                            {{ $layanan->updated_date }}
+                            {{ $layanan->updated_at }}
                           </span>
                         @else
                           -
                         @endif
                       </td>
                       <td>
-                        @if ($layanan->deleted_date)
+                        @if ($layanan->deleted_at)
                           <span
                             style="color:#C80036; background-color: #FA7070; border-radius: 50px; padding: 5px 10px; display: inline-block;">
-                            {{ $layanan->deleted_date }}
+                            {{ $layanan->deleted_at }}
                           </span>
                         @else
                           -
