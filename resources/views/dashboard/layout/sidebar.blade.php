@@ -127,7 +127,8 @@
       </li><!-- End Feedback Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-error-404.html">
+        <a class="nav-link {{ Request::is('dashboard/voucher') || Request::is('dashboard/voucher/*') ? '' : 'collapsed' }}"
+          href="pages-error-404.html">
           <i class="bi bi-ticket-perforated"></i>
           <span>Voucher</span>
         </a>
@@ -141,7 +142,8 @@
       </li><!-- End Challenge Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-blank.html">
+        <a class="nav-link {{ Request::is('dashboard/badge') || Request::is('dashboard/badge/*') ? '' : 'collapsed' }}"
+          href="/dashboard/badge">
           <i class="bi bi-person-badge"></i>
           <span>Badge</span>
         </a>

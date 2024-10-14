@@ -65,7 +65,7 @@ class MemberRegisterController extends Controller
           $pointLogNewMember = PointLog::create([
             'member_id' => $newMemberId->id,
             'point' => 25,
-            'status' => 'Pendaftaran Member Baru',
+            'status' => 'Pendaftaran Member Baru dengan Referral',
             'date' => Carbon::now('Asia/Jakarta'),
           ]);
 
@@ -93,9 +93,10 @@ class MemberRegisterController extends Controller
           return back()->with('error', 'Kode referral tidak ditemukan!!!');
         }
       } else {
+        $validatedData['experience_point'] = 10;
+        $validatedData['redeemable_point'] = 10;
         $newMember = Member::create($validatedData);
         $newMemberId = Member::where('email', $newMember->email)->first();
-        Member::where('email', $newMemberId->email)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon'], 'experience_point' => 10, 'redeemable_point' => 10]);
 
         $pointLogNewMember = PointLog::create([
           'member_id' => $newMemberId->id,

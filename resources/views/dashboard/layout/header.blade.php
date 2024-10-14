@@ -31,6 +31,12 @@
           <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir
         </button>
       </div>
+    @elseif (Request::is('dashboard/badge'))
+      <div class="me-4">
+        <a href="/dashboard/badge/create" type="button" class="btn btn-success d-inline">
+          <i class="bi bi-plus me-1"></i>Badge
+        </a>
+      </div>
     @endif
   </div>
 

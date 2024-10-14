@@ -3,6 +3,7 @@
 use App\Models\LayananLog;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\KasirController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\GoogleController;
@@ -55,6 +56,9 @@ Route::middleware('isAdmin')->group(function () {
   Route::resource('/dashboard/pelanggan', PelangganController::class);
   Route::get('/dashboard/memberFetch', [PelangganController::class, 'memberFetch'])->name('member.fetch');
   Route::get('/dashboard/pelangganFetch', [PelangganController::class, 'pelangganFetch'])->name('pelanggan.fetch');
+
+  //badge
+  Route::resource('/dashboard/badge', BadgeController::class);
 });
 
 Route::middleware('notAdmin')->group(function () {

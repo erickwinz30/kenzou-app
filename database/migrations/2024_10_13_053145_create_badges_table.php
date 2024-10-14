@@ -14,9 +14,9 @@ return new class extends Migration
     Schema::create('badges', function (Blueprint $table) {
       $table->id();
       $table->string('nama');
-      $table->integer('max_point');
+      $table->integer('min_point');
       $table->decimal('diskon', 3, 2);
-      $table->string('img_path');
+      $table->string('image');
       $table->timestamps();
     });
   }

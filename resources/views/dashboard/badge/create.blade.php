@@ -1,0 +1,110 @@
+@extends('dashboard.layout.main')
+
+@section('container')
+  <div class="pagetitle">
+    <h1>Badge</h1>
+    <nav>
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">Admin</li>
+        <li class="breadcrumb-item active">Badge</li>
+        <li class="breadcrumb-item active">Tambah</li>
+      </ol>
+    </nav>
+  </div><!-- End Page Title -->
+
+  @if (session()->has('error'))
+    <div class="row justify-content-center">
+      <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center" role="alert">
+        {{ session('error') }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    </div>
+  @endif
+
+  <section class="section">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Tambah Badge</h5>
+            <form action="/dashboard/badge" method="POST" id="addForm" enctype="multipart/form-data">
+              @csrf
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
+                <div class="mb-3">
+                  <label for="nama" class="form-label @error('nama') is-invalid @enderror">Nama Badge</label>
+                  <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}"
+                    required autofocus>
+                  @error('nama')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
+                </div>
+                <div>
+                  <label for="min_point" class="form-label @error('min_point') is-invalid @enderror">Min
+                    Point</label>
+                  <input type="text" inputmode="numeric" class="form-control" id="min_point" name="min_point"
+                    value="{{ old('min_point') }}" required autofocus>
+                  @error('min_point')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
+                </div>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
+                <div class="mb-3">
+                  <label for="diskon" class="form-label @error('diskon') is-invalid @enderror">Diskon</label>
+                  <div class="input-group">
+                    <input type="text" inputmode="numeric" class="form-control" id="diskon" name="diskon"
+                      value="{{ old('diskon') }}" required autofocus>
+                    <span class="input-group-text" id="inputGroupPrepend">%</span>
+                  </div>
+                  @error('diskon')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
+                </div>
+                <div>
+                  <label for="image" class="form-label">Gambar Badge</label>
+                  <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
+                    name="image" onchange="previewImage()">
+                  @error('image')
+                    <div class="invalid-feedback">
+                      <p>{{ $message }}</p>
+                    </div>
+                  @enderror
+                </div>
+              </div>
+              <div class="my-4" id="previewImgContainer">
+                <p class="fw-bold text-center">Preview Gambar</p>
+                <div class="d-flex justify-content-center">
+                  <img class="img-preview img-fluid mb-3" style="max-height: 200px">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a href="/dashboard/badge" class="btn btn-secondary me-1">Batal</a>
+                <button type="submit" class="btn btn-primary">Tambah</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    function previewImage() {
+      const image = document.querySelector('#image');
+      const imgPreview = document.querySelector('.img-preview');
+
+      const oFReader = new FileReader();
+      oFReader.readAsDataURL(image.files[0]);
+
+      oFReader.onload = function(oFREvent) {
+        imgPreview.src = oFREvent.target.result;
+      }
+    }
+  </script>
+@endsection

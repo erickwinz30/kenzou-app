@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Member;
+use App\Models\PointLog;
 use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -118,15 +120,41 @@ class GoogleController extends Controller
             Log::info('Perolehan Point Member: ', ['member' => $afterRegisterExperiencePoint]);
 
             $findMember->update(['experience_point' => $afterRegisterExperiencePoint, 'redeemable_point' => $afterRegisterRedeemablePoint]);
-
             $findPhoneNumber = Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->first();
 
             if ($findPhoneNumber) {
               Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->update(['member_id' => $findCurrentMember]);
               Member::where('id', $findCurrentMember)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'tanggal_lahir' => $validatedData['tanggal_lahir'], 'experience_point' => 25, 'redeemable_point' => 25]);
+
+              $pointLogNewMember = PointLog::create([
+                'member_id' => $findCurrentMember,
+                'point' => 25,
+                'status' => 'Pendaftaran Member Baru dengan Referral',
+                'date' => Carbon::now('Asia/Jakarta'),
+              ]);
+
+              Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
             } else {
               Pelanggan::create(['member_id' => $findCurrentMember, 'nomor_telepon' => $validatedData['nomor_telepon']]);
               Member::where('id', $findCurrentMember)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'tanggal_lahir' => $validatedData['tanggal_lahir'], 'experience_point' => 25, 'redeemable_point' => 25]);
+
+              $pointLogNewMember = PointLog::create([
+                'member_id' => $findCurrentMember,
+                'point' => 25,
+                'status' => 'Pendaftaran Member Baru dengan Referral',
+                'date' => Carbon::now('Asia/Jakarta'),
+              ]);
+
+              $pointLogMemberReferred = PointLog::create([
+                'member_id' => $findMember->id,
+                'point' => 25,
+                'status' => 'Referral dari Member Baru',
+                'point_from' => $findCurrentMember,
+                'date' => Carbon::now('Asia/Jakarta'),
+              ]);
+
+              Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
+              Log::info('Point Log Member Referred: ', ['Referred Member' => $pointLogMemberReferred]);
             }
 
             return redirect()->route('homepage');
@@ -141,10 +169,24 @@ class GoogleController extends Controller
 
           if ($findPhoneNumber) {
             Pelanggan::where('nomor_telepon', $validatedData['nomor_telepon'])->update(['member_id' => $currentLoginUser]);
-            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon']]);
+            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'experience_point' => 10, 'redeemable_point' => 10]);
+
+            $pointLogNewMember = PointLog::create([
+              'member_id' => $currentLoginUser,
+              'point' => 10,
+              'status' => 'Pendaftaran Member Baru dengan Referral',
+              'date' => Carbon::now('Asia/Jakarta'),
+            ]);
           } else {
             Pelanggan::create(['member_id' => $currentLoginUser, 'nomor_telepon' => $validatedData['nomor_telepon']]);
-            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon']]);
+            Member::where('id', $currentLoginUser)->update(['nomor_telepon' => $validatedData['nomor_telepon'], 'experience_point' => 10, 'redeemable_point' => 10]);
+
+            $pointLogNewMember = PointLog::create([
+              'member_id' => $currentLoginUser,
+              'point' => 10,
+              'status' => 'Pendaftaran Member Baru dengan Referral',
+              'date' => Carbon::now('Asia/Jakarta'),
+            ]);
           }
 
           return redirect()->route('homepage');
