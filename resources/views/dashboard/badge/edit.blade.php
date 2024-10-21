@@ -54,21 +54,21 @@
                   @enderror
                 </div>
               </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
                 <div class="mb-3">
-                  <label for="diskon" class="form-label @error('diskon') is-invalid @enderror">Diskon</label>
+                  <label for="discount" class="form-label @error('discount') is-invalid @enderror">Diskon</label>
                   <div class="input-group">
-                    <input type="text" inputmode="numeric" class="form-control" id="diskon" name="diskon"
-                      value="{{ old('diskon', $badge->diskon * 100) }}" required autofocus>
+                    <input type="text" inputmode="numeric" class="form-control" id="discount" name="discount"
+                      value="{{ old('discount', $badge->discount * 100) }}" required autofocus>
                     <span class="input-group-text" id="inputGroupPrepend">%</span>
                   </div>
-                  @error('diskon')
+                  @error('discount')
                     <div class="invalid-feedback">
                       {{ $message }}
                     </div>
                   @enderror
                 </div>
-                <div>
+                <div class="mb-3">
                   <label for="image" class="form-label">Gambar Badge</label>
                   <input class="form-control @error('image') is-invalid @enderror" type="file" id="image"
                     name="image" onchange="previewImage()">

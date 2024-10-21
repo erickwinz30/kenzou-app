@@ -13,7 +13,7 @@
 
   @if (session()->has('success'))
     <div class="row justify-content-center">
-      <div class="alert alert-success alert-dismissible fade show col-lg-10" role="alert">
+      <div class="alert alert-success alert-dismissible fade show col-lg-12" role="alert">
         {{ session('success') }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>
@@ -46,7 +46,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $badge->nama }}</td>
                       <td>{{ $badge->min_point }}</td>
-                      <td>{{ $badge->diskon * 100 }}%</td>
+                      <td>{{ $badge->discount * 100 }}%</td>
                       <td><img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}"
                           style="max-width: 100px"></td>
                       <td>

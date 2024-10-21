@@ -46,14 +46,14 @@
                       {{-- <td class="bg-success rounded-pill">{{ $layanan->added_date }}</td> --}}
                       <td>
                         <span
-                          style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                          style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
                           {{ $layanan->created_at }}
                         </span>
                       </td>
                       <td>
                         @if ($layanan->updated_at)
                           <span
-                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
                             {{ $layanan->updated_at }}
                           </span>
                         @else
@@ -63,7 +63,7 @@
                       <td>
                         @if ($layanan->deleted_at)
                           <span
-                            style="color:#C80036; background-color: #FA7070; border-radius: 50px; padding: 5px 10px; display: inline-block;">
+                            style="color:#C80036; background-color: #FA7070; border-radius: 10px; padding: 5px 10px; display: inline-block;">
                             {{ $layanan->deleted_at }}
                           </span>
                         @else

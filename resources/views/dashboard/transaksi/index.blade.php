@@ -117,7 +117,7 @@
                         <td>{{ $transaksi->user->nama }}</td>
                         <td class="text-center align-middle" style="padding: 0;">
                           <span
-                            style="color:#219653; background-color: #e8f4ed; border-radius: 50px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
                             {{ $transaksi->date }}
                           </span>
                         </td>

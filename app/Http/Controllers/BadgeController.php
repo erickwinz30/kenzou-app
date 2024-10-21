@@ -37,11 +37,11 @@ class BadgeController extends Controller
       $validatedData = $request->validate([
         'nama' => 'required|max:255',
         'min_point' => 'required',
-        'diskon' => 'required',
+        'discount' => 'required',
         'image' => 'required|file|image|max:2048',
       ]);
 
-      $validatedData['diskon'] = $validatedData['diskon'] / 100;
+      $validatedData['discount'] = $validatedData['discount'] / 100;
       $validatedData['image'] = $request->file('image')->store('badge-image');
 
       Badge::create($validatedData);
@@ -80,7 +80,7 @@ class BadgeController extends Controller
     $rules = [
       'nama' => 'required|max:255',
       'min_point' => 'required',
-      'diskon' => 'required',
+      'discount' => 'required',
       'image' => 'file|image|max:2048',
     ];
 
@@ -93,8 +93,8 @@ class BadgeController extends Controller
       $validatedData['image'] = $request->file('image')->store('badge-image');
     }
 
-    if ($validatedData['diskon']) {
-      $validatedData['diskon'] = $validatedData['diskon'] / 100;
+    if ($validatedData['discount']) {
+      $validatedData['discount'] = $validatedData['discount'] / 100;
     }
 
     Badge::where('id', $badge->id)->update($validatedData);

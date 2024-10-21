@@ -15,7 +15,7 @@ return new class extends Migration
       $table->id();
       $table->string('nama');
       $table->integer('min_point');
-      $table->decimal('diskon', 3, 2);
+      $table->decimal('discount', 3, 2);
       $table->string('image');
       $table->timestamps();
     });

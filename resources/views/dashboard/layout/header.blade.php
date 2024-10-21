@@ -37,6 +37,12 @@
           <i class="bi bi-plus me-1"></i>Badge
         </a>
       </div>
+    @elseif (Request::is('dashboard/voucher'))
+      <div class="me-4">
+        <a href="/dashboard/voucher/create" type="button" class="btn btn-success d-inline">
+          <i class="bi bi-plus me-1"></i>Voucher
+        </a>
+      </div>
     @endif
   </div>
 

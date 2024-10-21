@@ -44,26 +44,26 @@
 
     <main>
       <div class="container">
-        @if (session()->has('success'))
-          <div class="row justify-content-center">
-            <div class="alert alert-success alert-dismissible fade show col-lg-12 justify-content-center"
-              role="alert">
-              {{ session('success') }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </div>
-        @endif
-
-        @if (session()->has('error'))
-          <div class="row justify-content-center">
-            <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center" role="alert">
-              {{ session('error') }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          </div>
-        @endif
-
         <section class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+          @if (session()->has('success'))
+            <div class="row justify-content-center">
+              <div class="alert alert-success alert-dismissible fade show col-lg-12 justify-content-center"
+                role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          @endif
+
+          @if (session()->has('error'))
+            <div class="row justify-content-center">
+              <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center"
+                role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            </div>
+          @endif
           <div class="container">
             <div class="row justify-content-center">
               <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">

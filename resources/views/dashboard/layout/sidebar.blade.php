@@ -128,7 +128,7 @@
 
       <li class="nav-item">
         <a class="nav-link {{ Request::is('dashboard/voucher') || Request::is('dashboard/voucher/*') ? '' : 'collapsed' }}"
-          href="pages-error-404.html">
+          href="/dashboard/voucher">
           <i class="bi bi-ticket-perforated"></i>
           <span>Voucher</span>
         </a>

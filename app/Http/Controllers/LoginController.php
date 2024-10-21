@@ -36,7 +36,7 @@ class LoginController extends Controller
       }
     }
 
-    return back()->with('loginError', 'Login failed!');
+    return back()->with('error', 'Login failed!');
   }
 
   public function logout(Request $request)

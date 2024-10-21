@@ -9,6 +9,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
+use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\PelangganController;
@@ -59,6 +60,11 @@ Route::middleware('isAdmin')->group(function () {
 
   //badge
   Route::resource('/dashboard/badge', BadgeController::class);
+
+  //voucher
+  Route::resource('/dashboard/voucher', VoucherController::class);
+  Route::get('/dashboard/nonActiveFetch', [VoucherController::class, 'nonActiveFetch'])->name('voucher.nonActiveFetch');
+  Route::get('/dashboard/allVoucherFetch', [VoucherController::class, 'allVoucherFetch'])->name('voucher.allVoucherFetch');
 });
 
 Route::middleware('notAdmin')->group(function () {
