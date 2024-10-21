@@ -42,16 +42,30 @@
                     </div>
                   @enderror
                 </div>
-                <div>
-                  <label for="min_point" class="form-label @error('min_point') is-invalid @enderror">Min
-                    Point</label>
-                  <input type="text" inputmode="numeric" class="form-control" id="min_point" name="min_point"
-                    value="{{ old('min_point', $badge->min_point) }}" required autofocus>
-                  @error('min_point')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 pe-0">
+                  <div class="pe-0">
+                    <label for="min_point" class="form-label @error('min_point') is-invalid @enderror">Min
+                      Point</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="min_point" name="min_point"
+                      value="{{ old('min_point', $badge->min_point) }}" required autofocus placeholder="Minimal point...">
+                    @error('min_point')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
+                  <div class="pe-0">
+                    <label for="max_point" class="form-label @error('max_point') is-invalid @enderror">Max
+                      Point</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="max_point" name="max_point"
+                      value="{{ old('max_point', $badge->max_point) }}" required autofocus
+                      placeholder="Maksimal point...">
+                    @error('max_point')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
                 </div>
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">

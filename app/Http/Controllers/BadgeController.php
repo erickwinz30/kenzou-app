@@ -37,6 +37,7 @@ class BadgeController extends Controller
       $validatedData = $request->validate([
         'nama' => 'required|max:255',
         'min_point' => 'required',
+        'max_point' => 'required',
         'discount' => 'required',
         'image' => 'required|file|image|max:2048',
       ]);
@@ -80,6 +81,7 @@ class BadgeController extends Controller
     $rules = [
       'nama' => 'required|max:255',
       'min_point' => 'required',
+      'max_point' => 'required',
       'discount' => 'required',
       'image' => 'file|image|max:2048',
     ];

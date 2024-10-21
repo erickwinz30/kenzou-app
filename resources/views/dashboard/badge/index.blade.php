@@ -35,6 +35,7 @@
                     <th>No</th>
                     <th>Nama</th>
                     <th>Min Point</th>
+                    <th>Max Point</th>
                     <th>Diskon</th>
                     <th>Gambar</th>
                     <th>Aksi</th>
@@ -46,6 +47,7 @@
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $badge->nama }}</td>
                       <td>{{ $badge->min_point }}</td>
+                      <td>{{ $badge->max_point }}</td>
                       <td>{{ $badge->discount * 100 }}%</td>
                       <td><img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}"
                           style="max-width: 100px"></td>

@@ -33,23 +33,36 @@
                 <div class="mb-3">
                   <label for="nama" class="form-label @error('nama') is-invalid @enderror">Nama Badge</label>
                   <input type="text" class="form-control" id="nama" name="nama" value="{{ old('nama') }}"
-                    required autofocus>
+                    placeholder="Masukkan nama badge..." required autofocus>
                   @error('nama')
                     <div class="invalid-feedback">
                       {{ $message }}
                     </div>
                   @enderror
                 </div>
-                <div>
-                  <label for="min_point" class="form-label @error('min_point') is-invalid @enderror">Min
-                    Point</label>
-                  <input type="text" inputmode="numeric" class="form-control" id="min_point" name="min_point"
-                    value="{{ old('min_point') }}" required autofocus>
-                  @error('min_point')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 pe-0">
+                  <div class="pe-0">
+                    <label for="min_point" class="form-label @error('min_point') is-invalid @enderror">Min
+                      Point</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="min_point" name="min_point"
+                      value="{{ old('min_point') }}" required autofocus placeholder="Minimal point...">
+                    @error('min_point')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
+                  <div class="pe-0">
+                    <label for="max_point" class="form-label @error('max_point') is-invalid @enderror">Max
+                      Point</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="max_point" name="max_point"
+                      value="{{ old('max_point') }}" required autofocus placeholder="Maksimal point...">
+                    @error('max_point')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
                 </div>
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
@@ -57,7 +70,7 @@
                   <label for="discount" class="form-label @error('discount') is-invalid @enderror">Diskon</label>
                   <div class="input-group">
                     <input type="text" inputmode="numeric" class="form-control" id="discount" name="discount"
-                      value="{{ old('discount') }}" required autofocus>
+                      value="{{ old('discount') }}" required autofocus placeholder="Masukkan diskon...">
                     <span class="input-group-text" id="inputGroupPrepend">%</span>
                   </div>
                   @error('discount')
