@@ -6,26 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('challenges', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('deskripsi');
-            $table->datetime('from_date');
-            $table->datetime('to_date');
-            $table->integer('target_progress');
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('challenges', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->string('description');
+      $table->datetime('from_date');
+      $table->datetime('to_date');
+      $table->integer('target');
+      $table->json('reward');
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('challenges');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('challenges');
+  }
 };

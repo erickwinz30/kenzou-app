@@ -10,6 +10,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\PelangganController;
@@ -65,6 +66,9 @@ Route::middleware('isAdmin')->group(function () {
   Route::resource('/dashboard/voucher', VoucherController::class);
   Route::get('/dashboard/nonActiveFetch', [VoucherController::class, 'nonActiveFetch'])->name('voucher.nonActiveFetch');
   Route::get('/dashboard/allVoucherFetch', [VoucherController::class, 'allVoucherFetch'])->name('voucher.allVoucherFetch');
+
+  //challenge
+  Route::resource('/dashboard/challenge', ChallengeController::class);
 });
 
 Route::middleware('notAdmin')->group(function () {

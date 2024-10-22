@@ -135,7 +135,8 @@
       </li><!-- End Voucher Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="pages-blank.html">
+        <a class="nav-link {{ Request::is('dashboard/challenge') || Request::is('dashboard/challenge/*') ? '' : 'collapsed' }}"
+          href="/dashboard/challenge">
           <i class="bi bi-graph-up"></i>
           <span>Challenge</span>
         </a>

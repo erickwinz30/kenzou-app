@@ -97,6 +97,7 @@ class MemberRegisterController extends Controller
         $validatedData['redeemable_point'] = 10;
         $newMember = Member::create($validatedData);
         $newMemberId = Member::where('email', $newMember->email)->first();
+        $newMemberPhoneNumberUpdate = Member::where('id', $newMemberId->id)->update(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
 
         $pointLogNewMember = PointLog::create([
           'member_id' => $newMemberId->id,
@@ -106,6 +107,7 @@ class MemberRegisterController extends Controller
         ]);
 
         Log::info('Data member baru: ', ['member' => $validatedData]);
+        Log::info('Data member Nomor Telepon: ', ['member' => $newMemberPhoneNumberUpdate]);
         Log::info('Check id Member baru: ', ['member' => $newMember]);
         Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
 
