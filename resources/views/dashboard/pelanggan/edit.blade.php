@@ -56,7 +56,7 @@
                   <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">No.
                     Telepon</label>
                   <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon" name="nomor_telepon"
-                    value="{{ old('nomor_telepon', $pelanggan->nomor_telepon) }}" required autofocus>
+                    value="{{ old('nomor_telepon', $pelanggan->member->nomor_telepon) }}" required autofocus>
                   @error('nomor_telepon')
                     <div class="invalid-feedback">
                       {{ $message }}

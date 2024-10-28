@@ -43,6 +43,12 @@
           <i class="bi bi-plus me-1"></i>Voucher
         </a>
       </div>
+    @elseif (Request::is('dashboard/challenge'))
+      <div class="me-4">
+        <a href="/dashboard/challenge/create" type="button" class="btn btn-success d-inline">
+          <i class="bi bi-plus me-1"></i>Challenge
+        </a>
+      </div>
     @endif
   </div>
 

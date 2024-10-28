@@ -179,8 +179,8 @@ class CatatTransaksiController extends Controller
     } catch (\Exception $e) {
       $errorMessage = $e->getMessage();
       $errorTrace = $e->getTraceAsString();
-      Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
-      return redirect()->route('register-next')->with('error', $errorMessage);
+      Log::error('Pencarian pelanggan error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+      return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
     }
   }
 

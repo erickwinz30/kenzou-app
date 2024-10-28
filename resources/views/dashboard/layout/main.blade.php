@@ -6,9 +6,9 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
     <title>Kenzou Drive Thru Car Wash Admin</title>
-    <meta content="" name="description">
+    {{-- <meta content="" name="description">
     <meta content="" name="keywords">
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#000000" /> --}}
 
     <!-- Favicons -->
     <link href="{{ asset('img/icons/icon-72.png') }}" rel="icon">
@@ -20,6 +20,12 @@
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
       rel="stylesheet">
+
+    <!-- JQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+
 
     <!-- Vendor CSS Files -->
     <link href="{{ asset('vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
@@ -33,6 +39,9 @@
 
     <!-- Template Main CSS File -->
     <link href=" {{ asset('css/style.css') }}" rel="stylesheet">
+
+    <!-- Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     <!-- =======================================================
   * Template Name: NiceAdmin
@@ -67,10 +76,12 @@
 
     {{-- swallfire --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>
 
-
   </body>
+
+</html>
 
 </html>
