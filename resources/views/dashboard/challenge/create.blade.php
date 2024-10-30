@@ -47,7 +47,7 @@
                   <div class="mb-3">
                     <label for="from_date" class="form-label">Dari</label>
                     <input class="form-control @error('from_date') is-invalid @enderror" type="datetime-local"
-                      id="from_date" name="from_date" onchange="previewImage()">
+                      id="from_date" name="from_date">
                     @error('from_date')
                     <div class="invalid-feedback">
                       <p>{{ $message }}</p>
@@ -57,7 +57,7 @@
                   <div>
                     <label for="to_date" class="form-label">Sampai</label>
                     <input class="form-control @error('to_date') is-invalid @enderror" type="datetime-local"
-                      id="to_date" name="to_date" onchange="previewImage()">
+                      id="to_date" name="to_date">
                     @error('to_date')
                     <div class="invalid-feedback">
                       <p>{{ $message }}</p>
@@ -81,10 +81,10 @@
               <div class="mb-3 unit-input-container">
                 <label for="unit" class="form-label">Satuan</label>
                 <div class="input-group d-flex">
-                  <select class="js-unit-tags" name="reward_unit_id" id="reward_unit_id">
+                  <select class="js-unit-tags" name="unit_id" id="unit_id">
                   </select>
                 </div>
-                @error('reward_unit_id')
+                @error('unit_id')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
@@ -122,7 +122,7 @@
               results: data.map(function(unit) {
                 return {
                   id: unit.id,
-                  text: unit.unit
+                  text: unit.unit_type
                 };
               })
             };

@@ -11,9 +11,9 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('reward_units', function (Blueprint $table) {
+    Schema::create('units', function (Blueprint $table) {
       $table->id();
-      $table->string('unit');
+      $table->string('unit_type');
       $table->timestamps();
     });
   }
@@ -23,6 +23,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('reward_units');
+    Schema::dropIfExists('units');
   }
 };

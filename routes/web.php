@@ -15,7 +15,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\RewardUnitController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MemberLoginController;
 use App\Http\Controllers\CatatTransaksiController;
 use App\Http\Controllers\MemberRegisterController;
@@ -73,9 +73,9 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard/challenge-active-fetch', [ChallengeController::class, 'activeFetch'])->name('challenge.activeFetch');
   Route::get('/dashboard/challenge-nonactive-fetch', [ChallengeController::class, 'nonActiveFetch'])->name('challenge.nonActiveFetch');
   Route::post('/dashboard/toggle-challenge-activation', [ChallengeController::class, 'toggleActivation'])->name('challenge.toggleActivation');
-  Route::get('/dashboard/fetchUnit', [RewardUnitController::class, 'index']);
-  Route::get('/dashboard/fetchUnits', [RewardUnitController::class, 'search'])->name('fetch.unit');
-  Route::post('/dashboard/fetchUnit/search', [RewardUnitController::class, 'search']);
+  Route::get('/dashboard/fetchUnit', [UnitController::class, 'index']);
+  Route::get('/dashboard/fetchUnits', [UnitController::class, 'search'])->name('fetch.unit');
+  Route::post('/dashboard/fetchUnit/search', [UnitController::class, 'search']);
 });
 
 Route::middleware('notAdmin')->group(function () {

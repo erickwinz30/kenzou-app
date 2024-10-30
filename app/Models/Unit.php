@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Challenge;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class RewardUnit extends Model
+class Unit extends Model
 {
   use HasFactory;
 
@@ -13,6 +14,6 @@ class RewardUnit extends Model
 
   public function challenges()
   {
-    return $this->hasMany(Challenge::class, 'reward_unit_id');
+    return $this->hasMany(Challenge::class, 'unit_id');
   }
 }

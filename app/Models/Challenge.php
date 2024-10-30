@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Unit;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,8 +23,8 @@ class Challenge extends Model
     });
   }
 
-  public function rewardUnit()
+  public function unit()
   {
-    return $this->belongsTo(RewardUnit::class, 'reward_unit_id');
+    return $this->belongsTo(Unit::class, 'unit_id');
   }
 }

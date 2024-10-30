@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Challenge;
-use App\Models\RewardUnit;
+use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -42,19 +42,19 @@ class ChallengeController extends Controller
         'target' => 'required|numeric',
       ]);
 
-      $currentUnit = RewardUnit::where('id', $request->reward_unit_id)->first();
+      $currentUnit = Unit::where('id', $request->unit_id)->first();
       if (!$currentUnit) {
-        $newUnit = RewardUnit::create([
-          'unit' => $request->reward_unit_id,
+        $newUnit = Unit::create([
+          'unit_type' => $request->unit_id,
         ]);
 
         Log::info('New Reward Unit created', ['unit' => $newUnit]);
 
-        $newUnitId = RewardUnit::where('unit', $request->reward_unit_id)->first();
+        $newUnitId = Unit::where('unit_type', $newUnit->unit_type)->first();
 
-        $validatedData['reward_unit_id'] = $newUnitId->id;
+        $validatedData['unit_id'] = $newUnitId->id;
       } else {
-        $validatedData['reward_unit_id'] = $request->reward_unit_id;
+        $validatedData['unit_id'] = $request->unit_id;
       }
 
       $newChallenge = Challenge::create($validatedData);
@@ -109,21 +109,21 @@ class ChallengeController extends Controller
 
     $validatedData = $request->validate($rules);
 
-    if ($request->reward_unit_id != $challenge->reward_unit_id) {
-      $currentUnit = RewardUnit::where('id', $request->reward_unit_id)->first();
+    if ($request->unit_id != $challenge->unit_id) {
+      $currentUnit = Unit::where('id', $request->unit_id)->first();
 
       if (!$currentUnit) {
-        $newUnit = RewardUnit::create([
-          'unit' => $request->reward_unit_id,
+        $newUnit = Unit::create([
+          'unit_type' => $request->unit_id,
         ]);
 
         Log::info('New Reward Unit created', ['unit' => $newUnit]);
 
-        $newUnitId = RewardUnit::where('unit', $request->reward_unit_id)->first();
+        $newUnitId = Unit::where('unit', $request->unit_id)->first();
 
-        $validatedData['reward_unit_id'] = $newUnitId->id;
+        $validatedData['unit_id'] = $newUnitId->id;
       } else {
-        $validatedData['reward_unit_id'] = $request->reward_unit_id;
+        $validatedData['unit_id'] = $request->unit_id;
       }
     }
 
@@ -153,7 +153,7 @@ class ChallengeController extends Controller
         'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
-        'reward_unit_id' => $challenge->rewardUnit->unit,
+        'unit_id' => $challenge->unit->unit_type,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -181,7 +181,7 @@ class ChallengeController extends Controller
         'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
-        'reward_unit_id' => $challenge->rewardUnit->unit,
+        'unit_id' => $challenge->unit->unit_type,
         'is_active' => $challenge->is_active,
       ];
     }

@@ -84,12 +84,12 @@
               <div class="mb-3 unit-input-container">
                 <label for="unit" class="form-label">Satuan</label>
                 <div class="input-group d-flex">
-                  <select class="js-unit-tags" name="reward_unit_id" id="reward_unit_id">
-                    <option value="{{ $challenge->reward_unit_id }}" selected>{{ $challenge->reward_unit_name }}
-                    </option>
+                  <select class="js-unit-tags" name="unit_id" id="unit_id">
+                    {{-- <option value="{{ $challenge->unit_id }}" selected>{{ $challenge->unit->unit_type }}
+                    </option> --}}
                   </select>
                 </div>
-                @error('reward_unit_id')
+                @error('unit_id')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
@@ -127,7 +127,7 @@
               results: data.map(function(unit) {
                 return {
                   id: unit.id,
-                  text: unit.unit
+                  text: unit.unit_type
                 };
               })
             };
@@ -142,8 +142,8 @@
       });
 
       // Set nilai awal pada Select2
-      var initialUnitId = "{{ $challenge->rewardUnit->id }}";
-      var initialUnitText = "{{ $challenge->rewardUnit->unit }}";
+      var initialUnitId = "{{ $challenge->unit->id }}";
+      var initialUnitText = "{{ $challenge->unit->unit_type }}";
       if (initialUnitId && initialUnitText) {
         var option = new Option(initialUnitText, initialUnitId, true, true);
         $select.append(option).trigger('change');
