@@ -174,7 +174,7 @@ class GoogleController extends Controller
             $pointLogNewMember = PointLog::create([
               'member_id' => $currentLoginUser,
               'point' => 10,
-              'status' => 'Pendaftaran Member Baru dengan Referral',
+              'status' => 'Pendaftaran Member Baru',
               'date' => Carbon::now('Asia/Jakarta'),
             ]);
           } else {
@@ -184,7 +184,7 @@ class GoogleController extends Controller
             $pointLogNewMember = PointLog::create([
               'member_id' => $currentLoginUser,
               'point' => 10,
-              'status' => 'Pendaftaran Member Baru dengan Referral',
+              'status' => 'Pendaftaran Member Baru',
               'date' => Carbon::now('Asia/Jakarta'),
             ]);
           }

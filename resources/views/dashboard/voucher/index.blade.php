@@ -93,12 +93,11 @@
                   <td>
                     <a href="/dashboard/voucher/{{ $voucher->id }}/edit" class="btn btn-warning" id="edit-button"><i
                         class="bi bi-pencil"></i></a>
-                    <form action="/dashboard/voucher/{{ $voucher->id }}" method="POST" class="d-inline"
-                      id="deleteForm{{ $voucher->id }}">
-                      @method('DELETE')
+                    <form action="/dashboard/toggle-voucher-activation" method="POST" id="toggleForm">
                       @csrf
-                      <button type="button" class="btn btn-danger" onclick="deleteConfirmation('{{ $voucher->id }}')">
-                        <i class="bi bi-trash"></i>
+                      <button type="button" class="btn btn-secondary" onclick="toggleConfirmation()">
+                        <i class="bi bi-toggle-on"></i>
+                        <input type="hidden" name="voucherId" id="voucherId" value="{{ $voucher->id }}">
                       </button>
                     </form>
                   </td>
@@ -160,10 +159,12 @@
               </td>
               <td>
                 <a href="/dashboard/voucher/${voucher.id}/edit" class="btn btn-warning" id="edit-button"><i class="bi bi-pencil"></i></a>
-                <form action="/dashboard/voucher/${voucher.id}" method="POST" class="d-inline" id="deleteForm${voucher.id}">
-                @method('DELETE')
-                @csrf
-                <button type="button" class="btn btn-danger" onclick="deleteConfirmation('${voucher.id}')"><i class="bi bi-trash"></i></button>
+                <form action="/dashboard/toggle-voucher-activation" method="POST" id="toggleForm">
+                  @csrf
+                  <button type="button" class="btn btn-secondary" onclick="toggleConfirmation()">
+                    <i class="bi bi-toggle-off"></i>
+                    <input type="hidden" name="voucherId" id="voucherId" value="${voucher.id}">
+                  </button>
                 </form>
               </td>
             `;
@@ -220,10 +221,12 @@
               </td>
               <td>
                 <a href="/dashboard/voucher/${voucher.id}/edit" class="btn btn-warning" id="edit-button"><i class="bi bi-pencil"></i></a>
-                <form action="/dashboard/voucher/${voucher.id}" method="POST" class="d-inline" id="deleteForm${voucher.id}">
-                @method('DELETE')
-                @csrf
-                <button type="button" class="btn btn-danger" onclick="deleteConfirmation('${voucher.id}')"><i class="bi bi-trash"></i></button>
+                <form action="/dashboard/toggle-voucher-activation" method="POST" id="toggleForm">
+                  @csrf
+                  <button type="button" class="btn btn-secondary" onclick="toggleConfirmation()">
+                    <i class="bi bi-toggle-${voucher.is_active === 1 ? 'on' : 'off'}"></i>
+                    <input type="hidden" name="voucherId" id="voucherId" value="${voucher.id}">
+                  </button>
                 </form>
               </td>
             `;
@@ -234,19 +237,19 @@
         .catch(error => console.error(error));
     });
 
-    //konfirmasi hapus data
-    function deleteConfirmation(id) {
+    //konfirmasi ubah status data
+    function toggleConfirmation() {
       Swal.fire({
-        title: "Yakin ingin menghapus?",
-        text: "Aksi ini tidak bisa mengembalikan data!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#2980B9",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+      title: "Yakin ingin mengubah status voucher?",
+      text: "Aksi ini akan mengubah status voucher!!!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2980B9",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, update it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          document.getElementById('deleteForm' + id).submit();
+        document.getElementById('toggleForm').submit();
         }
       });
     };

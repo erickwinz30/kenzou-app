@@ -191,4 +191,18 @@ class VoucherController extends Controller
 
     return $dataAllVoucher;
   }
+
+  public function toggleActivation(Request $request)
+  {
+    try {
+      $voucher = Voucher::findOrFail($request->voucherId);
+      $voucher->is_active = !$voucher->is_active;
+      $voucher->save();
+
+      return redirect('/dashboard/voucher')->with('success', 'Status voucher berhasil diubah!!!');
+    } catch (\Exception $e) {
+      Log::error("Error in ChallengeController@toggleActivation", ['error' => $e->getMessage()]);
+      return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+    }
+  }
 }

@@ -6,22 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
-    {
-        Schema::create('owned_vouchers', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
-    }
+  /**
+   * Run the migrations.
+   */
+  public function up(): void
+  {
+    Schema::create('owned_vouchers', function (Blueprint $table) {
+      $table->uuid('id')->primary();
+      $table->foreignUuid('member_id');
+      $table->foreignUuid('voucher_id');
+      $table->boolean('is_used')->default(false);
+      $table->datetime('used_date')->nullable();
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('owned_vouchers');
-    }
+  /**
+   * Reverse the migrations.
+   */
+  public function down(): void
+  {
+    Schema::dropIfExists('owned_vouchers');
+  }
 };

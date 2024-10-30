@@ -2,6 +2,7 @@
 
 use App\Models\LayananLog;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BadgeController;
 use App\Http\Controllers\KasirController;
@@ -15,8 +16,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\TransaksiController;
-use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MemberLoginController;
+use App\Http\Controllers\OwnedVoucherController;
 use App\Http\Controllers\CatatTransaksiController;
 use App\Http\Controllers\MemberRegisterController;
 
@@ -67,6 +68,8 @@ Route::middleware('isAdmin')->group(function () {
   Route::resource('/dashboard/voucher', VoucherController::class);
   Route::get('/dashboard/nonActiveFetch', [VoucherController::class, 'nonActiveFetch'])->name('voucher.nonActiveFetch');
   Route::get('/dashboard/allVoucherFetch', [VoucherController::class, 'allVoucherFetch'])->name('voucher.allVoucherFetch');
+  Route::post('/dashboard/toggle-voucher-activation', [VoucherController::class, 'toggleActivation'])->name('voucher.toggleActivation');
+
 
   //challenge & reward unit
   Route::resource('/dashboard/challenge', ChallengeController::class);
@@ -119,6 +122,10 @@ Route::middleware('auth:member')->group(function () {
   Route::get('/', [MemberController::class, 'index'])->name('homepage');
   Route::get('/register/next', [GoogleController::class, 'viewAfterGoogleCallback'])->name('register-next');
   Route::post('/register/next', [GoogleController::class, 'nextRegisterStore']);
+
+  //voucher
+  Route::get('/voucher', [OwnedVoucherController::class, 'index'])->name('voucher-index');
+  Route::post('/voucher/claim', [OwnedVoucherController::class, 'claimVoucher']);
 
   //account information page
   Route::get('/account', [MemberController::class, 'account'])->name('account');

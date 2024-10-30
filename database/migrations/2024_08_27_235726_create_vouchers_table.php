@@ -17,7 +17,7 @@ return new class extends Migration
       $table->string('description');
       $table->integer('point_needed');
       $table->decimal('discount')->nullable();
-      $table->boolean('is_active')->default(true);
+      $table->boolean('is_active')->default(false);
       $table->datetime('from_date');
       $table->datetime('to_date');
       $table->timestamps();

@@ -8,17 +8,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Voucher extends Model
 {
-    use HasFactory;
+  use HasFactory;
 
-    protected $keyType = 'string';
-    protected $guarded = ['id'];
+  protected $keyType = 'string';
+  protected $guarded = ['id'];
 
-    protected static function boot()
-    {
-        parent::boot();
+  protected static function boot()
+  {
+    parent::boot();
 
-        static::creating(function ($model) {
-            $model->{$model->getKeyName()} = Str::uuid()->toString();
-        });
-    }
+    static::creating(function ($model) {
+      $model->{$model->getKeyName()} = Str::uuid()->toString();
+    });
+  }
+
+  public function ownedVouchers()
+  {
+    return $this->hasMany(OwnedVoucher::class, 'voucher_id');
+  }
 }
