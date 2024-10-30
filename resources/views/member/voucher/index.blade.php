@@ -1,15 +1,16 @@
 @extends('member.layout.main')
 
 @section('container')
-<div class="pagetitle d-flex justify-content-between align-items-center">
+<div class="pagetitle">
   <h1>Voucher</h1>
-  <a href="{{ route('homepage') }}" class="btn btn-primary"
-    style="background-color: #012970; border-color:#012970">Kembali</a>
 </div><!-- End Page Title -->
 
 <section class="section mt-4">
   <div class="col-12">
     <h2 class="fs-5 fw-bold">Voucher yang dimiliki: </h2>
+    @if ($ownedVouchers->isEmpty())
+    <p class="text-center">Belum memiliki voucher</p>
+    @else
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
       @foreach ($ownedVouchers as $ownedVoucher)
       <div class="col">
@@ -27,10 +28,14 @@
       </div>
       @endforeach
     </div>
+    @endif
   </div>
 
   <div class="col-12 pb-5">
     <h2 class="fs-5 fw-bold">Semua Voucher</h2>
+    @if ($vouchers->isEmpty())
+    <p class="text-center">Belum ada voucher yang tersedia</p>
+    @else
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
       @foreach ($vouchers as $voucher)
       <div class="col">
@@ -69,6 +74,7 @@
       </div>
       @endforeach
     </div>
+    @endif
   </div>
 </section>
 

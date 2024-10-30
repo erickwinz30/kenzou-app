@@ -18,11 +18,7 @@ class OwnedVoucherController extends Controller
   {
     $member = Auth::guard('member')->user();
     $vouchers = Voucher::where('is_active', true)->get();
-
-    // Fetch owned vouchers with their related voucher details
-    $ownedVouchers = $member->ownedVouchers()->with('voucher')->get();
-
-    // dd($ownedVouchers);
+    $ownedVouchers = $member->ownedVouchers;
 
     return view('member.voucher.index', compact('vouchers', 'ownedVouchers'));
   }
