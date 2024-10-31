@@ -11,44 +11,38 @@
 
   <div>
     @if (Request::is('dashboard/transaksi'))
-      <div class="me-4">
-        <a href="/dashboard/transaksiBaru" class="btn btn-success">
-          <i class="bi bi-plus me-1"></i>Transaksi
-        </a>
-      </div>
+    <div class="me-4">
+      <a href="/dashboard/transaksiBaru" class="btn btn-success">
+        <i class="bi bi-plus me-1"></i>Transaksi
+      </a>
+    </div>
     @elseif(Request::is('dashboard/layanan'))
-      <div class="me-4">
-        <a href="/dashboard/layanan/create" type="button" class="btn btn-success d-inline">
-          <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
-        </a>
-        <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
-          <i class="bi bi-clock-history" style="margin-right: 2px;"></i>History
-        </a>
-      </div>
+    <div class="me-4">
+      <a href="/dashboard/layanan/create" type="button" class="btn btn-success d-inline">
+        <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
+      </a>
+      <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
+        <i class="bi bi-clock-history" style="margin-right: 2px;"></i>History
+      </a>
+    </div>
     @elseif (Request::is('dashboard/kasir'))
-      <div class="me-4">
-        <button type="button" class="btn btn-success d-inline" data-bs-toggle='modal' data-bs-target='#inputModal'>
-          <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir
-        </button>
-      </div>
-    @elseif (Request::is('dashboard/badge'))
-      <div class="me-4">
-        <a href="/dashboard/badge/create" type="button" class="btn btn-success d-inline">
-          <i class="bi bi-plus me-1"></i>Badge
-        </a>
-      </div>
+    <div class="me-4">
+      <button type="button" class="btn btn-success d-inline" data-bs-toggle='modal' data-bs-target='#inputModal'>
+        <i class="bi bi-plus" style="margin-right: 2px;"></i>Kasir
+      </button>
+    </div>
     @elseif (Request::is('dashboard/voucher'))
-      <div class="me-4">
-        <a href="/dashboard/voucher/create" type="button" class="btn btn-success d-inline">
-          <i class="bi bi-plus me-1"></i>Voucher
-        </a>
-      </div>
+    <div class="me-4">
+      <a href="/dashboard/voucher/create" type="button" class="btn btn-success d-inline">
+        <i class="bi bi-plus me-1"></i>Voucher
+      </a>
+    </div>
     @elseif (Request::is('dashboard/challenge'))
-      <div class="me-4">
-        <a href="/dashboard/challenge/create" type="button" class="btn btn-success d-inline">
-          <i class="bi bi-plus me-1"></i>Challenge
-        </a>
-      </div>
+    <div class="me-4">
+      <a href="/dashboard/challenge/create" type="button" class="btn btn-success d-inline">
+        <i class="bi bi-plus me-1"></i>Challenge
+      </a>
+    </div>
     @endif
   </div>
 

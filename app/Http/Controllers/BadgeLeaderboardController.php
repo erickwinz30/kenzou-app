@@ -1,0 +1,86 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\BadgeLeaderboard;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+
+class BadgeLeaderboardController extends Controller
+{
+  /**
+   * Display a listing of the resource.
+   */
+  public function index()
+  {
+    //
+  }
+
+  /**
+   * Show the form for creating a new resource.
+   */
+  public function create()
+  {
+    $existingRanks = BadgeLeaderboard::pluck('rank')->toArray();
+    return view('dashboard.leaderboard.create', compact('existingRanks'));
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   */
+  public function store(Request $request)
+  {
+    // dd($request->all());
+    try {
+      $validatedData = $request->validate([
+        'badge_name' => 'required|max:255',
+        'rank' => 'required|numeric',
+        'discount' => 'required|numeric',
+      ]);
+
+      $validatedData['discount'] = $validatedData['discount'] / 100;
+      $validatedData['image'] = $request->file('image')->store('badge-leaderboard-image');
+
+      BadgeLeaderboard::create($validatedData);
+
+      return redirect('/dashboard/badge')->with('success', 'Leaderboard berhasil ditambahkan');
+    } catch (\Exception $e) {
+      Log::error('Error saat penambahan data: ' . $e->getMessage());
+      Log::error('Error saat penambahan data: ' . $e->getTraceAsString());
+      return redirect('/dashboard/leaderboard')->with('error', 'Leaderboard gagal ditambahkan');
+    }
+  }
+
+  /**
+   * Display the specified resource.
+   */
+  public function show(BadgeLeaderboard $badgeLeaderboard)
+  {
+    //
+  }
+
+  /**
+   * Show the form for editing the specified resource.
+   */
+  public function edit(BadgeLeaderboard $badgeLeaderboard)
+  {
+    //
+  }
+
+  /**
+   * Update the specified resource in storage.
+   */
+  public function update(Request $request, BadgeLeaderboard $badgeLeaderboard)
+  {
+    //
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   */
+  public function destroy(BadgeLeaderboard $badgeLeaderboard)
+  {
+    //
+  }
+}

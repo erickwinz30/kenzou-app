@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Badge;
 use Illuminate\Http\Request;
+use App\Models\BadgeLeaderboard;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -15,9 +16,10 @@ class BadgeController extends Controller
    */
   public function index()
   {
-    return view('dashboard.badge.index', [
-      'badges' => Badge::all(),
-    ]);
+    $badges = Badge::all();
+    $leaderboards = BadgeLeaderboard::all();
+
+    return view('dashboard.badge.index', compact('badges', 'leaderboards'));
   }
 
   /**

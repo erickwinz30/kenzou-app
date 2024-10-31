@@ -78,5 +78,9 @@ class DatabaseSeeder extends Seeder
         'detail' => $layanan->detail,
       ]);
     }
+
+    // $member[] = [
+
+    // ];
   }
 }

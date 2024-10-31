@@ -20,6 +20,7 @@ use App\Http\Controllers\MemberLoginController;
 use App\Http\Controllers\OwnedVoucherController;
 use App\Http\Controllers\CatatTransaksiController;
 use App\Http\Controllers\MemberRegisterController;
+use App\Http\Controllers\BadgeLeaderboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,6 +64,9 @@ Route::middleware('isAdmin')->group(function () {
 
   //badge
   Route::resource('/dashboard/badge', BadgeController::class);
+
+  //badge leaderboard
+  Route::resource('/dashboard/badge-leaderboard', BadgeLeaderboardController::class);
 
   //voucher
   Route::resource('/dashboard/voucher', VoucherController::class);
