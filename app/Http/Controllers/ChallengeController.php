@@ -40,6 +40,8 @@ class ChallengeController extends Controller
         'from_date' => 'required|date',
         'to_date' => 'required|date',
         'target' => 'required|numeric',
+        'reward_type' => 'required',
+        'reward_value' => 'nullable|numeric',
       ]);
 
       $currentUnit = Unit::where('id', $request->unit_id)->first();
@@ -154,6 +156,8 @@ class ChallengeController extends Controller
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
         'unit_id' => $challenge->unit->unit_type,
+        'reward_type' => $challenge->reward_type,
+        'reward_value' => $challenge->reward_value,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -182,6 +186,8 @@ class ChallengeController extends Controller
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
         'unit_id' => $challenge->unit->unit_type,
+        'reward_type' => $challenge->reward_type,
+        'reward_value' => $challenge->reward_value,
         'is_active' => $challenge->is_active,
       ];
     }

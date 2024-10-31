@@ -18,6 +18,8 @@ return new class extends Migration
       $table->datetime('to_date');
       $table->integer('target');
       $table->foreignId('unit_id');
+      $table->string('reward_type');
+      $table->string('reward_value')->nullable();
       $table->boolean('is_active')->default(false);
       $table->timestamps();
     });

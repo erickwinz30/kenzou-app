@@ -43,6 +43,8 @@
                   <th>Sampai</th>
                   <th>Target</th>
                   <th>Satuan</th>
+                  <th>Tipe Hadiah</th>
+                  <th>Hadiah yang diperoleh</th>
                   <th>Status</th>
                   <th>Aksi</th>
                 </tr>
@@ -66,6 +68,8 @@
                   </td>
                   <td>{{ $challenge->target }}</td>
                   <td>{{ $challenge->unit->unit_type }}</td>
+                  <td>{{ $challenge->reward_type }}</td>
+                  <td>{{ $challenge->reward_value }}</td>
                   <td class="text-center align-middle" style="padding: 0;">
                     @if ($challenge->is_active === 1)
                     <span
@@ -159,6 +163,8 @@
           </td>
           <td>${challenge.target}</td>
           <td>${challenge.unit_id}</td>
+          <td>${challenge.reward_type}</td>
+          <td>${challenge.reward_value}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
             color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};
@@ -221,6 +227,8 @@
           </td>
           <td>${challenge.target}</td>
           <td>${challenge.unit_id}</td>
+          <td>${challenge.reward_type}</td>
+          <td>${challenge.reward_value}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
             color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};

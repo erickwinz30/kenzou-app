@@ -120,9 +120,9 @@ class VoucherController extends Controller
         $validatedData['discount'] = $validatedData['discount'] / 100;
       }
 
-      dd($validatedData);
+      // dd($validatedData);
 
-      // Voucher::where('id', $voucher->id)->update($validatedData);
+      Voucher::where('id', $voucher->id)->update($validatedData);
 
       return redirect('/dashboard/voucher')->with('success', 'Voucher berhasil diubah!');
     } catch (\Exception $e) {
