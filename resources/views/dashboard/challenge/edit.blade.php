@@ -71,7 +71,7 @@
               </div>
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-              <div>
+              <div class="mb-3">
                 <label for="target" class="form-label">Target</label>
                 <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
                   id="target" name="target" value="{{ old('target', $challenge->target) }}" required autofocus>
@@ -90,6 +90,37 @@
                   </select>
                 </div>
                 @error('unit_id')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="reward_type" class="form-label">Tipe Hadiah</label>
+                <select class="form-select" aria-label="Default select example" name="reward_type" id="reward_type">
+                  <option value="Pencucian" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
+                    }}>Pencucian</option>
+                  <option value="Point" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : '' }}>Point
+                  </option>
+                  <option value="Diskon" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : '' }}>Diskon
+                  </option>
+                  <option value="Freebie" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
+                    }}>Freebie</option>
+                </select>
+                @error('reward_type')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+              <div class="mb-3">
+                <label for="reward_value" class="form-label">Hadiah yang diperoleh pelanggan</label>
+                <input type="text" inputmode="numeric" class="form-control @error('reward_value') is-invalid @enderror"
+                  id="reward_value" name="reward_value" placeholder="Isi dalam bentuk angka.."
+                  value="{{ old('reward_value', $challenge->reward_value) }}" required autofocus>
+                @error('reward_value')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
