@@ -54,16 +54,29 @@
               </div>
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-              <div class="mb-3">
-                <label for="point_needed" class="form-label @error('point_needed') is-invalid @enderror">Point yang
-                  Diperlukan</label>
-                <input type="text" inputmode="numeric" class="form-control" id="point_needed" name="point_needed"
-                  value="{{ old('point_needed', $voucher->point_needed) }}" required autofocus>
-                @error('point_needed')
-                <div class="invalid-feedback">
-                  {{ $message }}
+              <div>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                  <div class="mb-3">
+                    <label for="point_needed" class="form-label @error('point_needed') is-invalid @enderror">Point yang
+                      Diperlukan</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="point_needed" name="point_needed"
+                      value="{{ old('point_needed', $voucher->point_needed) }}" required autofocus>
+                    @error('point_needed')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                    @enderror
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="inputGroupSelect02">Status</label>
+                    <select class="form-select" id="inputGroupSelect02" name="is_active">
+                      <option value="0" {{ old('is_active', $voucher->is_active) == 0 ? 'selected' : '' }}>Tidak
+                      </option>
+                      <option value="1" {{ old('is_active', $voucher->is_active) == 1 ? 'selected' : '' }}>Aktif
+                      </option>
+                    </select>
+                  </div>
                 </div>
-                @enderror
               </div>
               <div class="mb-3">
                 <label for="discount" class="form-label @error('discount') is-invalid @enderror">Diskon</label>
@@ -81,13 +94,20 @@
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
               <div class="mb-3">
-                <label class="form-label" for="inputGroupSelect02">Status</label>
-                <select class="form-select" id="inputGroupSelect02" name="is_active">
-                  <option value="0" {{ old('is_active', $voucher->is_active) == 0 ? 'selected' : '' }}>Tidak
-                  </option>
-                  <option value="1" {{ old('is_active', $voucher->is_active) == 1 ? 'selected' : '' }}>Aktif
-                  </option>
-                </select>
+                <label for="minimum_transaction" class="form-label">Minimum Transaksi</label>
+                <div class="input-group">
+                  <span class="input-group-text" id="inputGroupPrepend">Rp</span>
+                  <input type="text" inputmode="numeric"
+                    class="form-control @error('minimum_transaction') is-invalid @enderror" id="minimum_transaction"
+                    name="minimum_transaction" value={{ number_format(old('minimum_transaction',
+                    $voucher->minimum_transaction), 0, ',', '.') }}
+                  required autofocus>
+                </div>
+                @error('minimum_transaction')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
               </div>
               <div>
                 <div class="text-center">

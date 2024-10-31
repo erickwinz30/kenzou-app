@@ -39,7 +39,8 @@ class VoucherController extends Controller
         'nama' => 'required|min:3|max:255',
         'description' => 'required|max:255',
         'point_needed' => 'required|numeric',
-        'discount' => 'required|numeric',
+        'discount' => 'required|decimal',
+        'minimum_transaction' => 'required|numeric',
         'from_date' => 'required|date',
         'to_date' => 'required|date',
       ]);
@@ -88,15 +89,20 @@ class VoucherController extends Controller
         $rules['description'] = 'required|max:255';
       }
 
-      if ($request->point_needed !== $voucher->point_needed) {
+      if ($request->point_needed != $voucher->point_needed) {
         $rules['point_needed'] = 'required|numeric';
       }
 
-      if ($request->discount !== $voucher->discount) {
-        $rules['discount'] = 'required|numeric';
+      if (round(floatval($request->discount), 2) !== round($voucher->discount * 100, 2)) {
+        $rules['discount'] = 'required|decimal';
       }
 
-      if ($request->is_active !== $voucher->is_active) {
+      $minimumTransaction = floatval(str_replace(['.', ','], ['', '.'], $request->minimum_transaction));
+      if ($minimumTransaction != $voucher->minimum_transaction) {
+        $rules['minimum_transaction'] = 'required|numeric';
+      }
+
+      if ($request->is_active != $voucher->is_active) {
         $rules['is_active'] = 'required|boolean';
       }
 
@@ -110,11 +116,13 @@ class VoucherController extends Controller
 
       $validatedData = $request->validate($rules);
 
-      if ($validatedData['discount']) {
+      if (round(floatval($request->discount), 2) !== round($voucher->discount * 100, 2)) {
         $validatedData['discount'] = $validatedData['discount'] / 100;
       }
 
-      Voucher::where('id', $voucher->id)->update($validatedData);
+      dd($validatedData);
+
+      // Voucher::where('id', $voucher->id)->update($validatedData);
 
       return redirect('/dashboard/voucher')->with('success', 'Voucher berhasil diubah!');
     } catch (\Exception $e) {

@@ -51,6 +51,7 @@
                   <th>Deskripsi</th>
                   <th>Keperluan Point</th>
                   <th>Diskon</th>
+                  <th>Minimum Transaksi</th>
                   <th>Status</th>
                   <th>Tanggal Awal</th>
                   <th>Tanggal Akhir</th>
@@ -65,6 +66,7 @@
                   <td>{{ $voucher->description }}</td>
                   <td>{{ $voucher->point_needed }}</td>
                   <td>{{ $voucher->discount * 100 }}%</td>
+                  <td>Rp {{ number_format($voucher->minimum_transaction, 0, ',', '.') }}</td>
                   <td class="text-center align-middle" style="padding: 0;">
                     @if ($voucher->is_active === 1)
                     <span
