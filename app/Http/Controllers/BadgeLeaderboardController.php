@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\BadgeLeaderboard;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 
 class BadgeLeaderboardController extends Controller
 {
@@ -65,7 +66,9 @@ class BadgeLeaderboardController extends Controller
    */
   public function edit(BadgeLeaderboard $badgeLeaderboard)
   {
-    //
+    return view('dashboard.leaderboard.edit', [
+      'leaderboard' => $badgeLeaderboard,
+    ]);
   }
 
   /**
@@ -73,7 +76,47 @@ class BadgeLeaderboardController extends Controller
    */
   public function update(Request $request, BadgeLeaderboard $badgeLeaderboard)
   {
-    //
+    try {
+      $rules = [];
+
+      if ($request->badge_name !== $badgeLeaderboard->badge_name) {
+        $rules['badge_name'] = 'required|max:255';
+      }
+
+      if ($request->rank != $badgeLeaderboard->rank) {
+        $rules['rank'] = 'required|numeric';
+      }
+
+      if (round(floatval($request->discount), 2) !== round($badgeLeaderboard->discount * 100, 2)) {
+        $rules['discount'] = 'required|numeric|between:0,99.99';
+      }
+
+      if (empty($rules) && !$request->hasFile('image')) {
+        return redirect()->back()->with('error', 'Tidak ada data yang diupdate!!');
+      }
+
+      $validatedData = $request->validate($rules);
+
+      if ($request->hasFile('image')) {
+        if ($badgeLeaderboard->image) {
+          Storage::delete($badgeLeaderboard->image);
+        }
+        $validatedData['image'] = $request->file('image')->store('badge-image');
+      }
+
+      if (isset($validatedData['discount'])) {
+        $validatedData['discount'] = $validatedData['discount'] / 100;
+      }
+
+      $updated = $badgeLeaderboard->update($validatedData);
+      Log::info('Data Badge Leaderboard berhasil diupdate: ' . $updated);
+
+      return redirect('/dashboard/badge')->with('success', 'Badge untuk Leaderboard berhasil diupdate');
+    } catch (\Exception $e) {
+      Log::error('Error saat update data: ' . $e->getMessage());
+      Log::error('Error saat update data: ' . $e->getTraceAsString());
+      return redirect('/dashboard/leaderboard')->with('error', 'Leaderboard gagal diupdate');
+    }
   }
 
   /**
@@ -81,6 +124,11 @@ class BadgeLeaderboardController extends Controller
    */
   public function destroy(BadgeLeaderboard $badgeLeaderboard)
   {
-    //
+    if ($badgeLeaderboard->image) {
+      Storage::delete($badgeLeaderboard->image);
+    }
+    BadgeLeaderboard::destroy($badgeLeaderboard->id);
+
+    return redirect('/dashboard/badge')->with('success', 'Badge Leaderboard telah berhasil dihapus!');
   }
 }

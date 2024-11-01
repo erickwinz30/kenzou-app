@@ -6,6 +6,7 @@ use App\Models\Member;
 use App\Models\PointLog;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -20,8 +21,15 @@ class MemberController extends Controller
 
   public function account()
   {
+    $member = Auth::guard('member')->user();
+    $badge = DB::table('badges')
+      ->where('min_point', '<=', $member->experience_point)
+      ->where('max_point', '>=', $member->experience_point)
+      ->first();
+
     return view('member.more.index', [
-      'information' => Auth::guard('member')->user(),
+      'information' => $member,
+      'badge' => $badge,
     ]);
   }
 
