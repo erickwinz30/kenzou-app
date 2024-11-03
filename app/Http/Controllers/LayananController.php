@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Layanan;
+use App\Models\LayananLog;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
-use App\Models\LayananLog;
+use App\Models\CategoryLayanan;
+use App\Http\Controllers\Controller;
 
 class LayananController extends Controller
 {
@@ -17,6 +19,7 @@ class LayananController extends Controller
   {
     return view('dashboard.layanan.index', [
       'layanans' => Layanan::all(),
+      'categories' => CategoryLayanan::all(),
     ]);
   }
 

@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Layanan;
 use App\Models\LayananLog;
+use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -36,6 +37,23 @@ class DatabaseSeeder extends Seeder
       'password' => bcrypt('hanyang123'),
     ]);
 
+    $categories = [
+      [
+        'name' => 'Cuci',
+      ],
+      [
+        'name' => 'Detailing',
+      ],
+      [
+        'name' => 'Lainnya',
+      ]
+    ];
+
+    foreach ($categories as $category) {
+      CategoryLayanan::factory()->create($category);
+    }
+
+
     $layanans = [
       [
         'nama_layanan' => 'Cuci Eksterior',
@@ -43,6 +61,7 @@ class DatabaseSeeder extends Seeder
         'point' => 2,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
+        'category_layanan_id' => 1,
       ],
       [
         'nama_layanan' => 'Cuci Interior',
@@ -50,6 +69,7 @@ class DatabaseSeeder extends Seeder
         'point' => 2,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pembersihan interior dengan cairan pembersih dan vacuum',
+        'category_layanan_id' => 1,
       ],
       [
         'nama_layanan' => 'Wax',
@@ -57,6 +77,7 @@ class DatabaseSeeder extends Seeder
         'point' => 5,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian cairan obat untuk cat pada mobil',
+        'category_layanan_id' => 2,
       ],
       [
         'nama_layanan' => 'Fogging',
@@ -64,6 +85,7 @@ class DatabaseSeeder extends Seeder
         'point' => 3,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian asap/uap disinfektan',
+        'category_layanan_id' => 3,
       ],
     ];
 

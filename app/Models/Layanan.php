@@ -10,6 +10,12 @@ class Layanan extends Model
 {
   use HasFactory;
   protected $guarded = ['id'];
+  protected $with = ['categoryLayanan'];
+
+  public function categoryLayanan()
+  {
+    return $this->belongsTo(CategoryLayanan::class, 'category_layanan_id');
+  }
 
   public function transaksi()
   {

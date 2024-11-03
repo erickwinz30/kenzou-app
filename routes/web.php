@@ -20,6 +20,7 @@ use App\Http\Controllers\MemberLoginController;
 use App\Http\Controllers\OwnedVoucherController;
 use App\Http\Controllers\CatatTransaksiController;
 use App\Http\Controllers\MemberRegisterController;
+use App\Http\Controllers\CategoryLayananController;
 use App\Http\Controllers\BadgeLeaderboardController;
 
 /*
@@ -53,6 +54,9 @@ Route::middleware('isAdmin')->group(function () {
   //layanan
   Route::resource('/dashboard/layanan', LayananController::class);
   Route::get('/dashboard/layananLog', [LayananController::class, 'history'])->name('layanan.history');
+
+  //category layanan
+  Route::resource('dashboard/category-layanan', CategoryLayananController::class);
 
   //kasir
   Route::resource('/dashboard/kasir', KasirController::class);
