@@ -48,7 +48,6 @@ class LayananController extends Controller
     // dd($validatedData);
 
     $layanan = Layanan::create($validatedData);
-
     $validatedData['layanan_id'] = $layanan->id;
 
     LayananLog::create($validatedData);
@@ -61,7 +60,9 @@ class LayananController extends Controller
    */
   public function show(Layanan $layanan)
   {
-    //
+    return view('dashboard.layanan.view', [
+      'layanan' => $layanan,
+    ]);
   }
 
   /**

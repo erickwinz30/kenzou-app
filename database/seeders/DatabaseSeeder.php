@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
     $layanans = [
       [
         'nama_layanan' => 'Cuci Eksterior',
-        'harga' => '60000',
+        'harga' => '80000',
         'point' => 2,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
@@ -73,7 +73,7 @@ class DatabaseSeeder extends Seeder
       ],
       [
         'nama_layanan' => 'Wax',
-        'harga' => '70000',
+        'harga' => '120000',
         'point' => 5,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian cairan obat untuk cat pada mobil',
@@ -81,7 +81,7 @@ class DatabaseSeeder extends Seeder
       ],
       [
         'nama_layanan' => 'Fogging',
-        'harga' => '35000',
+        'harga' => '50000',
         'point' => 3,
         'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian asap/uap disinfektan',
@@ -100,9 +100,5 @@ class DatabaseSeeder extends Seeder
         'detail' => $layanan->detail,
       ]);
     }
-
-    // $member[] = [
-
-    // ];
   }
 }

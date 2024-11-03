@@ -12,12 +12,6 @@
 </div><!-- End Page Title -->
 
 @if (session()->has('success'))
-{{-- <div class="row justify-content-center">
-  <div class="alert alert-success alert-dismissible fade show col-lg-10 justify-content-center" role="alert">
-    {{ session('success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-</div> --}}
 <x-alert-success type="success" :message="session('success')" />
 @endif
 
@@ -49,6 +43,7 @@
                   <th>Harga</th>
                   <th>Point</th>
                   <th>Detail</th>
+                  <th>Kategori</th>
                   <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Buat</th>
                   <th>Aksi</th>
                 </tr>
@@ -61,6 +56,7 @@
                   <td>Rp {{ number_format($layanan->harga, 0, ',', '.') }}</td>
                   <td>{{ $layanan->point }}</td>
                   <td>{{ Str::limit($layanan->detail, 20) }}</td>
+                  <td>{{ $layanan->categoryLayanan->name }}</td>
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
                       style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
@@ -68,6 +64,7 @@
                     </span>
                   </td>
                   <td>
+                    <a href="/dashboard/layanan/{{ $layanan->id }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
                     <a href="/dashboard/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
                         class="bi bi-pencil"></i></a>
                     <form action="/dashboard/layanan/{{ $layanan->id }}" method="POST" class="d-inline"
