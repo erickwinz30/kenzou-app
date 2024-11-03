@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\Challenge;
 use App\Models\Unit;
+use App\Models\Member;
+use App\Models\Challenge;
 use Illuminate\Http\Request;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
@@ -61,6 +63,21 @@ class ChallengeController extends Controller
 
       $newChallenge = Challenge::create($validatedData);
       Log::info('New Challenge created', ['challenge' => $newChallenge]);
+
+      $newChallengeId = Challenge::where('description', $newChallenge->description)->first();
+      Log::info('New Challenge ID', ['id' => $newChallengeId->id]);
+
+      $allMember = Member::all();
+
+      foreach ($allMember as $member) {
+        $newChallengeProgress = ChallengeProgress::create([
+          'challenge_id' => $newChallengeId->id,
+          'member_id' => $member->id,
+          'progress' => 0,
+        ]);
+
+        Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
+      }
 
       return redirect('/dashboard/challenge')->with('success', 'Challenge baru berhasil ditambahkan!!!');
     } catch (\Exception $e) {

@@ -65,4 +65,9 @@ class Member extends Authenticatable
   {
     return $this->hasMany(OwnedVoucher::class, 'member_id');
   }
+
+  public function challengeProgress()
+  {
+    return $this->hasMany(ChallengeProgress::class, 'member_id');
+  }
 }

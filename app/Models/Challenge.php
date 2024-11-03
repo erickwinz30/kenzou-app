@@ -12,7 +12,18 @@ class Challenge extends Model
   use HasFactory;
 
   protected $keyType = 'string';
-  protected $guarded = ['id'];
+
+  protected $fillable = [
+    'description',
+    'from_date',
+    'to_date',
+    'target',
+    'unit_id',
+    'reward_type',
+    'reward_value',
+    'is_active',
+  ];
+
 
   protected static function boot()
   {
@@ -26,5 +37,10 @@ class Challenge extends Model
   public function unit()
   {
     return $this->belongsTo(Unit::class, 'unit_id');
+  }
+
+  public function progress()
+  {
+    return $this->hasMany(ChallengeProgress::class, 'challenge_id');
   }
 }

@@ -73,12 +73,12 @@
                   <td class="text-center align-middle" style="padding: 0;">
                     @if ($challenge->is_active === 1)
                     <span
-                      style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
                       Aktif
                     </span>
                     @else
                     <span
-                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
                       Tidak Aktif
                     </span>
                     @endif
@@ -151,13 +151,13 @@
           <td>${challenge.description}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
-              style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+              style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
               ${challenge.from_date}
             </span>
           </td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
-              style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+              style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
               ${challenge.to_date}
             </span>
           </td>
@@ -215,13 +215,13 @@
           <td>${challenge.description}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
-              style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+              style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
               ${challenge.from_date}
             </span>
           </td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
-              style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+              style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
               ${challenge.to_date}
             </span>
           </td>

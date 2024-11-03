@@ -13,17 +13,21 @@
           <h1 class="fs-1 fw-bold text-center">{{ $information->nama }}</h1>
           <div class="mb-4">
             <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>
-            <div class="progress" role="progressbar" aria-label="Basic example"
-              aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
-              aria-valuemax="{{ $badge->max_point }}">
-              @php
-              // Calculate the progress percentage
-              $progressPercentage = (($information->experience_point - $badge->min_point) /
-              ($badge->max_point - $badge->min_point)) * 100;
-              @endphp
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="progress w-100" role="progressbar" aria-label="Basic example"
+                aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
+                aria-valuemax="{{ $badge->max_point }}">
+                @php
+                // Calculate the progress percentage
+                $progressPercentage = (($information->experience_point - $badge->min_point) /
+                ($badge->max_point - $badge->min_point)) * 100;
+                @endphp
 
-              <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
+                <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
+              </div>
+              <p class="card-text ms-2">{{ round($progressPercentage) }}%</p>
             </div>
+
           </div>
           <div class="d-flex justify-content-center">
             <h2 class="fs-4 text-center"><strong>Exp: </strong> {{ $information->experience_point }} Point</h2>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,7 +17,13 @@ class MemberController extends Controller
 {
   public function index()
   {
-    return view('member.index');
+    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->get();
+    // foreach ($listChallenge as $challenge) {
+    //   echo $challenge->challenge;
+    // }
+    return view('member.index', [
+      'challengeProgress' => $listChallenge,
+    ]);
   }
 
   public function account()
