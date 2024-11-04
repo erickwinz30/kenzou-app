@@ -67,7 +67,7 @@
                     </span>
                   </td>
                   <td>{{ $challenge->target }}</td>
-                  <td>{{ $challenge->unit->unit_type }}</td>
+                  <td>{{ $challenge->unit }}</td>
                   <td>{{ $challenge->reward_type }}</td>
                   <td>{{ $challenge->reward_value }}</td>
                   <td class="text-center align-middle" style="padding: 0;">
@@ -162,7 +162,7 @@
             </span>
           </td>
           <td>${challenge.target}</td>
-          <td>${challenge.unit_id}</td>
+          <td>${challenge.unit}</td>
           <td>${challenge.reward_type}</td>
           <td>${challenge.reward_value}</td>
           <td class="text-center align-middle" style="padding: 0;">
@@ -226,7 +226,7 @@
             </span>
           </td>
           <td>${challenge.target}</td>
-          <td>${challenge.unit_id}</td>
+          <td>${challenge.unit}</td>
           <td>${challenge.reward_type}</td>
           <td>${challenge.reward_value}</td>
           <td class="text-center align-middle" style="padding: 0;">

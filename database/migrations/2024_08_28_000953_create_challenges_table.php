@@ -17,7 +17,7 @@ return new class extends Migration
       $table->datetime('from_date');
       $table->datetime('to_date');
       $table->integer('target');
-      $table->foreignId('unit_id');
+      $table->string('unit');
       $table->string('reward_type');
       $table->string('reward_value')->nullable();
       $table->boolean('is_active')->default(false);

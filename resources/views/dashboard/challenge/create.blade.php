@@ -34,7 +34,7 @@
               <div class="mb-3">
                 <label for="description" class="form-label">Deskripsi</label>
                 <input type="text" class="form-control @error('description') is-invalid @enderror" id="description"
-                  name="description" required autofocus>
+                  name="description" placeholder="Masukkan deksripsinya.." required autofocus>
                 @error('description')
                 <div class="invalid-feedback">
                   {{ $message }}
@@ -69,22 +69,27 @@
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
               <div class="mb-3">
-                <label for="target" class="form-label">Target</label>
-                <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
-                  id="target" name="target" required autofocus>
-                @error('target')
+                <label for="unit" class="form-label">Satuan</label>
+                <div class="input-group d-flex">
+                  <select class="form-select @error('unit') is-invalid @enderror" name="unit" id="unit"
+                    aria-label="Default select example">
+                    <option style="color: grey" selected disabled>Pilih satuannya...</option>
+                    <option value="Transaksi">Per Transaksi</option>
+                    <option value="Total Pengeluaran Member">Total pengeluaran member selama periode</option>
+                    <option value="Point">Perolehan point member selama periode</option>
+                  </select>
+                </div>
+                @error('unit')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
                 @enderror
               </div>
-              <div class="mb-3 unit-input-container">
-                <label for="unit" class="form-label">Satuan</label>
-                <div class="input-group d-flex">
-                  <select class="js-unit-tags" name="unit_id" id="unit_id">
-                  </select>
-                </div>
-                @error('unit_id')
+              <div class="mb-3">
+                <label for="target" class="form-label">Target</label>
+                <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
+                  id="target" name="target" placeholder="Isi dalam bentuk angka.." required autofocus>
+                @error('target')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
@@ -94,12 +99,22 @@
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
               <div class="mb-3">
                 <label for="reward_type" class="form-label">Tipe Hadiah</label>
-                <select class="form-select" aria-label="Default select example" name="reward_type" id="reward_type">
+                <select class="form-select @error('reward_type') is-invalid @enderror"
+                  aria-label="Default select example" name="reward_type" id="reward_type">
                   <option selected style="color: gray" disabled>Silahkan pilih hadiahnya...</option>
-                  <option value="Pencucian">Pencucian</option>
-                  <option value="Point">Point</option>
-                  <option value="Diskon">Diskon</option>
-                  <option value="Freebie">Freebie</option>
+                  {{-- <option value="Pencucian">Pencucian</option> --}}
+                  @foreach ( $categories as $category)
+                  <optgroup label="{{ $category->name }}">
+                    @foreach ($category->layanans as $layanan)
+                    <option value="{{ $layanan->nama_layanan }}">{{ $layanan->nama_layanan }}</option>
+                    @endforeach
+                  </optgroup>
+                  @endforeach
+                  <optgroup label="Atau">
+                    <option value="Point">Point</option>
+                    <option value="Diskon">Diskon</option>
+                    <option value="Freebie">Freebie</option>
+                  </optgroup>
                 </select>
                 @error('reward_type')
                 <div class="invalid-feedback">
@@ -128,40 +143,4 @@
     </div>
   </div>
 </section>
-
-<script>
-  $(document).ready(function() {
-      var $select = $(".js-unit-tags").select2({
-        tags: true,
-        placeholder: "Pilih atau masukkan unit baru...",
-        allowClear: true,
-        ajax: {
-          url: '/dashboard/fetchUnits', // URL endpoint untuk memuat data
-          dataType: 'json',
-          delay: 250,
-          data: function(params) {
-            return {
-              q: params.term // istilah pencarian
-            };
-          },
-          processResults: function(data) {
-            return {
-              results: data.map(function(unit) {
-                return {
-                  id: unit.id,
-                  text: unit.unit_type
-                };
-              })
-            };
-          },
-          cache: true
-        }
-      });
-
-      // Event listener untuk menghapus pilihan
-      $select.on('select2:unselecting', function(e) {
-        $(this).val(null).trigger('change');
-      });
-    });
-</script>
 @endsection

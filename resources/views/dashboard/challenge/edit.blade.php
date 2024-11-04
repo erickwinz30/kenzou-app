@@ -72,24 +72,29 @@
             </div>
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
               <div class="mb-3">
-                <label for="target" class="form-label">Target</label>
-                <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
-                  id="target" name="target" value="{{ old('target', $challenge->target) }}" required autofocus>
-                @error('target')
+                <label for="unit" class="form-label">Satuan</label>
+                <div class="input-group d-flex">
+                  <select class="form-select" name="unit" id="unit">
+                    <option value="Transaksi" {{ old('unit', $challenge->unit) == 0 ? 'selected' : '' }}>Per Transaksi
+                    </option>
+                    <option value="Total Pengeluaran Member" {{ old('unit', $challenge->unit) == 0 ? 'selected' : ''
+                      }}>Total pengeluaran member selama periode</option>
+                    <option value="Point" {{ old('unit', $challenge->unit) == 0 ? 'selected' : '' }}>Perolehan point
+                      member selama periode</option>
+                    </option>
+                  </select>
+                </div>
+                @error('unit')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
                 @enderror
               </div>
-              <div class="mb-3 unit-input-container">
-                <label for="unit" class="form-label">Satuan</label>
-                <div class="input-group d-flex">
-                  <select class="js-unit-tags" name="unit_id" id="unit_id">
-                    {{-- <option value="{{ $challenge->unit_id }}" selected>{{ $challenge->unit->unit_type }}
-                    </option> --}}
-                  </select>
-                </div>
-                @error('unit_id')
+              <div class="mb-3">
+                <label for="target" class="form-label">Target</label>
+                <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
+                  id="target" name="target" value="{{ old('target', $challenge->target) }}" required autofocus>
+                @error('target')
                 <div class="invalid-feedback">
                   {{ $message }}
                 </div>
@@ -100,14 +105,23 @@
               <div class="mb-3">
                 <label for="reward_type" class="form-label">Tipe Hadiah</label>
                 <select class="form-select" aria-label="Default select example" name="reward_type" id="reward_type">
-                  <option value="Pencucian" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
-                    }}>Pencucian</option>
-                  <option value="Point" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : '' }}>Point
-                  </option>
-                  <option value="Diskon" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : '' }}>Diskon
-                  </option>
-                  <option value="Freebie" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
-                    }}>Freebie</option>
+                  @foreach ( $categories as $category)
+                  <optgroup label="{{ $category->name }}">
+                    @foreach ($category->layanans as $layanan)
+                    <option value="{{ $layanan->id }}" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected'
+                      : ''
+                      }}>{{ $layanan->nama_layanan }}</option>
+                    @endforeach
+                  </optgroup>
+                  @endforeach
+                  <optgroup label="Atau">
+                    <option value="Point" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
+                      }}>Point</option>
+                    <option value="Diskon" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
+                      }}>Diskon</option>
+                    <option value="Freebie" {{ old('reward_type', $challenge->reward_type) == 0 ? 'selected' : ''
+                      }}>Freebie</option>
+                  </optgroup>
                 </select>
                 @error('reward_type')
                 <div class="invalid-feedback">
@@ -139,49 +153,7 @@
 </section>
 
 <script>
-  $(document).ready(function() {
-      var $select = $(".js-unit-tags").select2({
-        tags: true,
-        placeholder: "Pilih atau masukkan unit baru...",
-        allowClear: true,
-        ajax: {
-          url: '/dashboard/fetchUnits', // URL endpoint untuk memuat data
-          dataType: 'json',
-          delay: 250,
-          data: function(params) {
-            return {
-              q: params.term // istilah pencarian
-            };
-          },
-          processResults: function(data) {
-            return {
-              results: data.map(function(unit) {
-                return {
-                  id: unit.id,
-                  text: unit.unit_type
-                };
-              })
-            };
-          },
-          cache: true
-        }
-      });
-
-      // Event listener untuk menghapus pilihan
-      $select.on('select2:unselecting', function(e) {
-        $(this).val(null).trigger('change');
-      });
-
-      // Set nilai awal pada Select2
-      var initialUnitId = "{{ $challenge->unit->id }}";
-      var initialUnitText = "{{ $challenge->unit->unit_type }}";
-      if (initialUnitId && initialUnitText) {
-        var option = new Option(initialUnitText, initialUnitId, true, true);
-        $select.append(option).trigger('change');
-      }
-    });
-
-    function editConfirmation() {
+  function editConfirmation() {
       Swal.fire({
         title: "Yakin ingin mengubah data voucher?",
         text: "Aksi ini tidak bisa mengembalikan data!",

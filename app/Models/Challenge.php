@@ -18,7 +18,7 @@ class Challenge extends Model
     'from_date',
     'to_date',
     'target',
-    'unit_id',
+    'unit',
     'reward_type',
     'reward_value',
     'is_active',
@@ -32,11 +32,6 @@ class Challenge extends Model
     static::creating(function ($model) {
       $model->{$model->getKeyName()} = Str::uuid()->toString();
     });
-  }
-
-  public function unit()
-  {
-    return $this->belongsTo(Unit::class, 'unit_id');
   }
 
   public function progress()

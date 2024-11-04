@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Unit;
 use App\Models\Member;
+use App\Models\Layanan;
 use App\Models\Challenge;
 use Illuminate\Http\Request;
 use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\CategoryLayanan;
 
 class ChallengeController extends Controller
 {
@@ -28,7 +30,9 @@ class ChallengeController extends Controller
    */
   public function create()
   {
-    return view('dashboard.challenge.create');
+    return view('dashboard.challenge.create', [
+      'categories' => CategoryLayanan::all(),
+    ]);
   }
 
   /**
@@ -41,43 +45,32 @@ class ChallengeController extends Controller
         'description' => 'required|max:255',
         'from_date' => 'required|date',
         'to_date' => 'required|date',
+        'unit' => 'required',
         'target' => 'required|numeric',
         'reward_type' => 'required',
         'reward_value' => 'nullable|numeric',
       ]);
 
-      $currentUnit = Unit::where('id', $request->unit_id)->first();
-      if (!$currentUnit) {
-        $newUnit = Unit::create([
-          'unit_type' => $request->unit_id,
-        ]);
-
-        Log::info('New Reward Unit created', ['unit' => $newUnit]);
-
-        $newUnitId = Unit::where('unit_type', $newUnit->unit_type)->first();
-
-        $validatedData['unit_id'] = $newUnitId->id;
-      } else {
-        $validatedData['unit_id'] = $request->unit_id;
-      }
-
       $newChallenge = Challenge::create($validatedData);
       Log::info('New Challenge created', ['challenge' => $newChallenge]);
 
-      $newChallengeId = Challenge::where('description', $newChallenge->description)->first();
-      Log::info('New Challenge ID', ['id' => $newChallengeId->id]);
+      // $newChallengeId = Challenge::where('description', $newChallenge->description)->first();
+      // Log::info('New Challenge ID', ['id' => $newChallengeId->id]);
 
       $allMember = Member::all();
 
-      foreach ($allMember as $member) {
-        $newChallengeProgress = ChallengeProgress::create([
-          'challenge_id' => $newChallengeId->id,
-          'member_id' => $member->id,
-          'progress' => 0,
-        ]);
+      if ($allMember) {
+        foreach ($allMember as $member) {
+          $newChallengeProgress = ChallengeProgress::create([
+            'challenge_id' => $newChallenge->id,
+            'member_id' => $member->id,
+            'progress' => 0,
+          ]);
 
-        Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
+          Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
+        }
       }
+
 
       return redirect('/dashboard/challenge')->with('success', 'Challenge baru berhasil ditambahkan!!!');
     } catch (\Exception $e) {
@@ -102,6 +95,7 @@ class ChallengeController extends Controller
   {
     return view('dashboard.challenge.edit', [
       'challenge' => $challenge,
+      'categories' => CategoryLayanan::all(),
     ]);
   }
 
@@ -172,7 +166,7 @@ class ChallengeController extends Controller
         'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
-        'unit_id' => $challenge->unit->unit_type,
+        'unit' => $challenge->unit,
         'reward_type' => $challenge->reward_type,
         'reward_value' => $challenge->reward_value,
         'is_active' => $challenge->is_active,
@@ -202,7 +196,7 @@ class ChallengeController extends Controller
         'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
         'target' => $challenge->target,
-        'unit_id' => $challenge->unit->unit_type,
+        'unit' => $challenge->unit,
         'reward_type' => $challenge->reward_type,
         'reward_value' => $challenge->reward_value,
         'is_active' => $challenge->is_active,
