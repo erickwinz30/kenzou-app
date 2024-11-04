@@ -15,23 +15,24 @@
             <div class="card-body p-3">
               <div>
                 <h5 class="card-title p-0">{{ $progress->challenge->description }}</h5>
-              </div>
-              {{-- <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                <p class="card-text mt-3">Berlaku hingga: {{
+                  \Carbon\Carbon::parse($progress->challenge->to_date)->format('d
+                  F Y') }}</p>
                 <div class="d-flex justify-content-between align-items-center">
                   <div class="progress w-100" role="progressbar" aria-label="Basic example"
-                    aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
-                    aria-valuemax="{{ $badge->max_point }}">
+                    aria-valuenow="{{ $progress->progress }}" aria-valuemin="0"
+                    aria-valuemax="{{ $progress->challenge->target }}">
                     @php
                     // Calculate the progress percentage
-                    $progressPercentage = (($information->experience_point - $badge->min_point) /
-                    ($badge->max_point - $badge->min_point)) * 100;
+                    $progressPercentage = ($progress->progress /
+                    $progress->challenge->target);
                     @endphp
 
                     <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
                   </div>
-                  <p class="card-text ms-2">{{ round($progressPercentage) }}%</p>
+                  <p class="card-text ms-2">{{ $progressPercentage }}%</p>
                 </div>
-              </div> --}}
+              </div>
             </div>
           </div>
         </div>

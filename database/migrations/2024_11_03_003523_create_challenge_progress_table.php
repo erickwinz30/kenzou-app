@@ -15,7 +15,7 @@ return new class extends Migration
       $table->uuid('id')->primary();
       $table->foreignUuid('challenge_id');
       $table->foreignUuid('member_id');
-      $table->integer('progress');
+      $table->integer('progress')->default(0);
       $table->boolean('is_completed')->default(false);
       $table->datetime('completed_at')->nullable();
       $table->timestamps();

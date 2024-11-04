@@ -27,7 +27,6 @@
               </div>
               <p class="card-text ms-2">{{ round($progressPercentage) }}%</p>
             </div>
-
           </div>
           <div class="d-flex justify-content-center">
             <h2 class="fs-4 text-center"><strong>Exp: </strong> {{ $information->experience_point }} Point</h2>
@@ -52,7 +51,9 @@
               <a href="{{ route('point-history') }}" class="card-text fs-5 text-decoration-none text-reset">Riwayat
                 Point</a>
               <hr class="my-2">
-              <a href="#" class="card-text fs-5 text-decoration-none text-reset mb-3">Feedback ke Kenzou</a>
+              <a href="#" class="card-text fs-5 text-decoration-none text-reset">Feedback ke Kenzou</a>
+              <hr class="my-2">
+              <a href="/logout" class="card-text fs-5 text-decoration-none text-reset mb-3">Logout</a>
             </div>
           </div>
         </div>

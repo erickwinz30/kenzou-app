@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\PointLog;
+use App\Models\Challenge;
 use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +68,8 @@ class GoogleController extends Controller
         $memberCheck = Member::where('email', $newMember->email)->first();
 
         Auth::guard('member')->login($memberCheck);
+
+        $this->addChallengeProgress($memberCheck->id);
 
         session()->regenerate();
 
@@ -196,6 +200,23 @@ class GoogleController extends Controller
         $errorTrace = $e->getTraceAsString();
         Log::error('Error during Google sign-in: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
         return redirect()->route('register-next')->with('error', $errorMessage);
+      }
+    }
+  }
+
+  private function addChallengeProgress($memberId)
+  {
+    $allChallenge = Challenge::all();
+
+    if ($allChallenge) {
+      foreach ($allChallenge as $challenge) {
+        $newChallengeProgress = ChallengeProgress::create([
+          'challenge_id' => $challenge->id,
+          'member_id' => $memberId,
+          'progress' => 0,
+        ]);
+
+        Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
       }
     }
   }
