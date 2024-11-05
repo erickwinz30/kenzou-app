@@ -24,7 +24,17 @@
               <tbody>
                 @foreach ($leaderboards as $member)
                 <tr>
-                  <td>{{ $loop->iteration }}</td>
+                  <td>
+                    @if ($loop->iteration == 1)
+                    <img src="{{ asset('storage/' . $rankFirst) }}" alt="Badge Rank First" style="max-width: 100px">
+                    @elseif ($loop->iteration == 2)
+                    <img src="{{ asset('storage/' . $rankSecond) }}" alt="Badge Rank Second" style="max-width: 100px">
+                    @elseif($loop->iteration == 3)
+                    <img src="{{ asset('storage/' . $rankThird) }}" alt="Badge Rank Third" style="max-width: 100px">
+                    @else
+                    {{ $loop->iteration }}
+                    @endif
+                  </td>
                   <td>{{ $member->nama }}</td>
                   <td>{{ $member->nomor_telepon }}</td>
                   <td>{{ $member->email }}</td>
@@ -49,7 +59,6 @@
           <!-- End Table with stripped rows -->
         </div>
       </div>
-
     </div>
   </div>
 </section>
