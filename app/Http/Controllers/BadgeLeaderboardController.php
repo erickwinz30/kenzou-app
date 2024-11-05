@@ -24,7 +24,7 @@ class BadgeLeaderboardController extends Controller
   public function create()
   {
     $existingRanks = BadgeLeaderboard::pluck('rank')->toArray();
-    return view('dashboard.leaderboard.create', compact('existingRanks'));
+    return view('dashboard.badge.leaderboard.create', compact('existingRanks'));
   }
 
   /**
@@ -66,7 +66,7 @@ class BadgeLeaderboardController extends Controller
    */
   public function edit(BadgeLeaderboard $badgeLeaderboard)
   {
-    return view('dashboard.leaderboard.edit', [
+    return view('dashboard.badge.leaderboard.edit', [
       'leaderboard' => $badgeLeaderboard,
     ]);
   }

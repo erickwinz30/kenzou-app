@@ -16,6 +16,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\TransaksiController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\MemberLoginController;
 use App\Http\Controllers\OwnedVoucherController;
 use App\Http\Controllers\CatatTransaksiController;
@@ -84,6 +85,9 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard/challenge-active-fetch', [ChallengeController::class, 'activeFetch'])->name('challenge.activeFetch');
   Route::get('/dashboard/challenge-nonactive-fetch', [ChallengeController::class, 'nonActiveFetch'])->name('challenge.nonActiveFetch');
   Route::post('/dashboard/toggle-challenge-activation', [ChallengeController::class, 'toggleActivation'])->name('challenge.toggleActivation');
+
+  //leaderboard
+  Route::get('/dashboard/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard-index');
 });
 
 Route::middleware('notAdmin')->group(function () {

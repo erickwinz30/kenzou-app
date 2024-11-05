@@ -18,9 +18,7 @@ class MemberController extends Controller
   public function index()
   {
     $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->get();
-    // foreach ($listChallenge as $challenge) {
-    //   echo $challenge->challenge;
-    // }
+
     return view('member.index', [
       'challengeProgress' => $listChallenge,
     ]);
