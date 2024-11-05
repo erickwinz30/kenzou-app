@@ -163,8 +163,8 @@ class ChallengeController extends Controller
       $dataActive[] = [
         'id' => $challenge->id,
         'description' => $challenge->description,
-        'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
-        'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
+        'from_date' => Carbon::parse($challenge->from_date)->format('d-m-Y H:i:s'),
+        'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,
         'unit' => $challenge->unit,
         'reward_type' => $challenge->reward_type,
@@ -193,8 +193,8 @@ class ChallengeController extends Controller
       $dataNonActive[] = [
         'id' => $challenge->id,
         'description' => $challenge->description,
-        'from_date' => Carbon::parse($challenge->from_date)->format('Y-m-d H:i:s'),
-        'to_date' => Carbon::parse($challenge->to_date)->format('Y-m-d H:i:s'),
+        'from_date' => Carbon::parse($challenge->from_date)->format('d-m-Y H:i:s'),
+        'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,
         'unit' => $challenge->unit,
         'reward_type' => $challenge->reward_type,

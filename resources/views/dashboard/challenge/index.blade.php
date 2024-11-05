@@ -57,13 +57,13 @@
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
                       style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
-                      {{ $challenge->from_date }}
+                      {{ \Carbon\Carbon::parse($challenge->from_date)->format('d-m-Y H:i:s') }}
                     </span>
                   </td>
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
                       style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
-                      {{ $challenge->to_date }}
+                      {{ \Carbon\Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s') }}
                     </span>
                   </td>
                   <td>{{ $challenge->target }}</td>

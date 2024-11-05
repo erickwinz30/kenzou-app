@@ -83,13 +83,13 @@
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
                       style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
-                      {{ $voucher->from_date }}
+                      {{ \Carbon\Carbon::parse($voucher->from_date)->format('d-m-Y') }}
                     </span>
                   </td>
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
                       style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
-                      {{ $voucher->to_date }}
+                      {{ \Carbon\Carbon::parse($voucher->to_date)->format('d-m-Y') }}
                     </span>
                   </td>
                   <td>
