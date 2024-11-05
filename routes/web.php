@@ -84,9 +84,6 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard/challenge-active-fetch', [ChallengeController::class, 'activeFetch'])->name('challenge.activeFetch');
   Route::get('/dashboard/challenge-nonactive-fetch', [ChallengeController::class, 'nonActiveFetch'])->name('challenge.nonActiveFetch');
   Route::post('/dashboard/toggle-challenge-activation', [ChallengeController::class, 'toggleActivation'])->name('challenge.toggleActivation');
-  Route::get('/dashboard/fetchUnit', [UnitController::class, 'index']);
-  Route::get('/dashboard/fetchUnits', [UnitController::class, 'search'])->name('fetch.unit');
-  Route::post('/dashboard/fetchUnit/search', [UnitController::class, 'search']);
 });
 
 Route::middleware('notAdmin')->group(function () {

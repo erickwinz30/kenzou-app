@@ -39,7 +39,7 @@ class VoucherController extends Controller
         'nama' => 'required|min:3|max:255',
         'description' => 'required|max:255',
         'point_needed' => 'required|numeric',
-        'discount' => 'required|decimal',
+        'discount' => 'required|numeric',
         'minimum_transaction' => 'required|numeric',
         'from_date' => 'required|date',
         'to_date' => 'required|date',
@@ -155,8 +155,8 @@ class VoucherController extends Controller
         'discount' => $voucher->discount,
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
-        'from_date' => Carbon::parse($voucher->from_date)->format('Y-m-d H:i:s'),
-        'to_date' => Carbon::parse($voucher->to_date)->format('Y-m-d H:i:s'),
+        'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
+        'to_date' => Carbon::parse($voucher->to_date)->format('d-m-Y H:i:s'),
       ];
     }
 
@@ -184,8 +184,8 @@ class VoucherController extends Controller
         'discount' => $voucher->discount,
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
-        'from_date' => Carbon::parse($voucher->from_date)->format('Y-m-d H:i:s'),
-        'to_date' => Carbon::parse($voucher->to_date)->format('Y-m-d H:i:s'),
+        'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
+        'to_date' => Carbon::parse($voucher->to_date)->format('d-m-Y H:i:s'),
       ];
     }
 

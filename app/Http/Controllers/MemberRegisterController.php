@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\PointLog;
+use App\Models\Challenge;
 use App\Models\Pelanggan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class MemberRegisterController extends Controller
@@ -77,6 +79,7 @@ class MemberRegisterController extends Controller
             'date' => Carbon::now('Asia/Jakarta'),
           ]);
 
+
           Log::info('Data member baru: ', ['member' => $validatedData]);
           Log::info('Check id Member baru: ', ['member' => $newMember]);
           Log::info('Point Log New Member: ', ['New Member' => $pointLogNewMember]);
@@ -87,6 +90,7 @@ class MemberRegisterController extends Controller
           } else {
             Pelanggan::create(['member_id' => $newMemberId->id, 'nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
           }
+          $this->addChallengeProgress($newMemberId->id);
 
           return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
         } else {
@@ -119,6 +123,8 @@ class MemberRegisterController extends Controller
           Pelanggan::create(['member_id' => $newMemberId->id, 'nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
         }
 
+        $this->addChallengeProgress($newMemberId->id);
+
         return redirect()->route('login')->with('success', 'Akun telah terdaftar!!!');
       }
     } catch (\Exception $e) {
@@ -126,6 +132,23 @@ class MemberRegisterController extends Controller
       Log::error('Register Member Error Trace: ', ['message' => $e->getTraceAsString()]);
 
       return redirect('/register')->with('error', $e->getMessage());
+    }
+  }
+
+  private function addChallengeProgress($memberId)
+  {
+    $allChallenge = Challenge::all();
+
+    if ($allChallenge) {
+      foreach ($allChallenge as $challenge) {
+        $newChallengeProgress = ChallengeProgress::create([
+          'challenge_id' => $challenge->id,
+          'member_id' => $memberId,
+          'progress' => 0,
+        ]);
+
+        Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
+      }
     }
   }
 }

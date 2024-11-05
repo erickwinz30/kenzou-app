@@ -63,7 +63,7 @@
                 <tr>
                   <td>{{ $loop->iteration }}</td>
                   <td>{{ $voucher->nama }}</td>
-                  <td>{{ $voucher->description }}</td>
+                  <td>{{ Str::limit($voucher->description, 50) }}</td>
                   <td>{{ $voucher->point_needed }}</td>
                   <td>{{ $voucher->discount * 100 }}%</td>
                   <td>Rp {{ number_format($voucher->minimum_transaction, 0, ',', '.') }}</td>
@@ -136,10 +136,11 @@
           let iteration = 1;
           data.forEach(voucher => {
             let row = document.createElement("tr");
+            let description = voucher.description.length > 50 ? voucher.description.substring(0, 50) + '...' : voucher.description;
             row.innerHTML = `
               <td>${iteration}</td>
               <td>${voucher.nama}</td>
-              <td>${voucher.description}</td>
+              <td>${description}</td>
               <td>${voucher.point_needed}</td>
               <td>${voucher.discount * 100}%</td>
               <td class="text-center align-middle" style="padding: 0;">
@@ -196,10 +197,11 @@
           let iteration = 1;
           data.forEach(voucher => {
             let row = document.createElement("tr");
+            let description = voucher.description.length > 50 ? voucher.description.substring(0, 50) + '...' : voucher.description;
             row.innerHTML = `
               <td>${iteration}</td>
               <td>${voucher.nama}</td>
-              <td>${voucher.description}</td>
+              <td>${description}</td>
               <td>${voucher.point_needed}</td>
               <td>${voucher.discount * 100}%</td>
               <td class="text-center align-middle" style="padding: 0;">
