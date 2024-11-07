@@ -10,7 +10,8 @@
     </li><!-- End Dashboard Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="{{ route('voucher-index') }}">
+      <a class="nav-link {{ Request::is('voucher') || Request::is('voucher/*') ? '' : 'collapsed' }}"
+        href="{{ route('voucher-index') }}">
         <i class="bi bi-gift me-0"></i>
         <span class="d-none d-lg-block ms-2">Voucher</span>
       </a>

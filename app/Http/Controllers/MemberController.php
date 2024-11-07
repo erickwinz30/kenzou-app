@@ -119,4 +119,12 @@ class MemberController extends Controller
       'informations' => PointLog::where('member_id', $member->id)->orderBy('created_at', 'desc')->get(),
     ]);
   }
+
+  public function viewChallengeProgress(ChallengeProgress $challengeProgress)
+  {
+    // echo $challengeProgress;
+    return view('member.challenge.view', [
+      'progress' => $challengeProgress,
+    ]);
+  }
 }

@@ -14,24 +14,24 @@
           <div class="card shadow h-85" style="border-radius: 15px">
             <div class="card-body p-3">
               <div>
-                <h5 class="card-title p-0">{{ $progress->challenge->description }}</h5>
-                <p class="card-text mt-3">Berlaku hingga: {{
-                  \Carbon\Carbon::parse($progress->challenge->to_date)->format('d
-                  F Y') }}</p>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="progress w-100" role="progressbar" aria-label="Basic example"
-                    aria-valuenow="{{ $progress->progress }}" aria-valuemin="0"
-                    aria-valuemax="{{ $progress->challenge->target }}">
-                    @php
-                    // Calculate the progress percentage
-                    $progressPercentage = ($progress->progress /
-                    $progress->challenge->target);
-                    @endphp
-
-                    <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
+                <a href="{{ route('challenge-index', ['challengeProgress' => $progress->id]) }}"
+                  class="text-decoration-none" style="color: black">
+                  <h5 class="card-title p-0">{{ $progress->challenge->description }}</h5>
+                  <p class="card-text mt-3 text-decoration-none">
+                    Berlaku hingga: {{ \Carbon\Carbon::parse($progress->challenge->to_date)->format('d F Y') }}
+                  </p>
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="progress w-100" role="progressbar" aria-label="Basic example"
+                      aria-valuenow="{{ $progress->progress }}" aria-valuemin="0"
+                      aria-valuemax="{{ $progress->challenge->target }}">
+                      @php
+                      $progressPercentage = ($progress->progress / $progress->challenge->target) * 100;
+                      @endphp
+                      <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
+                    </div>
+                    <p class="card-text ms-2 text-decoration-none">{{ $progressPercentage }}%</p>
                   </div>
-                  <p class="card-text ms-2">{{ $progressPercentage }}%</p>
-                </div>
+                </a>
               </div>
             </div>
           </div>

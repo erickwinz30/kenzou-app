@@ -99,8 +99,7 @@
                   <span class="input-group-text" id="inputGroupPrepend">Rp</span>
                   <input type="text" inputmode="numeric"
                     class="form-control @error('minimum_transaction') is-invalid @enderror" id="minimum_transaction"
-                    name="minimum_transaction" value={{ number_format(old('minimum_transaction',
-                    $voucher->minimum_transaction), 0, ',', '.') }}
+                    name="minimum_transaction" value={{ old('minimum_transaction', $voucher->minimum_transaction) }}
                   required autofocus>
                 </div>
                 @error('minimum_transaction')

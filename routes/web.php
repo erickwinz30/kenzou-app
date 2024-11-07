@@ -132,8 +132,11 @@ Route::middleware('auth:member')->group(function () {
   Route::get('/register/next', [GoogleController::class, 'viewAfterGoogleCallback'])->name('register-next');
   Route::post('/register/next', [GoogleController::class, 'nextRegisterStore']);
 
+  //challenge progress
+  Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress'])->name('challenge-index');
   //voucher
   Route::get('/voucher', [OwnedVoucherController::class, 'index'])->name('voucher-index');
+  Route::get('/voucher/{voucher}', [OwnedVoucherController::class, 'viewVoucher']);
   Route::post('/voucher/claim', [OwnedVoucherController::class, 'claimVoucher']);
 
   //account information page

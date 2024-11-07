@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ChallengeProgress extends Model
 {
   use HasFactory;
+
+  protected $keyType = 'string';
   protected $guarded = ['id'];
 
   protected static function boot()

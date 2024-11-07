@@ -94,7 +94,7 @@ class VoucherController extends Controller
       }
 
       if (round(floatval($request->discount), 2) !== round($voucher->discount * 100, 2)) {
-        $rules['discount'] = 'required|decimal';
+        $rules['discount'] = 'required';
       }
 
       $minimumTransaction = floatval(str_replace(['.', ','], ['', '.'], $request->minimum_transaction));

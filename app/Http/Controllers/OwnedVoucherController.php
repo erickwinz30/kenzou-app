@@ -52,4 +52,12 @@ class OwnedVoucherController extends Controller
       return redirect('/voucher')->with('success', 'Voucher telah diredeem!!!');
     }
   }
+
+  public function viewVoucher(Voucher $voucher)
+  {
+    $member = Auth::guard('member')->user();
+    $ownedVouchers = $member->ownedVouchers;
+
+    return view('member.voucher.view', compact('voucher', 'ownedVouchers'));
+  }
 }

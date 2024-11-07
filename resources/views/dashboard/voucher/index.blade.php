@@ -70,25 +70,25 @@
                   <td class="text-center align-middle" style="padding: 0;">
                     @if ($voucher->is_active === 1)
                     <span
-                      style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                       Aktif
                     </span>
                     @else
                     <span
-                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                       Tidak Aktif
                     </span>
                     @endif
                   </td>
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
-                      style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
+                      style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
                       {{ \Carbon\Carbon::parse($voucher->from_date)->format('d-m-Y') }}
                     </span>
                   </td>
                   <td class="text-center align-middle" style="padding: 0;">
                     <span
-                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                       {{ \Carbon\Carbon::parse($voucher->to_date)->format('d-m-Y') }}
                     </span>
                   </td>
@@ -145,18 +145,18 @@
               <td>${voucher.discount * 100}%</td>
               <td class="text-center align-middle" style="padding: 0;">
                 <span
-                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                   Tidak Aktif
                 </span>
               </td>
               <td class="text-center align-middle" style="padding: 0;">
-                <span style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                <span style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                   ${voucher.from_date}
                 </span>
               </td>
               <td class="text-center align-middle" style="padding: 0;">
                 <span
-                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                   ${voucher.to_date}
                 </span>
               </td>
@@ -206,20 +206,20 @@
               <td>${voucher.discount * 100}%</td>
               <td class="text-center align-middle" style="padding: 0;">
                 <span
-                  style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
+                  style="border-radius: 5px; padding: 5px 10px; display: inline-block; 
                         color: ${voucher.is_active === 1 ? '#219653' : '#FFB22C'};
                         background-color: ${voucher.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
                   ${voucher.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
                 </span>
               </td>
               <td class="text-center align-middle" style="padding: 0;">
-                <span style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                <span style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                   ${voucher.from_date}
                 </span>
               </td>
               <td class="text-center align-middle" style="padding: 0;">
                 <span
-                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                  style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                   ${voucher.to_date}
                 </span>
               </td>
