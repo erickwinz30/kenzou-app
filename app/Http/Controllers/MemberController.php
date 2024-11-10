@@ -6,10 +6,11 @@ use App\Models\Member;
 use App\Models\PointLog;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
+use App\Models\BadgeLeaderboard;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
-use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +18,11 @@ class MemberController extends Controller
 {
   public function index()
   {
-    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->get();
+    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)
+      ->whereHas('challenge', function ($query) {
+        $query->where('is_active', true);
+      })
+      ->get();
 
     return view('member.index', [
       'challengeProgress' => $listChallenge,
@@ -125,6 +130,28 @@ class MemberController extends Controller
     // echo $challengeProgress;
     return view('member.challenge.view', [
       'progress' => $challengeProgress,
+    ]);
+  }
+
+  public function viewLeaderboard()
+  {
+    $members = Member::orderBy('experience_point', 'desc')->limit(10)->get();
+    $rankFirst = BadgeLeaderboard::where('rank', 1)->first()->image;
+    $rankSecond = BadgeLeaderboard::where('rank', 2)->first()->image;
+    $rankThird = BadgeLeaderboard::where('rank', 3)->first()->image;
+
+    $loggedInMember = Auth::guard('member')->user();
+    $loggedInMemberExperience = $loggedInMember->experience_point;
+
+    // Hitung ranking member yang sedang login
+    $loggedInMemberRank = Member::where('experience_point', '>', $loggedInMemberExperience)->count() + 1;
+
+    return view('member.leaderboard.index', [
+      'members' => $members,
+      'rankFirst' => $rankFirst,
+      'rankSecond' => $rankSecond,
+      'rankThird' => $rankThird,
+      'ownRank' => $loggedInMember,
     ]);
   }
 }

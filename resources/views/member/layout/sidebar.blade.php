@@ -18,7 +18,8 @@
     </li><!-- End Dashboard Nav -->
 
     <li class="nav-item">
-      <a class="nav-link collapsed" href="index.html">
+      <a class="nav-link {{ Request::is('leaderboard') || Request::is('leaderboard/*') ? '' : 'collapsed' }}"
+        href="{{ route('leaderboard') }}">
         <i class="bi bi-bar-chart me-0"></i>
         <span class="d-none d-lg-block ms-2">Leaderboard</span>
       </a>

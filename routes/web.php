@@ -134,6 +134,10 @@ Route::middleware('auth:member')->group(function () {
 
   //challenge progress
   Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress'])->name('challenge-index');
+
+  //leaderboard
+  Route::get('/leaderboard', [MemberController::class, 'viewLeaderboard'])->name('leaderboard');
+
   //voucher
   Route::get('/voucher', [OwnedVoucherController::class, 'index'])->name('voucher-index');
   Route::get('/voucher/{voucher}', [OwnedVoucherController::class, 'viewVoucher']);
