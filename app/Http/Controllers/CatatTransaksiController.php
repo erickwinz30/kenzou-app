@@ -92,7 +92,7 @@ class CatatTransaksiController extends Controller
       if ($findPelanggan) {
         if ($findPelanggan->member_id) {
           // $totalPoint = intval($totalPoint);
-          $this->checkRegisteredMember($transaction, $findPelanggan->member_id, $totalPoint);
+          $this->storeNewPoint($transaction, $findPelanggan->member_id, $totalPoint);
         }
       }
 
@@ -124,7 +124,7 @@ class CatatTransaksiController extends Controller
     return $validatedData;
   }
 
-  private function checkRegisteredMember($transaction, $memberId, $totalPoint)
+  private function storeNewPoint($transaction, $memberId, $totalPoint)
   {
     if (!is_numeric($totalPoint)) {
       Log::error('Non-numeric value passed to increment method.', ['totalPoint' => $totalPoint]);
@@ -308,5 +308,46 @@ class CatatTransaksiController extends Controller
       );
 
     print($message->sid);
+  }
+
+  public function checkMemberVoucher(Request $request)
+  {
+    try {
+      $member = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
+      Log::info('Input Nomor Telepon:', ['Member Phone Number' => $nomor_telepon]);
+
+      $searchResult = Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
+
+      $data = [];
+
+      foreach ($searchResult as $result) {
+        Log::info('Search Result:', ['search_result' => $result]);
+
+        $data[] = [
+          'nama' => $result->nama,
+          'email' => $result->email,
+          'nomor_telepon' => $result->nomor_telepon,
+          'experience_point' => $result->experience_point,
+          'redeemable_point' => $result->redeemable_point,
+        ];
+      }
+
+      if ($request->wantsJson()) {
+        // Pastikan kita mengembalikan array kosong jika tidak ada hasil
+        if ($searchResult->isEmpty()) {
+          return response()->json([]);
+        } else {
+          return response()->json($data, 200);
+        }
+      }
+
+      return $data;
+      // Log::info('Search Result:', ['search_result' => $searchResult]);
+    } catch (\Exception $e) {
+      $errorMessage = $e->getMessage();
+      $errorTrace = $e->getTraceAsString();
+      Log::error('Pencarian voucher member error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+      return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
+    }
   }
 }

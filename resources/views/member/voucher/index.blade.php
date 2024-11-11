@@ -20,7 +20,7 @@
             $formattedDate = \Carbon\Carbon::parse($ownedVoucher->voucher->to_date)->translatedFormat('j F Y, H:i');
             @endphp
             <div class="card-title p-3 m-0">{{ $ownedVoucher->voucher->nama }}</div>
-            <div class="card-text px-3 m-0">{{ Str::limit($ownedVoucher->voucher->description, 50) }}</div>
+            <div class="card-text px-3 m-0">{{ $ownedVoucher->voucher->description }}</div>
             <div class="d-flex justify-content-between align-items-center p-3">
               <div class="card-text w-50">Berlaku hingga: <strong style="color: #012970">{{ $formattedDate }}</strong>
               </div>

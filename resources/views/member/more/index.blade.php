@@ -12,7 +12,14 @@
         <div class="d-block">
           <h1 class="fs-1 fw-bold text-center">{{ $information->nama }}</h1>
           <div class="mb-4">
-            <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex align-items-center my-3">
+              <div class="d-flex justify-content-center">
+                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}" style="max-width: 100px">
+              </div>
+              <div>
+                <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>
+              </div>
+            </div>
             <div class="d-flex justify-content-between align-items-center">
               <div class="progress w-100" role="progressbar" aria-label="Basic example"
                 aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
