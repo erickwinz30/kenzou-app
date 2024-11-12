@@ -115,6 +115,7 @@
               <div class="item_transaksi mb-3" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
               </div>
+              <div class="mb-3" id="voucher-description-container"></div>
               <div class="mb-3">
                 <h6 class="card-text fw-semibold mb-3" id="card_item">Keterangan</h6>
                 <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini.."></textarea>
@@ -167,11 +168,19 @@
       const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
       let inputHarga = document.getElementById("inputHarga");
       let subtotal = 0;
+      let discount = 0;
       let timeoutId;
 
       // fuction untuk update subtotal
       function updateSubtotal(amount) {
         subtotal += amount;
+        inputHarga.value = subtotal;
+        subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
+      }
+
+      function discountSubtotal(amount) {
+        discount = subtotal * amount;
+        subtotal -= discount;
         inputHarga.value = subtotal;
         subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
       }
@@ -228,10 +237,11 @@
                 <div>
                   <h5 class="card-title p-0">${voucher.name}</h5>
                   <p class="card-text">${voucher.description}</p>
+                  <p class="card-text">Memperoleh Diskon: ${voucher.discount * 100}%</p>
                 </div>
                 <div>
-                  <button href="#" class="btn btn-primary add-item" data-id="${voucher.id}"
-                  data-discount="${voucher.discount}"><i class="bi bi-plus-circle"></i>
+                  <button href="#" class="btn btn-primary voucher-add-item" data-id="${voucher.id}"
+                  data-name="${voucher.name}" data-discount="${voucher.discount}"><i class="bi bi-plus-circle"></i>
                   </button>
                 </div>
               </div>
@@ -239,6 +249,40 @@
           `;
 
           document.querySelector("#voucher-list-container").appendChild(voucherItem);
+
+          clickVoucherItem();
+        });
+      }
+
+      function clickVoucherItem() {
+        const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
+
+        voucherAddItemButtons.forEach((button) => {
+          button.addEventListener("click", function(event) {
+            event.preventDefault();
+
+            const voucherId = this.getAttribute("data-id");
+            const voucherName = this.getAttribute("data-name");
+            const discount = parseFloat(this.getAttribute("data-discount"));
+
+            discountSubtotal(discount);
+
+            const voucherElement = document.getElementById("voucher-description-container");
+            voucherElement.innerHTML = `
+              <h6 class="card-text fw-semibold">Voucher</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex justify-content-start align-items-center">
+                  <p class="card-text">${voucherName} (${discount * 100}%)</p>
+                </div>
+                <button type="button" class="btn p-0 ms-2 remove-voucher">
+                  <i class="bi bi-x-circle"></i>
+              </div>
+            `;
+
+            voucherAddItemButtons.forEach((button) => {
+              button.disabled = true;
+            });
+          });
         });
       }
 
