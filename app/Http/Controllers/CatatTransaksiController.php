@@ -11,6 +11,7 @@ use Twilio\Rest\Client;
 use App\Models\PointLog;
 use App\Models\Pelanggan;
 use App\Models\Transaksi;
+use App\Models\OwnedVoucher;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
 use Illuminate\Support\Facades\DB;
@@ -313,31 +314,35 @@ class CatatTransaksiController extends Controller
   public function checkMemberVoucher(Request $request)
   {
     try {
-      $member = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
-      Log::info('Input Nomor Telepon:', ['Member Phone Number' => $nomor_telepon]);
+      $memberId = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
+      Log::info('Input Nomor Telepon:', ['Member Phone Number' => $memberId]);
 
-      $searchResult = Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
+      $listVoucher = OwnedVoucher::where('member_id', $memberId)->first()->get();
+      Log::info('Owned Voucher:', ['Voucher' => $listVoucher]);
 
       $data = [];
 
-      foreach ($searchResult as $result) {
-        Log::info('Search Result:', ['search_result' => $result]);
+      if ($listVoucher) {
+        foreach ($listVoucher as $ownedVoucher) {
+          Log::info('List Owned Voucher:', ['Voucher' => $ownedVoucher]);
 
-        $data[] = [
-          'nama' => $result->nama,
-          'email' => $result->email,
-          'nomor_telepon' => $result->nomor_telepon,
-          'experience_point' => $result->experience_point,
-          'redeemable_point' => $result->redeemable_point,
-        ];
+          $data[] = [
+            'id' => $ownedVoucher->voucher->id,
+            'name' => $ownedVoucher->voucher->nama,
+            'description' => $ownedVoucher->voucher->description,
+            'discount' => $ownedVoucher->voucher->discount,
+            'minimun_transaction' => $ownedVoucher->voucher->minimum_transaction,
+            'to_date' => Carbon::parse($ownedVoucher->voucher->to_date)->format('d M Y'),
+          ];
+        }
       }
 
       if ($request->wantsJson()) {
         // Pastikan kita mengembalikan array kosong jika tidak ada hasil
-        if ($searchResult->isEmpty()) {
+        if ($listVoucher->isEmpty()) {
           return response()->json([]);
         } else {
-          return response()->json($data, 200);
+          return response()->json($data);
         }
       }
 

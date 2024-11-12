@@ -18,7 +18,7 @@ class MemberController extends Controller
 {
   public function index()
   {
-    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)
+    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', false)
       ->whereHas('challenge', function ($query) {
         $query->where('is_active', true);
       })
@@ -143,15 +143,11 @@ class MemberController extends Controller
     $loggedInMember = Auth::guard('member')->user();
     $loggedInMemberExperience = $loggedInMember->experience_point;
 
-    // Hitung ranking member yang sedang login
-    $loggedInMemberRank = Member::where('experience_point', '>', $loggedInMemberExperience)->count() + 1;
-
     return view('member.leaderboard.index', [
       'members' => $members,
       'rankFirst' => $rankFirst,
       'rankSecond' => $rankSecond,
       'rankThird' => $rankThird,
-      'ownRank' => $loggedInMember,
     ]);
   }
 }
