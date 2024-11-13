@@ -100,6 +100,7 @@ Route::middleware('notAdmin')->group(function () {
 
   Route::post('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'catat']);
   Route::post('/dashboard/transaksiBaru/nomor_telepon', [CatatTransaksiController::class, 'searchPhoneNumber']);
+  Route::post('/dashboard/transaksiBaru/fetch-check-member', [CatatTransaksiController::class, 'checkMember']);
   Route::post('/dashboard/transaksiBaru/fetch-check-voucher', [CatatTransaksiController::class, 'checkMemberVoucher']);
 
   //tampil list layanan

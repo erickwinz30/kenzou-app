@@ -109,7 +109,7 @@
                 <p class="card-text">{{ $tanggal_transaksi }}</p>
               </div>
               <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
-                <h6 class="card-text fw-semibold my-auto">No. Telp Pelanggan</h6>
+                <h6 class="card-text fw-semibold my-auto">Informasi Pelanggan</h6>
               </div>
               <h6 class="card-text fw-semibold" id="card_item">Item</h6>
               <div class="item_transaksi mb-3" id="item_transaksi">
@@ -204,6 +204,120 @@
             }
           })
           .catch((error) => console.error("Error Fetching Data:", error));
+      }
+
+      function checkCustomerOrMember() {
+
+      }
+
+      function customerInformationElement() {
+        let noHp = document.getElementById("nomor_telepon").value;
+        let infoPelanggan = document.createElement("div");
+        infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
+
+        infoPelanggan.innerHTML = `
+          <input type="hidden" name="nomor_telepon" id="nomor_telepon_value" value="${noHp}">
+          <p class="card-text my-auto">${noHp}</p>
+          <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        `;
+
+        checkMemberVoucher(noHp);
+
+        document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
+        document.getElementById("nomor_telepon").value = "";
+
+        document.getElementById("remove-pelanggan").addEventListener("click", function() {
+          // event.preventDefault();
+          let noHp = document.getElementById("nomor_telepon");
+          noHp.value = "";
+          infoPelanggan.remove();
+
+          const voucherElement = document.getElementById("voucher-element");
+
+          if (voucherElement) {
+            voucherElement.remove();
+          }
+        });
+      }
+
+      function memberInformationClickElement(memberName, phoneNumber, badgeName, badgeDiscount, pelangganContainer) {
+        let infoPelanggan = document.createElement("div");
+        infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
+
+        infoPelanggan.innerHTML = `
+            <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${memberName}" data-nomor-telepon="${phoneNumber}" 
+            data-badge-name="${badgeName}" data-badge-discount="${badgeDiscount}">
+              <input type="hidden" name="nomor_telepon" id="nomor_telepon_value" value="${phoneNumber}">
+              <p class="card-text my-auto">${memberName} / ${badgeName}</p>
+              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          `;
+
+        checkMemberVoucher(phoneNumber);
+
+        document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
+        document.getElementById("nomor_telepon").value = "";
+
+        pelangganContainer.remove();
+
+        document.getElementById("remove-pelanggan").addEventListener("click", function() {
+          // event.preventDefault();
+          let noHp = document.getElementById("nomor_telepon");
+          noHp.value = "";
+          infoPelanggan.remove();
+          pelangganContainer.remove();
+
+          const voucherElement = document.getElementById("voucher-element");
+          if (voucherElement) {
+            voucherElement.remove();
+          }
+        });
+
+        console.log(phoneNumber);
+      }
+
+      function memberInformationListElement(containerDataPelanggan, pelangganContainer) {
+        const memberName = containerDataPelanggan.getAttribute("data-member-name");
+        const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
+        const badgeName = containerDataPelanggan.getAttribute("data-badge-name");
+        const badgeDiscount = containerDataPelanggan.getAttribute("data-badge-discount");
+
+        let infoPelanggan = document.createElement("div");
+        infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
+
+        infoPelanggan.innerHTML = `
+            <input type="hidden" name="nomor_telepon" id="nomor_telepon_value" value="${nomorTelepon}">
+            <p class="card-text my-auto">${memberName} / ${badgeName}</p>
+            <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          `;
+
+        checkMemberVoucher(nomorTelepon);
+
+        document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
+        document.getElementById("nomor_telepon").value = "";
+
+        pelangganContainer.remove();
+
+        document.getElementById("remove-pelanggan").addEventListener("click", function() {
+          // event.preventDefault();
+          let noHp = document.getElementById("nomor_telepon");
+          noHp.value = "";
+          infoPelanggan.remove();
+          pelangganContainer.remove();
+
+          const voucherElement = document.getElementById("voucher-element");
+          if (voucherElement) {
+            voucherElement.remove();
+          }
+        });
+
+        console.log(nomorTelepon);
       }
 
       function createVoucherElement() {
@@ -331,37 +445,63 @@
 
       //tombol tambah nomor telepon
       addNoPelanggan.addEventListener("click", function(event) {
-        event.preventDefault();
+        const noHp = document.getElementById("nomor_telepon").value;
 
-        let noHp = document.getElementById("nomor_telepon").value;
-        let infoPelanggan = document.createElement("div");
-        infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
+        fetch("/dashboard/transaksiBaru/nomor_telepon", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            },
+            body: JSON.stringify({
+              nomor_telepon: noHp,
+            }),
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            let pelangganContainer = document.getElementById("pelanggan-container");
 
-        infoPelanggan.innerHTML = `
-          <input type="hidden" name="nomor_telepon" id="nomor_telepon_value" value="${noHp}">
-          <p class="card-text my-auto">${noHp}</p>
-          <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
-            <i class="bi bi-x-circle"></i>
-          </button>
-        `;
+            if (data && data.length > 0) {
+              // Periksa apakah data tidak kosong
+              // Jika elemen pelangganContainer tidak ada, buat elemen baru
+              if (!pelangganContainer) {
+                pelangganContainer = document.createElement("div");
+                pelangganContainer.classList.add("pelanggan-container");
+                pelangganContainer.setAttribute("id", "pelanggan-container");
+                containerNoPelanggan.appendChild(pelangganContainer);
+              } else {
+                // Kosongkan isi pelangganContainer jika sudah ada
+                pelangganContainer.innerHTML = "";
+              }
 
-        checkMemberVoucher(noHp);
+              // Tambahkan data ke pelangganContainer
+              data.forEach((item) => {
+                // const containerDataPelanggan = document.createElement("div");
+                console.log(item.nama);
 
-        document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
-        document.getElementById("nomor_telepon").value = "";
+                memberInformationClickElement(item.nama, item.nomor_telepon, item
+                  .badgeName, item.badgeDiscount, pelangganContainer);
 
-        document.getElementById("remove-pelanggan").addEventListener("click", function() {
-          // event.preventDefault();
-          let noHp = document.getElementById("nomor_telepon");
-          noHp.value = "";
-          infoPelanggan.remove();
+                //   containerDataPelanggan.innerHTML = `
+              //   <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
+              //   data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}">
+              //     <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
+              //     <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
+              //   </div>
+              //   <hr>
+              // `;
 
-          const voucherElement = document.getElementById("voucher-element");
-
-          if (voucherElement) {
-            voucherElement.remove();
-          }
-        });
+                //   pelangganContainer.appendChild(containerDataPelanggan);
+              });
+            } else {
+              customerInformationElement();
+              // Jika data kosong, hapus pelangganContainer jika sudah ada
+              if (pelangganContainer) {
+                pelangganContainer.remove(); // Hapus elemen pelangganContainer dari DOM
+              }
+            }
+          })
+          .catch((error) => console.error("Error Fetching Data:", error));
       });
 
       //proses input nomor telepon
@@ -406,7 +546,8 @@
                     console.log(item.nama);
 
                     containerDataPelanggan.innerHTML = `
-                          <div class="d-flex justify-content-between align-items-center my-2" data-nomor-telepon="${item.nomor_telepon}">
+                          <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
+                          data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}">
                             <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
                             <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
                           </div>
@@ -440,40 +581,7 @@
         let pelangganContainer = document.getElementById("pelanggan-container");
 
         if (containerDataPelanggan) {
-          const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
-
-          let infoPelanggan = document.createElement("div");
-          infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
-
-          infoPelanggan.innerHTML = `
-            <input type="hidden" name="nomor_telepon" id="nomor_telepon_value" value="${nomorTelepon}">
-            <p class="card-text my-auto">${nomorTelepon}</p>
-            <button type="button" class="btn p-0 ms-2 my-auto" id="remove-pelanggan">
-              <i class="bi bi-x-circle"></i>
-            </button>
-          `;
-
-          checkMemberVoucher(nomorTelepon);
-
-          document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
-          document.getElementById("nomor_telepon").value = "";
-
-          pelangganContainer.remove();
-
-          document.getElementById("remove-pelanggan").addEventListener("click", function() {
-            // event.preventDefault();
-            let noHp = document.getElementById("nomor_telepon");
-            noHp.value = "";
-            infoPelanggan.remove();
-            pelangganContainer.remove();
-
-            const voucherElement = document.getElementById("voucher-element");
-            if (voucherElement) {
-              voucherElement.remove();
-            }
-          });
-
-          console.log(nomorTelepon);
+          memberInformationListElement(containerDataPelanggan, pelangganContainer);
         }
       });
     });

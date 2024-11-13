@@ -159,10 +159,17 @@ class CatatTransaksiController extends Controller
       foreach ($searchResult as $result) {
         Log::info('Search Result:', ['search_result' => $result]);
 
+        $badge = DB::table('badges')
+          ->where('min_point', '<=', $result->experience_point)
+          ->where('max_point', '>=', $result->experience_point)
+          ->first();
+
         $data[] = [
           'nama' => $result->nama,
           'email' => $result->email,
           'nomor_telepon' => $result->nomor_telepon,
+          'badgeName' => $badge->nama,
+          'badgeDiscount' => $badge->discount,
         ];
       }
 
@@ -310,6 +317,16 @@ class CatatTransaksiController extends Controller
 
     print($message->sid);
   }
+
+  // public function checkMember(Request $request) {
+  //   $member = Auth::guard('member')->user();
+  //   $badge = DB::table('badges')
+  //   ->where('min_point', '<=', $member->experience_point)
+  //     ->where('max_point', '>=', $member->experience_point)
+  //     ->first();
+
+
+  // }
 
   public function checkMemberVoucher(Request $request)
   {
