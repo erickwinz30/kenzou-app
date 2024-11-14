@@ -167,20 +167,29 @@
       const inputNomorTelepon = document.getElementById("nomor_telepon");
       const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
       let inputHarga = document.getElementById("inputHarga");
+      let total = 0;
+      let badgeDiscountPercentage = 0;
+      let voucherDiscountPercentage = 0;
       let subtotal = 0;
       let discount = 0;
       let timeoutId;
 
       // fuction untuk update subtotal
-      function updateSubtotal(amount) {
-        subtotal += amount;
-        inputHarga.value = subtotal;
-        subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
-      }
+      function updateSubtotal(badgeDiscount, amount, voucherDiscount) {
+        total += amount;
+        console.log("Total Layanan: " + total);
 
-      function discountSubtotal(amount) {
-        discount = subtotal * amount;
-        subtotal -= discount;
+        let badgeDiscountResult = total * badgeDiscount;
+        console.log("Badge Discount: " + badgeDiscountResult);
+        let voucherDiscountResult = total * voucherDiscount;
+        console.log("Voucher Discount: " + voucherDiscountResult);
+
+        let totalDiscount = badgeDiscountResult + voucherDiscountResult;
+        console.log("Total Discount: " + totalDiscount);
+
+        subtotal = total - totalDiscount;
+        console.log("Subtotal: " + subtotal);
+
         inputHarga.value = subtotal;
         subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
       }
@@ -225,6 +234,8 @@
 
         checkMemberVoucher(noHp);
 
+        updateSubtotal(0, 0, 0);
+
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
 
@@ -245,6 +256,7 @@
       function memberInformationClickElement(memberName, phoneNumber, badgeName, badgeDiscount, pelangganContainer) {
         let infoPelanggan = document.createElement("div");
         infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
+        badgeDiscountPercentage = badgeDiscount;
 
         infoPelanggan.innerHTML = `
             <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${memberName}" data-nomor-telepon="${phoneNumber}" 
@@ -258,6 +270,9 @@
           `;
 
         checkMemberVoucher(phoneNumber);
+
+
+        updateSubtotal(badgeDiscountPercentage, 0, 0);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
@@ -285,6 +300,8 @@
         const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
         const badgeName = containerDataPelanggan.getAttribute("data-badge-name");
         const badgeDiscount = containerDataPelanggan.getAttribute("data-badge-discount");
+        badgeDiscountPercentage = badgeDiscount;
+
 
         let infoPelanggan = document.createElement("div");
         infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
@@ -299,6 +316,8 @@
 
         checkMemberVoucher(nomorTelepon);
 
+        updateSubtotal(badgeDiscountPercentage, 0, 0);
+
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
 
@@ -308,6 +327,10 @@
           // event.preventDefault();
           let noHp = document.getElementById("nomor_telepon");
           noHp.value = "";
+          badgeDiscountPercentage = 0;
+          voucherDiscountPercentage = 0;
+
+          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
           infoPelanggan.remove();
           pelangganContainer.remove();
 
@@ -372,30 +395,51 @@
         const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
 
         voucherAddItemButtons.forEach((button) => {
-          button.addEventListener("click", function(event) {
-            event.preventDefault();
+          // Hapus event listener sebelumnya jika ada
+          button.removeEventListener("click", handleVoucherClick);
 
-            const voucherId = this.getAttribute("data-id");
-            const voucherName = this.getAttribute("data-name");
-            const discount = parseFloat(this.getAttribute("data-discount"));
+          // Tambahkan event listener baru
+          button.addEventListener("click", handleVoucherClick);
+        });
+      }
 
-            discountSubtotal(discount);
+      function handleVoucherClick(event) {
+        event.preventDefault();
 
-            const voucherElement = document.getElementById("voucher-description-container");
-            voucherElement.innerHTML = `
-              <h6 class="card-text fw-semibold">Voucher</h6>
-              <div class="d-flex justify-content-between align-items-center">
-                <div class="d-flex justify-content-start align-items-center">
-                  <p class="card-text">${voucherName} (${discount * 100}%)</p>
-                </div>
-                <button type="button" class="btn p-0 ms-2 remove-voucher">
-                  <i class="bi bi-x-circle"></i>
-              </div>
-            `;
+        const voucherId = this.getAttribute("data-id");
+        const voucherName = this.getAttribute("data-name");
+        const discount = parseFloat(this.getAttribute("data-discount"));
 
-            voucherAddItemButtons.forEach((button) => {
-              button.disabled = true;
-            });
+        voucherDiscountPercentage = discount;
+
+        updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+
+        const voucherElement = document.getElementById("voucher-description-container");
+        voucherElement.innerHTML = `
+            <h6 class="card-text fw-semibold">Voucher</h6>
+            <div class="d-flex justify-content-between align-items-center">
+              <p class="card-text my-auto">${voucherName}</p>
+              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+                    <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+        `;
+
+        // Disable all other voucher buttons
+        const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
+        voucherAddItemButtons.forEach((button) => {
+          button.disabled = true;
+        });
+
+        // Enable the remove button for the selected voucher
+        document.getElementById("remove-voucher").addEventListener("click", function() {
+          voucherElement.innerHTML = "";
+          voucherDiscountPercentage = 0;
+          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+
+          // Enable all voucher buttons again
+          voucherAddItemButtons.forEach((button) => {
+            button.disabled = false;
           });
         });
       }
@@ -432,12 +476,12 @@
           // containerTransaksi = document.getElementById('item_transaksi');
           containerItem.appendChild(itemDiv);
 
-          updateSubtotal(itemPrice);
+          updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage);
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             itemDiv.remove();
-            updateSubtotal(-itemPrice);
+            updateSubtotal(0, -itemPrice, 0);
             button.disabled = false;
           });
         });
@@ -573,7 +617,7 @@
         }, 800); // Delay selama 800ms
       });
 
-      //list pelanggan saat input nomor telepon
+      //event klik saat list member muncul
       document.getElementById("container-informasi-pelanggan").addEventListener("click", function(event) {
         event.preventDefault();
         const target = event.target;
