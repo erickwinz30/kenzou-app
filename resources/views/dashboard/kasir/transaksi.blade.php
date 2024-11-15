@@ -215,10 +215,6 @@
           .catch((error) => console.error("Error Fetching Data:", error));
       }
 
-      function checkCustomerOrMember() {
-
-      }
-
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
         let infoPelanggan = document.createElement("div");
@@ -233,6 +229,7 @@
         `;
 
         checkMemberVoucher(noHp);
+        addNoPelanggan.disabled = true;
 
         updateSubtotal(0, 0, 0);
 
@@ -244,6 +241,7 @@
           let noHp = document.getElementById("nomor_telepon");
           noHp.value = "";
           infoPelanggan.remove();
+          addNoPelanggan.disabled = false;
 
           const voucherElement = document.getElementById("voucher-element");
 
@@ -270,7 +268,7 @@
           `;
 
         checkMemberVoucher(phoneNumber);
-
+        addNoPelanggan.disabled = true;
 
         updateSubtotal(badgeDiscountPercentage, 0, 0);
 
@@ -285,6 +283,7 @@
           noHp.value = "";
           infoPelanggan.remove();
           pelangganContainer.remove();
+          addNoPelanggan.disabled = false;
 
           const voucherElement = document.getElementById("voucher-element");
           if (voucherElement) {
@@ -315,6 +314,7 @@
           `;
 
         checkMemberVoucher(nomorTelepon);
+        addNoPelanggan.disabled = true;
 
         updateSubtotal(badgeDiscountPercentage, 0, 0);
 
@@ -331,7 +331,10 @@
           voucherDiscountPercentage = 0;
 
           updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+
           infoPelanggan.remove();
+          addNoPelanggan.disabled = false;
+
           pelangganContainer.remove();
 
           const voucherElement = document.getElementById("voucher-element");
@@ -525,17 +528,6 @@
 
                 memberInformationClickElement(item.nama, item.nomor_telepon, item
                   .badgeName, item.badgeDiscount, pelangganContainer);
-
-                //   containerDataPelanggan.innerHTML = `
-              //   <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
-              //   data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}">
-              //     <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
-              //     <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
-              //   </div>
-              //   <hr>
-              // `;
-
-                //   pelangganContainer.appendChild(containerDataPelanggan);
               });
             } else {
               customerInformationElement();
