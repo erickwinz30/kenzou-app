@@ -14,6 +14,7 @@ use App\Models\Transaksi;
 use App\Models\OwnedVoucher;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -318,16 +319,6 @@ class CatatTransaksiController extends Controller
     print($message->sid);
   }
 
-  // public function checkMember(Request $request) {
-  //   $member = Auth::guard('member')->user();
-  //   $badge = DB::table('badges')
-  //   ->where('min_point', '<=', $member->experience_point)
-  //     ->where('max_point', '>=', $member->experience_point)
-  //     ->first();
-
-
-  // }
-
   public function checkMemberVoucher(Request $request)
   {
     try {
@@ -369,6 +360,54 @@ class CatatTransaksiController extends Controller
       $errorMessage = $e->getMessage();
       $errorTrace = $e->getTraceAsString();
       Log::error('Pencarian voucher member error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+      return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
+    }
+  }
+
+  public function checkMemberChallenge(Request $request)
+  {
+    try {
+      $memberId = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
+      Log::info('Input Nomor Telepon:', ['Member Phone Number' => $memberId]);
+
+      $listChallenge = ChallengeProgress::where('member_id', $memberId)->where('is_completed', true)
+        ->whereHas('challenge', function ($query) {
+          $query->where('is_active', true);
+        })->get();
+      Log::info('Owned Voucher:', ['Voucher' => $listChallenge]);
+
+      $data = [];
+
+      if ($listChallenge) {
+        foreach ($listChallenge as $challengeProgress) {
+          Log::info('List Progressed Challenge:', ['Challenge' => $challengeProgress]);
+
+          $data[] = [
+            'id' => $challengeProgress->challenge->id,
+            'description' => $challengeProgress->challenge->description,
+            'target' => $challengeProgress->challenge->target,
+            'unit' => $challengeProgress->challenge->unit,
+            'reward_type' => $challengeProgress->challenge->reward_type,
+            'reward_value' => $challengeProgress->challenge->reward_value,
+            'to_date' => Carbon::parse($challengeProgress->challenge->to_date)->format('d M Y'),
+          ];
+        }
+      }
+
+      if ($request->wantsJson()) {
+        // Pastikan kita mengembalikan array kosong jika tidak ada hasil
+        if ($listChallenge->isEmpty()) {
+          return response()->json([]);
+        } else {
+          return response()->json($data);
+        }
+      }
+
+      return $data;
+    } catch (\Exception $e) {
+      $errorMessage = $e->getMessage();
+      $errorTrace = $e->getTraceAsString();
+      Log::error('Pencarian challenge member error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
       return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
     }
   }

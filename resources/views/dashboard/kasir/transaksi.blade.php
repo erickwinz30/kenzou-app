@@ -215,6 +215,32 @@
           .catch((error) => console.error("Error Fetching Data:", error));
       }
 
+      function checkMemberChallenge(phoneNumber) {
+        setTimeout(() => {
+          fetch("/dashboard/transaksiBaru/fetch-check-challenge", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+              },
+              body: JSON.stringify({
+                nomor_telepon: phoneNumber,
+              }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.length > 0) {
+                data.forEach((progresseChallenge) => {
+                  console.log("Progresse Challenge: " + progresseChallenge.description);
+                });
+                createChallengeElement();
+                createChallengeItemElement(data);
+              }
+            })
+            .catch((error) => console.error("Error Fetching Data:", error));
+        }, 800);
+      }
+
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
         let infoPelanggan = document.createElement("div");
@@ -229,6 +255,8 @@
         `;
 
         checkMemberVoucher(noHp);
+        checkMemberChallenge(noHp);
+
         addNoPelanggan.disabled = true;
 
         updateSubtotal(0, 0, 0);
@@ -243,11 +271,13 @@
           infoPelanggan.remove();
           addNoPelanggan.disabled = false;
 
-          const voucherElement = document.getElementById("voucher-element");
+          deleteMemberElement();
 
-          if (voucherElement) {
-            voucherElement.remove();
-          }
+          // const voucherElement = document.getElementById("voucher-element");
+
+          // if (voucherElement) {
+          //   voucherElement.remove();
+          // }
         });
       }
 
@@ -268,6 +298,8 @@
           `;
 
         checkMemberVoucher(phoneNumber);
+        checkMemberChallenge(phoneNumber);
+
         addNoPelanggan.disabled = true;
 
         updateSubtotal(badgeDiscountPercentage, 0, 0);
@@ -285,10 +317,12 @@
           pelangganContainer.remove();
           addNoPelanggan.disabled = false;
 
-          const voucherElement = document.getElementById("voucher-element");
-          if (voucherElement) {
-            voucherElement.remove();
-          }
+          // const voucherElement = document.getElementById("voucher-element");
+          // if (voucherElement) {
+          //   voucherElement.remove();
+          // }
+
+          deleteMemberElement();
         });
 
         console.log(phoneNumber);
@@ -314,6 +348,8 @@
           `;
 
         checkMemberVoucher(nomorTelepon);
+        checkMemberChallenge(nomorTelepon);
+
         addNoPelanggan.disabled = true;
 
         updateSubtotal(badgeDiscountPercentage, 0, 0);
@@ -337,10 +373,7 @@
 
           pelangganContainer.remove();
 
-          const voucherElement = document.getElementById("voucher-element");
-          if (voucherElement) {
-            voucherElement.remove();
-          }
+          deleteMemberElement();
         });
 
         console.log(nomorTelepon);
@@ -445,6 +478,66 @@
             button.disabled = false;
           });
         });
+      }
+
+      function createChallengeElement() {
+        const challengeElement = document.createElement("div");
+        challengeElement.classList.add("col-12");
+        challengeElement.setAttribute("id", "challenge-element");
+
+        challengeElement.innerHTML = `
+          <div class="card">
+            <div class="card-body">
+              <div class="challenge-header">
+                <h5 class="card-title">List Challenge Member</h5>
+              </div>
+              <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2" id="challenge-list-container">
+              </div>
+            </div>
+          </div>
+        `;
+
+        document.querySelector(".left-container").appendChild(challengeElement);
+      }
+
+      function createChallengeItemElement(data) {
+        data.map((challenge) => {
+          let challengeItem = document.createElement("div");
+          challengeItem.classList.add("col");
+
+          challengeItem.innerHTML = `
+            <div class="card shadow h-85" style="border-radius: 15px">
+              <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title p-0">${challenge.description}</h5>
+                  <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                  <p class="card-text">Memperoleh ${challenge.reward_type}: ${challenge.reward_value}</p>
+                </div>
+                <div>
+                  <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
+                  data-name="${challenge.description}" data-reward-type="${challenge.reward_type}" data-reward-value="${challenge.reward_value}"><i class="bi bi-plus-circle"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          document.querySelector("#challenge-list-container").appendChild(challengeItem);
+
+          clickVoucherItem();
+        });
+      }
+
+      function deleteMemberElement() {
+        const voucherElement = document.getElementById("voucher-element");
+        if (voucherElement) {
+          voucherElement.remove();
+        }
+
+        const challengeElement = document.getElementById("challenge-element");
+        if (challengeElement) {
+          challengeElement.remove();
+        }
       }
 
       // Add click event listeners to each button
