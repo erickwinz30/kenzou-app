@@ -12,18 +12,17 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class LayananFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'nama_layanan' => fake()->name(),
-            'harga' => $this->faker->numberBetween(20000, 100000),
-            'added_date' => now(),
-            'detail' => $this->faker->paragraph(),
-        ];
-    }
+  /**
+   * Define the model's default state.
+   *
+   * @return array<string, mixed>
+   */
+  public function definition(): array
+  {
+    return [
+      'nama_layanan' => fake()->name(),
+      'harga' => $this->faker->numberBetween(20000, 100000),
+      'detail' => $this->faker->paragraph(),
+    ];
+  }
 }

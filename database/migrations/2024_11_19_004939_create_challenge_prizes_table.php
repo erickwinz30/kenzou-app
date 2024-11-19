@@ -11,13 +11,10 @@ return new class extends Migration
    */
   public function up(): void
   {
-    Schema::create('layanans', function (Blueprint $table) {
+    Schema::create('challenge_prizes', function (Blueprint $table) {
       $table->id();
-      $table->string('nama_layanan');
-      $table->bigInteger('harga');
-      $table->integer('point');
-      $table->string('detail');
-      $table->foreignId('category_layanan_id');
+      $table->foreignId('layanan_id')->nullable();
+      $table->string('name');
       $table->timestamps();
     });
   }
@@ -27,6 +24,6 @@ return new class extends Migration
    */
   public function down(): void
   {
-    Schema::dropIfExists('layanans');
+    Schema::dropIfExists('challenge_prizes');
   }
 };

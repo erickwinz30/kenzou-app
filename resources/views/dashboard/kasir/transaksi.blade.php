@@ -116,6 +116,7 @@
                 <!-- Items will be added here dynamically -->
               </div>
               <div class="mb-3" id="voucher-description-container"></div>
+              <div class="mb-3" id="challenge-description-container"></div>
               <div class="mb-3">
                 <h6 class="card-text fw-semibold mb-3" id="card_item">Keterangan</h6>
                 <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini.."></textarea>
@@ -170,8 +171,8 @@
       let total = 0;
       let badgeDiscountPercentage = 0;
       let voucherDiscountPercentage = 0;
+      let challengeDiscountPercentage = 0;
       let subtotal = 0;
-      let discount = 0;
       let timeoutId;
 
       // fuction untuk update subtotal
@@ -185,6 +186,25 @@
         console.log("Voucher Discount: " + voucherDiscountResult);
 
         let totalDiscount = badgeDiscountResult + voucherDiscountResult;
+        console.log("Total Discount: " + totalDiscount);
+
+        subtotal = total - totalDiscount;
+        console.log("Subtotal: " + subtotal);
+
+        inputHarga.value = subtotal;
+        subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
+      }
+
+      function updateSubtotalChallenge(badgeDiscount, amount, challengeDiscount) {
+        total += amount;
+        console.log("Total Layanan: " + total);
+
+        let badgeDiscountResult = total * badgeDiscount;
+        console.log("Badge Discount: " + badgeDiscountResult);
+        let challengeDiscountResult = total * challengeDiscount;
+        console.log("Challenge Discount: " + challengeDiscountResult);
+
+        let totalDiscount = badgeDiscountResult + challengeDiscountResult;
         console.log("Total Discount: " + totalDiscount);
 
         subtotal = total - totalDiscount;
@@ -272,12 +292,6 @@
           addNoPelanggan.disabled = false;
 
           deleteMemberElement();
-
-          // const voucherElement = document.getElementById("voucher-element");
-
-          // if (voucherElement) {
-          //   voucherElement.remove();
-          // }
         });
       }
 
@@ -316,11 +330,6 @@
           infoPelanggan.remove();
           pelangganContainer.remove();
           addNoPelanggan.disabled = false;
-
-          // const voucherElement = document.getElementById("voucher-element");
-          // if (voucherElement) {
-          //   voucherElement.remove();
-          // }
 
           deleteMemberElement();
         });
@@ -515,7 +524,7 @@
                 </div>
                 <div>
                   <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
-                  data-name="${challenge.description}" data-reward-type="${challenge.reward_type}" data-reward-value="${challenge.reward_value}"><i class="bi bi-plus-circle"></i>
+                  data-description="${challenge.description}" data-reward-type="${challenge.reward_type}" data-reward-value="${challenge.reward_value}"><i class="bi bi-plus-circle"></i>
                   </button>
                 </div>
               </div>
@@ -524,7 +533,81 @@
 
           document.querySelector("#challenge-list-container").appendChild(challengeItem);
 
-          clickVoucherItem();
+          clickChallengeItem();
+        });
+      }
+
+      function clickChallengeItem() {
+        const challengeAddItemButtons = document.querySelectorAll(".challenge-add-item");
+
+        challengeAddItemButtons.forEach((button) => {
+          // Hapus event listener sebelumnya jika ada
+          button.removeEventListener("click", handleChallengeClick);
+
+          // Tambahkan event listener baru
+          button.addEventListener("click", handleChallengeClick);
+        });
+      }
+
+      function handleChallengeClick(event) {
+        event.preventDefault();
+
+        const challengeId = this.getAttribute("data-id");
+        const challengeDescription = this.getAttribute("data-description");
+        const challengeRewardType = this.getAttribute("data-reward-type");
+        const challengeRewardValue = this.getAttribute("data-reward-value");
+
+        // voucherDiscountPercentage = discount;
+
+        // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+
+        const challengeElement = document.getElementById("challenge-description-container");
+        challengeElement.innerHTML = `
+            <h6 class="card-text fw-semibold">Challenge</h6>
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <p class="card-text my-auto">${challengeDescription}</p>
+                <p class="card-text my-auto">Mendapat ${challengeRewardType} sebanyak ${challengeRewardValue}</p>
+              </div>
+              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+              <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+        `;
+
+        // Disable all other challenge buttons
+        const challengeAddItemButtons = document.querySelectorAll(".challenge-add-item");
+        challengeAddItemButtons.forEach((button) => {
+          button.disabled = true;
+        });
+
+        // Disable all other voucher buttons
+        const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
+        voucherAddItemButtons.forEach((button) => {
+          button.disabled = true;
+        });
+
+        // remove voucher element
+        const voucherElement = document.getElementById("voucher-description-container");
+        if (voucherElement) {
+          voucherElement.innerHTML = "";
+        }
+
+        // Enable the remove button for the selected challenge
+        document.getElementById("remove-challenge").addEventListener("click", function() {
+          challengeElement.innerHTML = "";
+          // voucherDiscountPercentage = 0;
+          // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+
+          // Enable all challenge buttons again
+          challengeAddItemButtons.forEach((button) => {
+            button.disabled = false;
+          });
+
+          // Enable all voucher buttons again
+          voucherAddItemButtons.forEach((button) => {
+            button.disabled = false;
+          });
         });
       }
 
@@ -577,7 +660,7 @@
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             itemDiv.remove();
-            updateSubtotal(0, -itemPrice, 0);
+            updateSubtotal(badgeDiscountPercentage, -itemPrice, 0);
             button.disabled = false;
           });
         });

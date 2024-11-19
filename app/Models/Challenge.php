@@ -38,4 +38,9 @@ class Challenge extends Model
   {
     return $this->hasMany(ChallengeProgress::class, 'challenge_id');
   }
+
+  public function challengePrize()
+  {
+    return $this->belongsTo(ChallengePrize::class, 'challenge_prize_id');
+  }
 }

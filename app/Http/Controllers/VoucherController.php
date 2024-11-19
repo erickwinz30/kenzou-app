@@ -153,6 +153,7 @@ class VoucherController extends Controller
         'nama' => $voucher->nama,
         'description' => $voucher->description,
         'discount' => $voucher->discount,
+        'minimum_transaction' => round($voucher->minimum_transaction),
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
         'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
@@ -182,6 +183,7 @@ class VoucherController extends Controller
         'nama' => $voucher->nama,
         'description' => $voucher->description,
         'discount' => $voucher->discount,
+        'minimum_transaction' => round($voucher->minimum_transaction, 2),
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
         'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
@@ -203,7 +205,8 @@ class VoucherController extends Controller
   public function toggleActivation(Request $request)
   {
     try {
-      $voucher = Voucher::findOrFail($request->voucherId);
+      $voucher = Voucher::where('id', $request->voucherId)->first();
+
       $voucher->is_active = !$voucher->is_active;
       $voucher->save();
 

@@ -5,24 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class LayananLog extends Model
+class ChallengePrize extends Model
 {
   use HasFactory;
 
-  protected $with = ['layanan'];
-
   protected $fillable = [
     'layanan_id',
-    'nama_layanan',
-    'harga',
-    'point',
-    'detail',
-    'updated_date',
-    'deleted_date',
+    'name',
   ];
 
   public function layanan()
   {
     return $this->belongsTo(Layanan::class);
+  }
+
+  public function challenges()
+  {
+    return $this->hasMany(Challenge::class);
   }
 }

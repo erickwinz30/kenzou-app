@@ -9,8 +9,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Layanan extends Model
 {
   use HasFactory;
-  protected $guarded = ['id'];
+
   protected $with = ['categoryLayanan'];
+  protected $fillable = [
+    'nama_layanan',
+    'harga',
+    'point',
+    'detail',
+    'category_layanan_id',
+  ];
 
   public function categoryLayanan()
   {
@@ -30,5 +37,10 @@ class Layanan extends Model
   public function detailLayanan()
   {
     return $this->hasMany(DetailLayanan::class, 'detail_layanan_id');
+  }
+
+  public function challengePrize()
+  {
+    return $this->hasMany(ChallengePrize::class);
   }
 }

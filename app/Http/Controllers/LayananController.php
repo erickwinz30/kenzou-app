@@ -7,7 +7,9 @@ use App\Models\Layanan;
 use App\Models\LayananLog;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use App\Models\ChallengePrize;
 use App\Models\CategoryLayanan;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
 class LayananController extends Controller
@@ -28,7 +30,9 @@ class LayananController extends Controller
    */
   public function create()
   {
-    return view('dashboard.layanan.create');
+    return view('dashboard.layanan.create', [
+      'categories' => CategoryLayanan::all(),
+    ]);
   }
 
   /**
@@ -38,12 +42,11 @@ class LayananController extends Controller
   {
     $validatedData = $request->validate([
       'nama_layanan' => 'required|min:3|max:255',
+      'category_layanan_id' => 'required',
       'harga' => 'required',
       'point' => 'required',
       'detail' => 'required|max:255',
     ]);
-
-    $validatedData['added_date'] = Carbon::now('Asia/Jakarta');
 
     // dd($validatedData);
 
@@ -51,6 +54,13 @@ class LayananController extends Controller
     $validatedData['layanan_id'] = $layanan->id;
 
     LayananLog::create($validatedData);
+
+    $challengePrize = ChallengePrize::create([
+      'layanan_id' => $layanan->id,
+      'name' => $layanan->nama_layanan,
+    ]);
+
+    Log::info('New Challenge Prize created', ['challenge_prize' => $challengePrize]);
 
     return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
   }

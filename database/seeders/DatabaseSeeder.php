@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\Layanan;
 use App\Models\LayananLog;
 use App\Models\CategoryLayanan;
+use App\Models\ChallengePrize;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -59,7 +60,6 @@ class DatabaseSeeder extends Seeder
         'nama_layanan' => 'Cuci Eksterior',
         'harga' => '80000',
         'point' => 2,
-        'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
         'category_layanan_id' => 1,
       ],
@@ -67,7 +67,6 @@ class DatabaseSeeder extends Seeder
         'nama_layanan' => 'Cuci Interior',
         'harga' => '40000',
         'point' => 2,
-        'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pembersihan interior dengan cairan pembersih dan vacuum',
         'category_layanan_id' => 1,
       ],
@@ -75,7 +74,6 @@ class DatabaseSeeder extends Seeder
         'nama_layanan' => 'Wax',
         'harga' => '120000',
         'point' => 5,
-        'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian cairan obat untuk cat pada mobil',
         'category_layanan_id' => 2,
       ],
@@ -83,7 +81,6 @@ class DatabaseSeeder extends Seeder
         'nama_layanan' => 'Fogging',
         'harga' => '50000',
         'point' => 3,
-        'added_date' => Carbon::now('Asia/Jakarta'),
         'detail' => 'Pemberian asap/uap disinfektan',
         'category_layanan_id' => 3,
       ],
@@ -99,6 +96,23 @@ class DatabaseSeeder extends Seeder
         'point' => $layanan->point,
         'detail' => $layanan->detail,
       ]);
+
+      ChallengePrize::factory()->create([
+        'layanan_id' => $layananId,
+        'name' => $layanan->nama_layanan,
+      ]);
     }
+
+    ChallengePrize::factory()->create([
+      'name' => 'Point',
+    ]);
+
+    ChallengePrize::factory()->create([
+      'name' => 'Diskon',
+    ]);
+
+    ChallengePrize::factory()->create([
+      'name' => 'Freebie',
+    ]);
   }
 }
