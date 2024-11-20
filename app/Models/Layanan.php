@@ -41,6 +41,6 @@ class Layanan extends Model
 
   public function challengePrize()
   {
-    return $this->hasMany(ChallengePrize::class);
+    return $this->hasMany(ChallengePrize::class, 'layanan_id');
   }
 }

@@ -14,9 +14,9 @@ class ChallengePrize extends Model
     'name',
   ];
 
-  public function layanan()
+  public function layanans()
   {
-    return $this->belongsTo(Layanan::class);
+    return $this->belongsTo(Layanan::class, 'layanan_id');
   }
 
   public function challenges()

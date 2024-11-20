@@ -19,7 +19,7 @@ class Challenge extends Model
     'to_date',
     'target',
     'unit',
-    'reward_type',
+    'challenge_prize_id',
     'reward_value',
     'is_active',
   ];
