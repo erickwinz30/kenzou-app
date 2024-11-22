@@ -14,6 +14,7 @@ use App\Models\Transaksi;
 use App\Models\OwnedVoucher;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use App\Models\BadgeLeaderboard;
 use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -408,6 +409,52 @@ class CatatTransaksiController extends Controller
       $errorMessage = $e->getMessage();
       $errorTrace = $e->getTraceAsString();
       Log::error('Pencarian challenge member error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
+      return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
+    }
+  }
+
+  public function checkMemberRank(Request $request)
+  {
+    try {
+      $member = Member::where('nomor_telepon', $request->nomor_telepon)->first();
+      $leaderboards = Member::orderBy('experience_point', 'desc')->get();
+
+      // Cari ranking member
+      $memberRank = $leaderboards->search(function ($item) use ($member) {
+        return $item->id == $member->id;
+      });
+
+      // Tambahkan 1 karena index dimulai dari 0
+      $memberRank = $memberRank !== false ? $memberRank + 1 : null;
+      Log::info('Member Rank:', ['Rank' => $memberRank]);
+
+      $data = [];
+
+      if ($memberRank === 1 || $memberRank === 2 || $memberRank === 3) {
+        $badge = BadgeLeaderboard::where('rank', $memberRank)->first();
+
+        $data = [
+          'rank' => $memberRank,
+          'discount' => $badge->discount,
+        ];
+
+        Log::info('Member Data', ['Member Rank' => $data]);
+
+        if ($request->wantsJson()) {
+          // Pastikan kita mengembalikan array kosong jika tidak ada hasil
+          if ($memberRank === null) {
+            return response()->json([]);
+          } else {
+            return response()->json($data);
+          }
+        }
+      }
+
+      return $data;
+    } catch (\Exception $e) {
+      $errorMessage = $e->getMessage();
+      $errorTrace = $e->getTraceAsString();
+      Log::error('Pencarian badge member error: ', ['message' => $errorMessage, 'trace' => $errorTrace]);
       return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
     }
   }

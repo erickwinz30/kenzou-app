@@ -115,6 +115,7 @@
               <div class="item_transaksi mb-3" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
               </div>
+              <div class="mb-3" id="rank-description-container"></div>
               <div class="mb-3" id="voucher-description-container"></div>
               <div class="mb-3" id="challenge-description-container"></div>
               <div class="mb-3">
@@ -172,6 +173,7 @@
       let badgeDiscountPercentage = 0;
       let voucherDiscountPercentage = 0;
       let challengeDiscountPercentage = 0;
+      let rankDiscountPercentage = 0;
       let subtotal = 0;
       let timeoutId;
 
@@ -261,6 +263,29 @@
         }, 800);
       }
 
+      function checkMemberRank(phoneNumber) {
+        fetch("/dashboard/transaksiBaru/fetch-check-rank", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            },
+            body: JSON.stringify({
+              nomor_telepon: phoneNumber,
+            }),
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data && Object.keys(data).length > 0) {
+              createRankElement(data);
+              console.log("Rank: " + data.rank + " with discount: " + data.discount);
+            } else {
+              console.log("No rank data found.");
+            }
+          })
+          .catch((error) => console.error("Error Fetching Data:", error));
+      }
+
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
         let infoPelanggan = document.createElement("div");
@@ -274,6 +299,7 @@
           </button>
         `;
 
+        checkMemberRank(noHp);
         checkMemberVoucher(noHp);
         checkMemberChallenge(noHp);
 
@@ -311,6 +337,7 @@
             </div>
           `;
 
+        checkMemberRank(phoneNumber);
         checkMemberVoucher(phoneNumber);
         checkMemberChallenge(phoneNumber);
 
@@ -356,6 +383,7 @@
             </button>
           `;
 
+        checkMemberRank(nomorTelepon);
         checkMemberVoucher(nomorTelepon);
         checkMemberChallenge(nomorTelepon);
 
@@ -609,6 +637,21 @@
             button.disabled = false;
           });
         });
+      }
+
+      function createRankElement(data) {
+        let rank = data.rank;
+        let discount = data.discount;
+
+        const rankElement = document.getElementById("rank-description-container");
+
+        rankElement.innerHTML = `
+          <h6 class="card-text fw-semibold">Rank</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="card-text my-auto">${rank}</p>
+            <p class="card-text my-auto">Diskon: ${discount * 100}%</p>
+          </div>
+        `;
       }
 
       function deleteMemberElement() {
