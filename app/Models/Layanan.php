@@ -39,8 +39,8 @@ class Layanan extends Model
     return $this->hasMany(DetailLayanan::class, 'detail_layanan_id');
   }
 
-  public function challengePrize()
+  public function challenge()
   {
-    return $this->hasMany(ChallengePrize::class, 'layanan_id');
+    return $this->hasMany(Challenge::class, 'layanan_id');
   }
 }

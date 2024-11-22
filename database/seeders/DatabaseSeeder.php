@@ -5,11 +5,15 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Badge;
 use App\Models\Layanan;
+use App\Models\Voucher;
 use App\Models\LayananLog;
-use App\Models\CategoryLayanan;
 use App\Models\ChallengePrize;
+use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
+use App\Models\BadgeLeaderboard;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -54,7 +58,6 @@ class DatabaseSeeder extends Seeder
       CategoryLayanan::factory()->create($category);
     }
 
-
     $layanans = [
       [
         'nama_layanan' => 'Cuci Eksterior',
@@ -96,23 +99,127 @@ class DatabaseSeeder extends Seeder
         'point' => $layanan->point,
         'detail' => $layanan->detail,
       ]);
-
-      ChallengePrize::factory()->create([
-        'layanan_id' => $layananId,
-        'name' => $layanan->nama_layanan,
-      ]);
     }
 
-    ChallengePrize::factory()->create([
-      'name' => 'Point',
-    ]);
+    // Path lokal gambar
+    $localPaths = [
+      'bronze' => 'D:\Badges\bronze.png',
+      'silver' => 'D:\Badges\silver.png',
+      'gold' => 'D:\Badges\gold.png',
+    ];
 
-    ChallengePrize::factory()->create([
-      'name' => 'Diskon',
-    ]);
+    // Path penyimpanan di aplikasi
+    $storagePaths = [];
 
-    ChallengePrize::factory()->create([
-      'name' => 'Freebie',
-    ]);
+    foreach ($localPaths as $key => $localPath) {
+      // Salin gambar ke direktori penyimpanan aplikasi
+      $storagePath = 'badge-image/' . basename($localPath);
+      Storage::disk('public')->put($storagePath, file_get_contents($localPath));
+      $storagePaths[$key] = $storagePath;
+    }
+
+    $badges = [
+      [
+        'nama' => 'Bronze',
+        'min_point' => 0,
+        'max_point' => 499,
+        'discount' => 0,
+        'image' => $storagePaths['bronze'],
+      ],
+      [
+        'nama' => 'Silver',
+        'min_point' => 500,
+        'max_point' => 1499,
+        'discount' => 0.03,
+        'image' => $storagePaths['silver'],
+      ],
+      [
+        'nama' => 'Gold',
+        'min_point' => 1500,
+        'max_point' => 100000,
+        'discount' => 0.05,
+        'image' => $storagePaths['gold'],
+      ],
+    ];
+
+    foreach ($badges as $badge) {
+      Badge::create($badge);
+    }
+
+    // Path lokal gambar
+    $localPathsLeaderboard = [
+      'bronze' => 'D:\Badges\Leaderboard\3.png',
+      'silver' => 'D:\Badges\Leaderboard\2.png',
+      'gold' => 'D:\Badges\leaderboard\1.png',
+    ];
+
+    // Path penyimpanan di aplikasi
+    $storagePathLeaderboards = [];
+
+    foreach ($localPathsLeaderboard as $key => $localPathLeaderboard) {
+      // Salin gambar ke direktori penyimpanan aplikasi
+      $storagePathLeaderboard = 'badge-leaderboard-image/' . basename($localPathLeaderboard);
+      Storage::disk('public')->put($storagePathLeaderboard, file_get_contents($localPathLeaderboard));
+      $storagePathLeaderboards[$key] = $storagePathLeaderboard;
+    }
+
+    $badgeLeaderboards = [
+      [
+        'badge_name' => 'Bronze',
+        'rank' => 3,
+        'discount' => 0,
+        'image' => $storagePathLeaderboards['bronze'],
+      ],
+      [
+        'badge_name' => 'Silver',
+        'rank' => 2,
+        'discount' => 0.05,
+        'image' => $storagePathLeaderboards['silver'],
+      ],
+      [
+        'badge_name' => 'Gold',
+        'rank' => 1,
+        'discount' => 0.1,
+        'image' => $storagePathLeaderboards['gold'],
+      ],
+    ];
+
+    foreach ($badgeLeaderboards as $badge) {
+      BadgeLeaderboard::create($badge);
+    }
+
+    $vouchers = [
+      [
+        'nama' => 'Voucher Diskon 5%',
+        'description' => 'Mendapatkan diskon 5% pada saat melakukan pencucian mobil',
+        'point_needed' => 50,
+        'discount' => 0.05,
+        'minimum_transaction' => 50000,
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+      ],
+      [
+        'nama' => 'Voucher Diskon 10%',
+        'description' => 'Mendapatkan diskon 10% pada saat melakukan pencucian mobil',
+        'point_needed' => 100,
+        'discount' => 0.1,
+        'minimum_transaction' => 10000,
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+      ],
+      [
+        'nama' => 'Voucher Diskon 20%',
+        'description' => 'Mendapatkan diskon 20% pada saat melakukan pencucian mobil',
+        'point_needed' => 150,
+        'discount' => 0.2,
+        'minimum_transaction' => 140000,
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+      ],
+    ];
+
+    foreach ($vouchers as $voucher) {
+      Voucher::create($voucher);
+    }
   }
 }

@@ -98,38 +98,20 @@
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
                 <div class="mb-3">
-                  <label for="challenge_prize_id" class="form-label">Tipe Hadiah</label>
-                  <select class="form-select @error('challenge_prize_id') is-invalid @enderror"
-                    aria-label="Default select example" name="challenge_prize_id" id="challenge_prize_id">
+                  <label for="layanan_id" class="form-label">Hadiah yang diperoleh member</label>
+                  <select class="form-select @error('layanan_id') is-invalid @enderror"
+                    aria-label="Default select example" name="layanan_id" id="layanan_id">
                     <option selected style="color: gray" disabled>Silahkan pilih hadiahnya...</option>
                     {{-- <option value="Pencucian">Pencucian</option> --}}
                     @foreach ($categories as $category)
                       <optgroup label="{{ $category->name }}">
                         @foreach ($category->layanans as $layanan)
-                          @foreach ($layanan->challengePrize as $prize)
-                            <option value="{{ $prize->id }}">{{ $prize->name }}</option>
-                          @endforeach
+                          <option value="{{ $layanan->id }}">{{ $layanan->nama_layanan }}</option>
                         @endforeach
                       </optgroup>
                     @endforeach
-                    <optgroup label="Atau">
-                      @foreach ($otherPrizes as $prize)
-                        <option value="{{ $prize->id }}">{{ $prize->name }}</option>
-                      @endforeach
-                    </optgroup>
                   </select>
-                  @error('challenge_prize_id')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-                <div class="mb-3">
-                  <label for="reward_value" class="form-label">Hadiah yang diperoleh pelanggan</label>
-                  <input type="text" inputmode="numeric"
-                    class="form-control @error('reward_value') is-invalid @enderror" id="reward_value" name="reward_value"
-                    placeholder="Isi dalam bentuk angka.." required autofocus>
-                  @error('reward_value')
+                  @error('layanan_id')
                     <div class="invalid-feedback">
                       {{ $message }}
                     </div>

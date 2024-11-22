@@ -33,7 +33,6 @@ class ChallengeController extends Controller
   {
     return view('dashboard.challenge.create', [
       'categories' => CategoryLayanan::all(),
-      'otherPrizes' => ChallengePrize::whereNull('layanan_id')->get(),
     ]);
   }
 
@@ -49,12 +48,13 @@ class ChallengeController extends Controller
         'to_date' => 'required|date',
         'target' => 'required|numeric',
         'unit' => 'required',
-        'challenge_prize_id' => 'required',
+        'layanan_id' => 'required',
         'reward_value' => 'nullable|numeric',
       ]);
 
       $newChallenge = Challenge::create($validatedData);
       Log::info('New Challenge created', ['challenge' => $newChallenge]);
+      Log::info('New Challenge ID', ['challengeId' => $newChallenge->id]);
 
       $allMember = Member::all();
 
@@ -63,13 +63,11 @@ class ChallengeController extends Controller
           $newChallengeProgress = ChallengeProgress::create([
             'challenge_id' => $newChallenge->id,
             'member_id' => $member->id,
-            'progress' => 0,
           ]);
 
           Log::info('New Challenge Progress created', ['progress' => $newChallengeProgress]);
         }
       }
-
 
       return redirect('/dashboard/challenge')->with('success', 'Challenge baru berhasil ditambahkan!!!');
     } catch (\Exception $e) {
@@ -95,7 +93,6 @@ class ChallengeController extends Controller
     return view('dashboard.challenge.edit', [
       'challenge' => $challenge,
       'categories' => CategoryLayanan::all(),
-      'otherPrizes' => ChallengePrize::whereNull('layanan_id')->get(),
     ]);
   }
 
@@ -104,6 +101,8 @@ class ChallengeController extends Controller
    */
   public function update(Request $request, Challenge $challenge)
   {
+    $rules = [];
+
     if ($request->description !== $challenge->description) {
       $rules['description'] = 'required|max:255';
     }
@@ -120,18 +119,15 @@ class ChallengeController extends Controller
       $rules['target'] = 'required|integer';
     }
 
-
     if ($request->unit !== $challenge->unit) {
       $rules['unit'] = 'required';
     }
 
-    if ($request->challenge_prize_id !== $challenge->challenge_prize_id) {
-      $rules['challenge_prize_id'] = 'required';
+    if ($request->layanan_id != $challenge->layanan_id) {
+      $rules['layanan_id'] = 'required|integer';
     }
 
-    if ($request->reward_value != $challenge->reward_value) {
-      $rules['reward_value'] = 'required|integer';
-    }
+    dd($rules);
 
     $validatedData = $request->validate($rules);
 
@@ -162,8 +158,7 @@ class ChallengeController extends Controller
         'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,
         'unit' => $challenge->unit,
-        'prize' => $challenge->challengePrize->name,
-        'reward_value' => $challenge->reward_value,
+        'layanan' => $challenge->layanan->nama_layanan,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -192,8 +187,7 @@ class ChallengeController extends Controller
         'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,
         'unit' => $challenge->unit,
-        'prize' => $challenge->challengePrize->name,
-        'reward_value' => $challenge->reward_value,
+        'layanan' => $challenge->layanan->nama_layanan,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -212,7 +206,7 @@ class ChallengeController extends Controller
   public function toggleActivation(Request $request)
   {
     try {
-      $challenge = Challenge::findOrFail($request->challengeId);
+      $challenge = Challenge::where('id', $request->challengeId)->first();
       $challenge->is_active = !$challenge->is_active;
       $challenge->save();
 

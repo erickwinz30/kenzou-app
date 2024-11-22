@@ -55,13 +55,6 @@ class LayananController extends Controller
 
     LayananLog::create($validatedData);
 
-    $challengePrize = ChallengePrize::create([
-      'layanan_id' => $layanan->id,
-      'name' => $layanan->nama_layanan,
-    ]);
-
-    Log::info('New Challenge Prize created', ['challenge_prize' => $challengePrize]);
-
     return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
   }
 

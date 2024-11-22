@@ -18,8 +18,7 @@ return new class extends Migration
       $table->datetime('to_date');
       $table->integer('target');
       $table->string('unit');
-      $table->foreignId('challenge_prize_id');
-      $table->string('reward_value')->nullable();
+      $table->foreignId('layanan_id');
       $table->boolean('is_active')->default(false);
       $table->timestamps();
     });

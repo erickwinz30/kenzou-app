@@ -12,6 +12,7 @@ class Challenge extends Model
   use HasFactory;
 
   protected $keyType = 'string';
+  public $incrementing = false;
 
   protected $fillable = [
     'description',
@@ -19,8 +20,7 @@ class Challenge extends Model
     'to_date',
     'target',
     'unit',
-    'challenge_prize_id',
-    'reward_value',
+    'layanan_id',
     'is_active',
   ];
 
@@ -39,8 +39,8 @@ class Challenge extends Model
     return $this->hasMany(ChallengeProgress::class, 'challenge_id');
   }
 
-  public function challengePrize()
+  public function layanan()
   {
-    return $this->belongsTo(ChallengePrize::class, 'challenge_prize_id');
+    return $this->belongsTo(Layanan::class, 'layanan_id');
   }
 }
