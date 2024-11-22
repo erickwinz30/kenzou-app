@@ -127,8 +127,6 @@ class ChallengeController extends Controller
       $rules['layanan_id'] = 'required|integer';
     }
 
-    dd($rules);
-
     $validatedData = $request->validate($rules);
 
     $updatedChallenge = Challenge::where('id', $challenge->id)->update($validatedData);

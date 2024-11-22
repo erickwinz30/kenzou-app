@@ -106,9 +106,8 @@
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
                 <div class="mb-3">
-                  <label for="challenge_prize_id" class="form-label">Tipe Hadiah</label>
-                  <select class="form-select" aria-label="Default select example" name="challenge_prize_id"
-                    id="challenge_prize_id">
+                  <label for="layanan_id" class="form-label">Tipe Hadiah</label>
+                  <select class="form-select" aria-label="Default select example" name="layanan_id" id="layanan_id">
                     @foreach ($categories as $category)
                       <optgroup label="{{ $category->name }}">
                         @foreach ($category->layanans as $layanan)
@@ -120,7 +119,7 @@
                       </optgroup>
                     @endforeach
                   </select>
-                  @error('challenge_prize_id')
+                  @error('layanan_id')
                     <div class="invalid-feedback">
                       {{ $message }}
                     </div>
