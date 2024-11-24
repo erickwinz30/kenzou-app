@@ -178,7 +178,7 @@
       let timeoutId;
 
       // fuction untuk update subtotal
-      function updateSubtotal(badgeDiscount, amount, voucherDiscount) {
+      function updateSubtotal(badgeDiscount, amount, voucherDiscount, rankDiscount) {
         total += amount;
         console.log("Total Layanan: " + total);
 
@@ -186,27 +186,10 @@
         console.log("Badge Discount: " + badgeDiscountResult);
         let voucherDiscountResult = total * voucherDiscount;
         console.log("Voucher Discount: " + voucherDiscountResult);
+        let rankDiscountResult = total * rankDiscount;
+        console.log("Rank Discount: " + rankDiscountResult);
 
-        let totalDiscount = badgeDiscountResult + voucherDiscountResult;
-        console.log("Total Discount: " + totalDiscount);
-
-        subtotal = total - totalDiscount;
-        console.log("Subtotal: " + subtotal);
-
-        inputHarga.value = subtotal;
-        subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
-      }
-
-      function updateSubtotalChallenge(badgeDiscount, amount, challengeDiscount) {
-        total += amount;
-        console.log("Total Layanan: " + total);
-
-        let badgeDiscountResult = total * badgeDiscount;
-        console.log("Badge Discount: " + badgeDiscountResult);
-        let challengeDiscountResult = total * challengeDiscount;
-        console.log("Challenge Discount: " + challengeDiscountResult);
-
-        let totalDiscount = badgeDiscountResult + challengeDiscountResult;
+        let totalDiscount = badgeDiscountResult + voucherDiscountResult + rankDiscountResult;
         console.log("Total Discount: " + totalDiscount);
 
         subtotal = total - totalDiscount;
@@ -252,8 +235,8 @@
             .then((response) => response.json())
             .then((data) => {
               if (data && data.length > 0) {
-                data.forEach((progresseChallenge) => {
-                  console.log("Progresse Challenge: " + progresseChallenge.description);
+                data.forEach((progressChallenge) => {
+                  console.log("Progress Challenge: " + progressChallenge.description);
                 });
                 createChallengeElement();
                 createChallengeItemElement(data);
@@ -263,28 +246,30 @@
         }, 800);
       }
 
-      function checkMemberRank(phoneNumber) {
-        fetch("/dashboard/transaksiBaru/fetch-check-rank", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            },
-            body: JSON.stringify({
-              nomor_telepon: phoneNumber,
-            }),
-          })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && Object.keys(data).length > 0) {
-              createRankElement(data);
-              console.log("Rank: " + data.rank + " with discount: " + data.discount);
-            } else {
-              console.log("No rank data found.");
-            }
-          })
-          .catch((error) => console.error("Error Fetching Data:", error));
-      }
+      // function checkMemberRank(phoneNumber) {
+      //   fetch("/dashboard/transaksiBaru/fetch-check-rank", {
+      //       method: "POST",
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         "X-CSRF-TOKEN": "{{ csrf_token() }}",
+      //       },
+      //       body: JSON.stringify({
+      //         nomor_telepon: phoneNumber,
+      //       }),
+      //     })
+      //     .then((response) => response.json())
+      //     .then((data) => {
+      //       if (data && Object.keys(data).length > 0) {
+      //         rankDiscountPercentage = data.discount;
+      //         createRankElement(data);
+      //         console.log("Rank: " + data.rank + " with discount: " + data.discount);
+      //       } else {
+      //         rankDiscountPercentage = 0;
+      //         console.log("No rank data found.");
+      //       }
+      //     })
+      //     .catch((error) => console.error("Error Fetching Data:", error));
+      // }
 
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
@@ -299,13 +284,13 @@
           </button>
         `;
 
-        checkMemberRank(noHp);
+        // checkMemberRank(noHp);
         checkMemberVoucher(noHp);
         checkMemberChallenge(noHp);
 
         addNoPelanggan.disabled = true;
 
-        updateSubtotal(0, 0, 0);
+        updateSubtotal(0, 0, 0, 0);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
@@ -337,13 +322,13 @@
             </div>
           `;
 
-        checkMemberRank(phoneNumber);
+        // checkMemberRank(phoneNumber);
         checkMemberVoucher(phoneNumber);
         checkMemberChallenge(phoneNumber);
 
         addNoPelanggan.disabled = true;
 
-        updateSubtotal(badgeDiscountPercentage, 0, 0);
+        updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
@@ -369,7 +354,10 @@
         const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
         const badgeName = containerDataPelanggan.getAttribute("data-badge-name");
         const badgeDiscount = containerDataPelanggan.getAttribute("data-badge-discount");
+        const rank = containerDataPelanggan.getAttribute("data-rank");
+        const rankDiscount = containerDataPelanggan.getAttribute("data-rank-discount");
         badgeDiscountPercentage = badgeDiscount;
+        rankDiscountPercentage = rankDiscount;
 
 
         let infoPelanggan = document.createElement("div");
@@ -383,15 +371,19 @@
             </button>
           `;
 
-        checkMemberRank(nomorTelepon);
+        // checkMemberRank(nomorTelepon);
         checkMemberVoucher(nomorTelepon);
         checkMemberChallenge(nomorTelepon);
 
         addNoPelanggan.disabled = true;
 
-        updateSubtotal(badgeDiscountPercentage, 0, 0);
+        updateSubtotal(badgeDiscountPercentage, 0, 0, rankDiscountPercentage);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
+
+        if (rank !== null) {
+          createRankElement(rank, rankDiscountPercentage);
+        }
         document.getElementById("nomor_telepon").value = "";
 
         pelangganContainer.remove();
@@ -402,8 +394,9 @@
           noHp.value = "";
           badgeDiscountPercentage = 0;
           voucherDiscountPercentage = 0;
+          rankDiscountPercentage = 0;
 
-          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
           infoPelanggan.remove();
           addNoPelanggan.disabled = false;
@@ -485,7 +478,7 @@
 
         voucherDiscountPercentage = discount;
 
-        updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+        updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
         const voucherElement = document.getElementById("voucher-description-container");
         voucherElement.innerHTML = `
@@ -508,7 +501,7 @@
         document.getElementById("remove-voucher").addEventListener("click", function() {
           voucherElement.innerHTML = "";
           voucherDiscountPercentage = 0;
-          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+          updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
           // Enable all voucher buttons again
           voucherAddItemButtons.forEach((button) => {
@@ -548,11 +541,11 @@
                 <div>
                   <h5 class="card-title p-0">${challenge.description}</h5>
                   <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
-                  <p class="card-text">Memperoleh ${challenge.reward_type}: ${challenge.reward_value}</p>
+                  <p class="card-text">Gratis ${challenge.layanan_name}</p>
                 </div>
                 <div>
                   <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
-                  data-description="${challenge.description}" data-reward-type="${challenge.reward_type}" data-reward-value="${challenge.reward_value}"><i class="bi bi-plus-circle"></i>
+                  data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" data-layanan-name="${challenge.layanan_name}"><i class="bi bi-plus-circle"></i>
                   </button>
                 </div>
               </div>
@@ -582,8 +575,8 @@
 
         const challengeId = this.getAttribute("data-id");
         const challengeDescription = this.getAttribute("data-description");
-        const challengeRewardType = this.getAttribute("data-reward-type");
-        const challengeRewardValue = this.getAttribute("data-reward-value");
+        const challengeLayananId = this.getAttribute("data-layanan-id");
+        const challengeLayananName = this.getAttribute("data-layanan-name");
 
         // voucherDiscountPercentage = discount;
 
@@ -595,7 +588,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <div>
                 <p class="card-text my-auto">${challengeDescription}</p>
-                <p class="card-text my-auto">Mendapat ${challengeRewardType} sebanyak ${challengeRewardValue}</p>
+                <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
               <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
               <i class="bi bi-x-circle"></i>
@@ -639,14 +632,14 @@
         });
       }
 
-      function createRankElement(data) {
-        let rank = data.rank;
-        let discount = data.discount;
+      function createRankElement(memberRank, memberRankDiscount) {
+        let rank = memberRank;
+        let discount = memberRankDiscount;
 
         const rankElement = document.getElementById("rank-description-container");
 
         rankElement.innerHTML = `
-          <h6 class="card-text fw-semibold">Rank</h6>
+          <h6 class="card-text fw-semibold">Leaderboard Rank</h6>
           <div class="d-flex justify-content-between align-items-center">
             <p class="card-text my-auto">${rank}</p>
             <p class="card-text my-auto">Diskon: ${discount * 100}%</p>
@@ -698,12 +691,13 @@
           // containerTransaksi = document.getElementById('item_transaksi');
           containerItem.appendChild(itemDiv);
 
-          updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage);
+          updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
+            rankDiscountPercentage);
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             itemDiv.remove();
-            updateSubtotal(badgeDiscountPercentage, -itemPrice, 0);
+            updateSubtotal(badgeDiscountPercentage, -itemPrice, 0, 0);
             button.disabled = false;
           });
         });
@@ -802,7 +796,7 @@
 
                     containerDataPelanggan.innerHTML = `
                           <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
-                          data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}">
+                          data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}" data-rank="${item.rank}" data-rank-discount="${item.rankDiscount}">
                             <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
                             <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
                           </div>

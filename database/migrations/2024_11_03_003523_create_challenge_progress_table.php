@@ -17,6 +17,7 @@ return new class extends Migration
       $table->foreignUuid('member_id');
       $table->integer('progress')->default(0);
       $table->boolean('is_completed')->default(false);
+      $table->boolean('is_used')->default(false);
       $table->datetime('completed_at')->nullable();
       $table->timestamps();
     });

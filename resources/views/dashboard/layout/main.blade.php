@@ -13,7 +13,6 @@
     <!-- Favicons -->
     <link href="{{ asset('img/icons/icon-72.png') }}" rel="icon">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.gstatic.com" rel="preconnect">

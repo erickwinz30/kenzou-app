@@ -156,10 +156,12 @@ class CatatTransaksiController extends Controller
 
       $searchResult = Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
 
+
       $data = [];
 
       foreach ($searchResult as $result) {
         Log::info('Search Result:', ['search_result' => $result]);
+        $memberRankCheck = $this->checkMemberRank($result->nomor_telepon);
 
         $badge = DB::table('badges')
           ->where('min_point', '<=', $result->experience_point)
@@ -172,6 +174,8 @@ class CatatTransaksiController extends Controller
           'nomor_telepon' => $result->nomor_telepon,
           'badgeName' => $badge->nama,
           'badgeDiscount' => $badge->discount,
+          'rank' => $memberRankCheck['rank'] ?? null,
+          'rankDiscount' => $memberRankCheck['discount'] ?? 0,
         ];
       }
 
@@ -388,8 +392,8 @@ class CatatTransaksiController extends Controller
             'description' => $challengeProgress->challenge->description,
             'target' => $challengeProgress->challenge->target,
             'unit' => $challengeProgress->challenge->unit,
-            'reward_type' => $challengeProgress->challenge->reward_type,
-            'reward_value' => $challengeProgress->challenge->reward_value,
+            'layanan_id' => $challengeProgress->challenge->layanan_id,
+            'layanan_name' => $challengeProgress->challenge->layanan->nama_layanan,
             'to_date' => Carbon::parse($challengeProgress->challenge->to_date)->format('d M Y'),
           ];
         }
@@ -413,10 +417,10 @@ class CatatTransaksiController extends Controller
     }
   }
 
-  public function checkMemberRank(Request $request)
+  public function checkMemberRank($phoneNumber)
   {
     try {
-      $member = Member::where('nomor_telepon', $request->nomor_telepon)->first();
+      $member = Member::where('nomor_telepon', $phoneNumber)->first();
       $leaderboards = Member::orderBy('experience_point', 'desc')->get();
 
       // Cari ranking member
@@ -440,14 +444,14 @@ class CatatTransaksiController extends Controller
 
         Log::info('Member Data', ['Member Rank' => $data]);
 
-        if ($request->wantsJson()) {
-          // Pastikan kita mengembalikan array kosong jika tidak ada hasil
-          if ($memberRank === null) {
-            return response()->json([]);
-          } else {
-            return response()->json($data);
-          }
-        }
+        // if ($request->wantsJson()) {
+        //   // Pastikan kita mengembalikan array kosong jika tidak ada hasil
+        //   if ($memberRank === null) {
+        //     return response()->json([]);
+        //   } else {
+        //     return response()->json($data);
+        //   }
+        // }
       }
 
       return $data;
