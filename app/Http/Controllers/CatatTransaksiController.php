@@ -156,7 +156,6 @@ class CatatTransaksiController extends Controller
 
       $searchResult = Member::where('nomor_telepon', 'like', '%' . $nomor_telepon . '%')->get();
 
-
       $data = [];
 
       foreach ($searchResult as $result) {

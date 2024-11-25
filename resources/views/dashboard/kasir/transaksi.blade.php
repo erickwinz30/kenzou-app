@@ -246,30 +246,30 @@
         }, 800);
       }
 
-      // function checkMemberRank(phoneNumber) {
-      //   fetch("/dashboard/transaksiBaru/fetch-check-rank", {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //         "X-CSRF-TOKEN": "{{ csrf_token() }}",
-      //       },
-      //       body: JSON.stringify({
-      //         nomor_telepon: phoneNumber,
-      //       }),
-      //     })
-      //     .then((response) => response.json())
-      //     .then((data) => {
-      //       if (data && Object.keys(data).length > 0) {
-      //         rankDiscountPercentage = data.discount;
-      //         createRankElement(data);
-      //         console.log("Rank: " + data.rank + " with discount: " + data.discount);
-      //       } else {
-      //         rankDiscountPercentage = 0;
-      //         console.log("No rank data found.");
-      //       }
-      //     })
-      //     .catch((error) => console.error("Error Fetching Data:", error));
-      // }
+      function checkMemberRank(phoneNumber) {
+        fetch("/dashboard/transaksiBaru/fetch-check-rank", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            },
+            body: JSON.stringify({
+              nomor_telepon: phoneNumber,
+            }),
+          })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data && Object.keys(data).length > 0) {
+              rankDiscountPercentage = data.discount;
+              createRankElement(data.rank, data.discount);
+              console.log("Rank: " + data.rank + " with discount: " + data.discount);
+            } else {
+              rankDiscountPercentage = 0;
+              console.log("No rank data found.");
+            }
+          })
+          .catch((error) => console.error("Error Fetching Data:", error));
+      }
 
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
@@ -284,9 +284,9 @@
           </button>
         `;
 
-        // checkMemberRank(noHp);
-        checkMemberVoucher(noHp);
-        checkMemberChallenge(noHp);
+        // // checkMemberRank(noHp);
+        // checkMemberVoucher(noHp);
+        // checkMemberChallenge(noHp);
 
         addNoPelanggan.disabled = true;
 
@@ -295,21 +295,29 @@
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
 
-        document.getElementById("remove-pelanggan").addEventListener("click", function() {
-          // event.preventDefault();
-          let noHp = document.getElementById("nomor_telepon");
-          noHp.value = "";
-          infoPelanggan.remove();
-          addNoPelanggan.disabled = false;
+        // document.getElementById("remove-pelanggan").addEventListener("click", function() {
+        //   // event.preventDefault();
+        //   let noHp = document.getElementById("nomor_telepon");
+        //   noHp.value = "";
+        //   infoPelanggan.remove();
+        //   addNoPelanggan.disabled = false;
 
-          deleteMemberElement();
-        });
+        //   deleteMemberElement();
+        // });
+
+        removePelanggan(infoPelanggan, addNoPelanggan, null);
       }
 
-      function memberInformationClickElement(memberName, phoneNumber, badgeName, badgeDiscount, pelangganContainer) {
+      function memberInformationClickElement(memberName, phoneNumber, badgeName, badgeDiscount, rank, rankDiscount,
+        pelangganContainer) {
         let infoPelanggan = document.createElement("div");
         infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
         badgeDiscountPercentage = badgeDiscount;
+        rankDiscountPercentage = rankDiscount;
+
+        if (rank !== null) {
+          createRankElement(rank, rankDiscountPercentage);
+        }
 
         infoPelanggan.innerHTML = `
             <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${memberName}" data-nomor-telepon="${phoneNumber}" 
@@ -335,16 +343,7 @@
 
         pelangganContainer.remove();
 
-        document.getElementById("remove-pelanggan").addEventListener("click", function() {
-          // event.preventDefault();
-          let noHp = document.getElementById("nomor_telepon");
-          noHp.value = "";
-          infoPelanggan.remove();
-          pelangganContainer.remove();
-          addNoPelanggan.disabled = false;
-
-          deleteMemberElement();
-        });
+        removePelanggan(infoPelanggan, addNoPelanggan, pelangganContainer);
 
         console.log(phoneNumber);
       }
@@ -388,6 +387,12 @@
 
         pelangganContainer.remove();
 
+        console.log(nomorTelepon);
+
+        removePelanggan(infoPelanggan, addNoPelanggan, pelangganContainer);
+      }
+
+      function removePelanggan(infoPelanggan, addNoPelanggan, pelangganContainer) {
         document.getElementById("remove-pelanggan").addEventListener("click", function() {
           // event.preventDefault();
           let noHp = document.getElementById("nomor_telepon");
@@ -401,12 +406,12 @@
           infoPelanggan.remove();
           addNoPelanggan.disabled = false;
 
-          pelangganContainer.remove();
+          if (pelangganContainer) {
+            pelangganContainer.remove();
+          }
 
           deleteMemberElement();
         });
-
-        console.log(nomorTelepon);
       }
 
       function createVoucherElement() {
@@ -482,13 +487,13 @@
 
         const voucherElement = document.getElementById("voucher-description-container");
         voucherElement.innerHTML = `
-            <h6 class="card-text fw-semibold">Voucher</h6>
-            <div class="d-flex justify-content-between align-items-center">
-              <p class="card-text my-auto">${voucherName}</p>
-              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
-                    <i class="bi bi-x-circle"></i>
-              </button>
-            </div>
+          <h6 class="card-text fw-semibold">Voucher</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="card-text my-auto">${voucherName}</p>
+            <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+              <i class="bi bi-x-circle"></i>
+            </button>
+          </div>
         `;
 
         // Disable all other voucher buttons
@@ -617,8 +622,8 @@
         // Enable the remove button for the selected challenge
         document.getElementById("remove-challenge").addEventListener("click", function() {
           challengeElement.innerHTML = "";
-          // voucherDiscountPercentage = 0;
-          // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+          // challengeDiscountPercentage = 0;
+          // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, );
 
           // Enable all challenge buttons again
           challengeAddItemButtons.forEach((button) => {
@@ -656,6 +661,21 @@
         const challengeElement = document.getElementById("challenge-element");
         if (challengeElement) {
           challengeElement.remove();
+        }
+
+        const rankDescriptionContainer = document.getElementById("rank-description-container");
+        if (rankDescriptionContainer) {
+          rankDescriptionContainer.innerHTML = "";
+        }
+
+        const voucherDescriptionContainer = document.getElementById("voucher-description-container");
+        if (voucherDescriptionContainer) {
+          voucherDescriptionContainer.innerHTML = "";
+        }
+
+        const challengeDescriptionContainer = document.getElementById("challenge-description-container");
+        if (challengeDescriptionContainer) {
+          challengeDescriptionContainer.innerHTML = "";
         }
       }
 
@@ -740,7 +760,7 @@
                 console.log(item.nama);
 
                 memberInformationClickElement(item.nama, item.nomor_telepon, item
-                  .badgeName, item.badgeDiscount, pelangganContainer);
+                  .badgeName, item.badgeDiscount, item.rank, item.rankDiscount, pelangganContainer);
               });
             } else {
               customerInformationElement();
