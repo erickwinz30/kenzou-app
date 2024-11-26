@@ -538,25 +538,56 @@
       function createChallengeItemElement(data) {
         data.map((challenge) => {
           let challengeItem = document.createElement("div");
+          let selectedLayananItem = document.querySelectorAll(".layanan-added-item");
           challengeItem.classList.add("col");
 
-          challengeItem.innerHTML = `
-            <div class="card shadow h-85" style="border-radius: 15px">
-              <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                <div>
-                  <h5 class="card-title p-0">${challenge.description}</h5>
-                  <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
-                  <p class="card-text">Gratis ${challenge.layanan_name}</p>
+          selectedLayananItem.forEach((selectedItem) => {
+            let selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
+            let selectedLayananName = selectedItem.getAttribute('data-layanan-name');
+            let selectedLayananPrice = selectedItem.getAttribute('data-layanan-price');
+
+            console.log(selectedLayananId, selectedLayananName, selectedLayananPrice);
+            console.log(challenge.layanan_id);
+
+            if (selectedLayananId === challenge.layanan_id) {
+              challengeItem.innerHTML = `
+                <div class="card shadow h-85" style="border-radius: 15px">
+                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title p-0">${challenge.description}</h5>
+                      <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                      <p class="card-text">Gratis ${challenge.layanan_name}</p>
+                    </div>
+                    <div>
+                      <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
+                      data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                      data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
-                  data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
-                  data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
-                  </button>
+              `;
+            } else {
+              challengeItem.innerHTML = `
+                <div class="card shadow h-85" style="border-radius: 15px">
+                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title p-0">${challenge.description}</h5>
+                      <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                      <p class="card-text">Gratis ${challenge.layanan_name}</p>
+                    </div>
+                    <div>
+                      <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
+                      data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                      data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          `;
+              `;
+            }
+          });
+
 
           document.querySelector("#challenge-list-container").appendChild(challengeItem);
 
@@ -715,6 +746,9 @@
           const itemDiv = document.createElement("div");
           itemDiv.classList.add("item", "d-flex", "justify-content-between", "align-items-center",
             "layanan-added-item");
+          itemDiv.setAttribute("data-layanan-id", itemId);
+          itemDiv.setAttribute("data-layanan-name", itemName);
+          itemDiv.setAttribute("data-layanan-price", itemPrice);
 
           // Add the item name and price to the new div
           itemDiv.innerHTML = `
@@ -765,19 +799,24 @@
 
               if (challengeLayananId === itemId) {
                 challengeDescriptionContainer.innerHTML = "";
+                challengeAddButton.forEach((button) => {
+                  // if (button.disabled === false) {
+                  // }
+                  button.disabled = true;
+                });
               }
 
-              challengeAddButton.forEach((button) => {
-                let buttonId = button.getAttribute("data-layanan-id");
+              // challengeAddButton.forEach((button) => {
+              //   let challengeLayananId = button.getAttribute("data-layanan-id");
 
-                if (buttonId === itemId) {
-                  button.disabled = false;
-                }
-              });
+              //   if (challengeLayananId === itemId) {
+              //     button.disabled = true;
+              //   }
+              // });
+              updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
+                rankDiscountPercentage);
             }
 
-            // updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
-            //   rankDiscountPercentage);
 
             voucherAddButton.forEach((button) => {
               button.disabled = false;
