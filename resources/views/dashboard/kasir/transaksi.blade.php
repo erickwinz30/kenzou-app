@@ -755,8 +755,10 @@
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             const challengeDescriptionContainer = document.getElementById(
               "challenge-description-container");
+            const voucherAddButton = document.querySelectorAll(".voucher-add-item");
 
-            if (challengeDescriptionContainer) {
+            if (challengeDescriptionContainer.innerHTML !== "") {
+              console.log('Challenge Description Container is not null');
               const challengeRemoveButton = document.getElementById("remove-challenge");
               const challengeAddButton = document.querySelectorAll(".challenge-add-item");
               const challengeLayananId = challengeRemoveButton.getAttribute("data-layanan-id");
@@ -764,9 +766,6 @@
               if (challengeLayananId === itemId) {
                 challengeDescriptionContainer.innerHTML = "";
               }
-
-              updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
-                rankDiscountPercentage);
 
               challengeAddButton.forEach((button) => {
                 let buttonId = button.getAttribute("data-layanan-id");
@@ -776,6 +775,13 @@
                 }
               });
             }
+
+            // updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
+            //   rankDiscountPercentage);
+
+            voucherAddButton.forEach((button) => {
+              button.disabled = false;
+            });
 
             itemDiv.remove();
             updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
