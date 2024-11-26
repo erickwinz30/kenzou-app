@@ -393,6 +393,7 @@ class CatatTransaksiController extends Controller
             'unit' => $challengeProgress->challenge->unit,
             'layanan_id' => $challengeProgress->challenge->layanan_id,
             'layanan_name' => $challengeProgress->challenge->layanan->nama_layanan,
+            'layanan_price' => $challengeProgress->challenge->layanan->harga,
             'to_date' => Carbon::parse($challengeProgress->challenge->to_date)->format('d M Y'),
           ];
         }

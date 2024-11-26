@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('layanans', function (Blueprint $table) {
       $table->id();
       $table->string('nama_layanan');
-      $table->bigInteger('harga');
+      $table->decimal('harga', 10, 2);
       $table->integer('point');
       $table->string('detail');
       $table->foreignId('category_layanan_id');

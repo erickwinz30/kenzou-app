@@ -549,8 +549,9 @@
                   <p class="card-text">Gratis ${challenge.layanan_name}</p>
                 </div>
                 <div>
-                  <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
-                  data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" data-layanan-name="${challenge.layanan_name}"><i class="bi bi-plus-circle"></i>
+                  <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
+                  data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                  data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
                   </button>
                 </div>
               </div>
@@ -582,10 +583,21 @@
         const challengeDescription = this.getAttribute("data-description");
         const challengeLayananId = this.getAttribute("data-layanan-id");
         const challengeLayananName = this.getAttribute("data-layanan-name");
+        const challengeLayananPrice = parseInt(this.getAttribute("data-layanan-price"));
 
-        // voucherDiscountPercentage = discount;
+        const layananItemsPrice = document.querySelectorAll(".layanan-price");
 
-        // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage);
+        layananItemsPrice.forEach((price) => {
+          let layananId = price.getAttribute("data-layanan-id");
+          let layananPrice = parseInt(price.getAttribute("data-price"));
+
+          if (layananId === challengeLayananId) {
+            price.textContent = `Rp. 0`;
+
+            updateSubtotal(badgeDiscountPercentage, -layananPrice, voucherDiscountPercentage,
+              rankDiscountPercentage);
+          }
+        });
 
         const challengeElement = document.getElementById("challenge-description-container");
         challengeElement.innerHTML = `
@@ -595,7 +607,7 @@
                 <p class="card-text my-auto">${challengeDescription}</p>
                 <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
-              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
               <i class="bi bi-x-circle"></i>
               </button>
             </div>
@@ -622,8 +634,18 @@
         // Enable the remove button for the selected challenge
         document.getElementById("remove-challenge").addEventListener("click", function() {
           challengeElement.innerHTML = "";
-          // challengeDiscountPercentage = 0;
-          // updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, );
+
+          layananItemsPrice.forEach((price) => {
+            let layananId = price.getAttribute("data-layanan-id");
+
+            if (layananId === challengeLayananId) {
+              price.textContent = `Rp. ${challengeLayananPrice.toLocaleString()}`;
+
+              updateSubtotal(badgeDiscountPercentage, challengeLayananPrice, voucherDiscountPercentage,
+                rankDiscountPercentage);
+            }
+          });
+
 
           // Enable all challenge buttons again
           challengeAddItemButtons.forEach((button) => {
@@ -691,14 +713,15 @@
 
           // Create a new div to hold the item details
           const itemDiv = document.createElement("div");
-          itemDiv.classList.add("item", "d-flex", "justify-content-between", "align-items-center");
+          itemDiv.classList.add("item", "d-flex", "justify-content-between", "align-items-center",
+            "layanan-added-item");
 
           // Add the item name and price to the new div
           itemDiv.innerHTML = `
-            <input type="hidden" name="layanan_id[]" value="${itemId}">
+            <input type="hidden" class="layanan-item-id" name="layanan_id[]" value="${itemId}">
             <p class="card-text my-auto">${itemName}</p>
             <div class="d-flex justify-content-end align-items-center">
-            <p class="card-text my-auto">Rp. ${itemPrice}</p>
+            <p class="card-text my-auto layanan-price" data-layanan-id=${itemId} data-price=${itemPrice}>Rp. ${itemPrice}</p>
             <button type="button" class="btn p-0 ms-2 remove-item">
               <i class="bi bi-x-circle"></i>
             </button>
@@ -711,13 +734,52 @@
           // containerTransaksi = document.getElementById('item_transaksi');
           containerItem.appendChild(itemDiv);
 
+          const challengeDescriptionContainer = document.getElementById("challenge-description-container");
+
+          if (challengeDescriptionContainer) {
+            let challengeAddButton = document.querySelectorAll(".challenge-add-item");
+
+            challengeAddButton.forEach((button) => {
+              let buttonId = button.getAttribute("data-layanan-id");
+
+              if (buttonId === itemId) {
+                button.disabled = false;
+              }
+            });
+          }
+
           updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
             rankDiscountPercentage);
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
+            const challengeDescriptionContainer = document.getElementById(
+              "challenge-description-container");
+
+            if (challengeDescriptionContainer) {
+              const challengeRemoveButton = document.getElementById("remove-challenge");
+              const challengeAddButton = document.querySelectorAll(".challenge-add-item");
+              const challengeLayananId = challengeRemoveButton.getAttribute("data-layanan-id");
+
+              if (challengeLayananId === itemId) {
+                challengeDescriptionContainer.innerHTML = "";
+              }
+
+              updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
+                rankDiscountPercentage);
+
+              challengeAddButton.forEach((button) => {
+                let buttonId = button.getAttribute("data-layanan-id");
+
+                if (buttonId === itemId) {
+                  button.disabled = false;
+                }
+              });
+            }
+
             itemDiv.remove();
-            updateSubtotal(badgeDiscountPercentage, -itemPrice, 0, 0);
+            updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
+              rankDiscountPercentage);
             button.disabled = false;
           });
         });
