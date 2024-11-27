@@ -111,9 +111,13 @@
               <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
                 <h6 class="card-text fw-semibold my-auto">Informasi Pelanggan</h6>
               </div>
-              <h6 class="card-text fw-semibold" id="card_item">Item</h6>
-              <div class="item_transaksi mb-3" id="item_transaksi">
+              <h6 class="card-text fw-semibold m-0" id="card_item">Item</h6>
+              <div class="item_transaksi" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
+              </div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="card-text fw-semibold m-0">Total: </h6>
+                <p class="card-text" id="total-display">Rp. 0</p>
               </div>
               <div class="mb-3" id="rank-description-container"></div>
               <div class="mb-3" id="voucher-description-container"></div>
@@ -170,6 +174,7 @@
       const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
       let inputHarga = document.getElementById("inputHarga");
       let total = 0;
+      let itemTotal = 0;
       let badgeDiscountPercentage = 0;
       let voucherDiscountPercentage = 0;
       let challengeDiscountPercentage = 0;
@@ -754,6 +759,11 @@
           // containerTransaksi = document.getElementById('item_transaksi');
           containerItem.appendChild(itemDiv);
 
+          // Update the total price
+          itemTotal += itemPrice;
+          const totalDisplay = document.getElementById("total-display");
+          totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
+
           const challengeDescriptionContainer = document.getElementById("challenge-description-container");
 
           if (challengeDescriptionContainer) {
@@ -773,6 +783,9 @@
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
+            // let removeItemPrice = parseInt(this.getAttribute("data-price"));
+            let removeItemPrice = parseInt(itemDiv.querySelector(".layanan-price").getAttribute(
+              "data-price"));
             const challengeDescriptionContainer = document.getElementById(
               "challenge-description-container");
             const voucherAddButton = document.querySelectorAll(".voucher-add-item");
@@ -786,23 +799,19 @@
               if (challengeLayananId === itemId) {
                 challengeDescriptionContainer.innerHTML = "";
                 challengeAddButton.forEach((button) => {
-                  // if (button.disabled === false) {
-                  // }
                   button.disabled = true;
                 });
               }
 
-              // challengeAddButton.forEach((button) => {
-              //   let challengeLayananId = button.getAttribute("data-layanan-id");
-
-              //   if (challengeLayananId === itemId) {
-              //     button.disabled = true;
-              //   }
-              // });
               updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
                 rankDiscountPercentage);
             }
 
+            // Update the total price
+            itemTotal -= removeItemPrice;
+            console.log(itemTotal);
+            const totalDisplay = document.getElementById("total-display");
+            totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
 
             voucherAddButton.forEach((button) => {
               button.disabled = false;
