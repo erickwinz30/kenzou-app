@@ -541,54 +541,72 @@
           let selectedLayananItem = document.querySelectorAll(".layanan-added-item");
           challengeItem.classList.add("col");
 
-          selectedLayananItem.forEach((selectedItem) => {
-            let selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
-            let selectedLayananName = selectedItem.getAttribute('data-layanan-name');
-            let selectedLayananPrice = selectedItem.getAttribute('data-layanan-price');
+          if (selectedLayananItem.length > 0) {
+            selectedLayananItem.forEach((selectedItem) => {
+              let selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
+              let selectedLayananName = selectedItem.getAttribute('data-layanan-name');
+              let selectedLayananPrice = selectedItem.getAttribute('data-layanan-price');
 
-            console.log(selectedLayananId, selectedLayananName, selectedLayananPrice);
-            console.log(challenge.layanan_id);
+              console.log(selectedLayananId, selectedLayananName, selectedLayananPrice);
+              console.log(challenge.layanan_id);
 
-            if (selectedLayananId === challenge.layanan_id) {
-              challengeItem.innerHTML = `
-                <div class="card shadow h-85" style="border-radius: 15px">
-                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                    <div>
-                      <h5 class="card-title p-0">${challenge.description}</h5>
-                      <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
-                      <p class="card-text">Gratis ${challenge.layanan_name}</p>
-                    </div>
-                    <div>
-                      <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
-                      data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
-                      data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              `;
-            } else {
-              challengeItem.innerHTML = `
-                <div class="card shadow h-85" style="border-radius: 15px">
-                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                    <div>
-                      <h5 class="card-title p-0">${challenge.description}</h5>
-                      <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
-                      <p class="card-text">Gratis ${challenge.layanan_name}</p>
-                    </div>
-                    <div>
-                      <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
-                      data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
-                      data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
-                      </button>
+              if (selectedLayananId === challenge.layanan_id) {
+                challengeItem.innerHTML = `
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">${challenge.description}</h5>
+                        <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                        <p class="card-text">Gratis ${challenge.layanan_name}</p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary challenge-add-item" data-id="${challenge.id}"
+                        data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                        data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
                     </div>
                   </div>
+                `;
+              } else {
+                challengeItem.innerHTML = `
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">${challenge.description}</h5>
+                        <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                        <p class="card-text">Gratis ${challenge.layanan_name}</p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
+                        data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                        data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }
+            });
+          } else {
+            challengeItem.innerHTML = `
+              <div class="card shadow h-85" style="border-radius: 15px">
+                <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                  <div>
+                    <h5 class="card-title p-0">${challenge.description}</h5>
+                    <p class="card-text">Selesai pada tanggal: ${challenge.to_date}</p>
+                    <p class="card-text">Gratis ${challenge.layanan_name}</p>
+                  </div>
+                  <div>
+                    <button href="#" class="btn btn-primary challenge-add-item" disabled data-id="${challenge.id}"
+                    data-description="${challenge.description}" data-layanan-id="${challenge.layanan_id}" 
+                    data-layanan-name="${challenge.layanan_name}" data-layanan-price="${challenge.layanan_price}"><i class="bi bi-plus-circle"></i>
+                    </button>
+                  </div>
                 </div>
-              `;
-            }
-          });
-
-
+              </div>
+            `;
+          }
           document.querySelector("#challenge-list-container").appendChild(challengeItem);
 
           clickChallengeItem();
