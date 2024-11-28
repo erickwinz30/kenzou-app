@@ -487,7 +487,6 @@
         const discount = parseFloat(this.getAttribute("data-discount"));
 
         voucherDiscountPercentage = discount;
-
         updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
         const voucherElement = document.getElementById("voucher-description-container");
@@ -507,6 +506,12 @@
           button.disabled = true;
         });
 
+        const challengeAddButtons = document.querySelectorAll(".challenge-add-item");
+        challengeAddButtons.forEach((button) => {
+          button.disabled = true;
+          console.log("Challenge Button Disabled");
+        });
+
         // Enable the remove button for the selected voucher
         document.getElementById("remove-voucher").addEventListener("click", function() {
           voucherElement.innerHTML = "";
@@ -515,6 +520,11 @@
 
           // Enable all voucher buttons again
           voucherAddItemButtons.forEach((button) => {
+            button.disabled = false;
+          });
+
+          //enable all challenge buttons again
+          challengeAddButtons.forEach((button) => {
             button.disabled = false;
           });
         });
@@ -941,7 +951,7 @@
               }
             })
             .catch((error) => console.error("Error Fetching Data:", error));
-        }, 800); // Delay selama 800ms
+        }, 500); // Delay selama 800ms
       });
 
       //event klik saat list member muncul
