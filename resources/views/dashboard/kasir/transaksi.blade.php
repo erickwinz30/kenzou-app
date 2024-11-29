@@ -266,8 +266,10 @@
           .then((data) => {
             if (data && Object.keys(data).length > 0) {
               rankDiscountPercentage = data.discount;
-              createRankElement(data.rank, data.discount);
-              console.log("Rank: " + data.rank + " with discount: " + data.discount);
+              let discountedResult = total * data.discount;
+              createRankElement(data.rank, data.discount, discountedResult);
+              console.log("Rank: " + data.rank + " with discount: " + data.discount + " and discounted result: " +
+                discountedResult);
             } else {
               rankDiscountPercentage = 0;
               console.log("No rank data found.");
@@ -300,16 +302,6 @@
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
         document.getElementById("nomor_telepon").value = "";
 
-        // document.getElementById("remove-pelanggan").addEventListener("click", function() {
-        //   // event.preventDefault();
-        //   let noHp = document.getElementById("nomor_telepon");
-        //   noHp.value = "";
-        //   infoPelanggan.remove();
-        //   addNoPelanggan.disabled = false;
-
-        //   deleteMemberElement();
-        // });
-
         removePelanggan(infoPelanggan, addNoPelanggan, null);
       }
 
@@ -321,7 +313,8 @@
         rankDiscountPercentage = rankDiscount;
 
         if (rank !== null) {
-          createRankElement(rank, rankDiscountPercentage);
+          let discountedResult = total * rankDiscount;
+          createRankElement(rank, rankDiscountPercentage, discountedResult);
         }
 
         infoPelanggan.innerHTML = `
@@ -386,12 +379,12 @@
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
 
         if (rank !== null) {
-          createRankElement(rank, rankDiscountPercentage);
+          let discountedResult = total * rankDiscount;
+          createRankElement(rank, rankDiscountPercentage, discountedResult);
         }
+
         document.getElementById("nomor_telepon").value = "";
-
         pelangganContainer.remove();
-
         console.log(nomorTelepon);
 
         removePelanggan(infoPelanggan, addNoPelanggan, pelangganContainer);
@@ -488,15 +481,19 @@
 
         voucherDiscountPercentage = discount;
         updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
+        let discountedResult = total * discount;
 
         const voucherElement = document.getElementById("voucher-description-container");
         voucherElement.innerHTML = `
           <h6 class="card-text fw-semibold">Voucher</h6>
           <div class="d-flex justify-content-between align-items-center">
             <p class="card-text my-auto">${voucherName}</p>
-            <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
-              <i class="bi bi-x-circle"></i>
-            </button>
+            <div class="d-flex justify-content-end align-items-center">
+              <p class="card-text my-auto">-Rp. ${discountedResult}</p>
+              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
           </div>
         `;
 
@@ -617,19 +614,8 @@
         const challengeLayananName = this.getAttribute("data-layanan-name");
         const challengeLayananPrice = parseInt(this.getAttribute("data-layanan-price"));
 
-        const layananItemsPrice = document.querySelectorAll(".layanan-price");
-
-        layananItemsPrice.forEach((price) => {
-          let layananId = price.getAttribute("data-layanan-id");
-          let layananPrice = parseInt(price.getAttribute("data-price"));
-
-          if (layananId === challengeLayananId) {
-            price.textContent = `Rp. 0`;
-
-            updateSubtotal(badgeDiscountPercentage, -layananPrice, voucherDiscountPercentage,
-              rankDiscountPercentage);
-          }
-        });
+        updateSubtotal(badgeDiscountPercentage, -challengeLayananPrice, voucherDiscountPercentage,
+          rankDiscountPercentage);
 
         const challengeElement = document.getElementById("challenge-description-container");
         challengeElement.innerHTML = `
@@ -639,9 +625,12 @@
                 <p class="card-text my-auto">${challengeDescription}</p>
                 <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
-              <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
-              <i class="bi bi-x-circle"></i>
-              </button>
+              <div class="d-flex justify-content-end align-items-center">
+                <p class="card-text my-auto">-Rp. ${challengeLayananPrice}</p>
+                <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
+                <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
             </div>
         `;
 
@@ -667,17 +656,8 @@
         document.getElementById("remove-challenge").addEventListener("click", function() {
           challengeElement.innerHTML = "";
 
-          layananItemsPrice.forEach((price) => {
-            let layananId = price.getAttribute("data-layanan-id");
-
-            if (layananId === challengeLayananId) {
-              price.textContent = `Rp. ${challengeLayananPrice.toLocaleString()}`;
-
-              updateSubtotal(badgeDiscountPercentage, challengeLayananPrice, voucherDiscountPercentage,
-                rankDiscountPercentage);
-            }
-          });
-
+          updateSubtotal(badgeDiscountPercentage, challengeLayananPrice, voucherDiscountPercentage,
+            rankDiscountPercentage);
 
           // Enable all challenge buttons again
           challengeAddItemButtons.forEach((button) => {
@@ -691,17 +671,23 @@
         });
       }
 
-      function createRankElement(memberRank, memberRankDiscount) {
+      function createRankElement(memberRank, memberRankDiscount, discountedResult) {
         let rank = memberRank;
         let discount = memberRankDiscount;
+        let discountedTotalRank = discountedResult;
 
         const rankElement = document.getElementById("rank-description-container");
 
         rankElement.innerHTML = `
           <h6 class="card-text fw-semibold">Leaderboard Rank</h6>
           <div class="d-flex justify-content-between align-items-center">
-            <p class="card-text my-auto">${rank}</p>
-            <p class="card-text my-auto">Diskon: ${discount * 100}%</p>
+            <div class="d-flex justify-content-start align-items-center">
+              <p class="card-text my-auto me-2">${rank}</p>
+              <p class="card-text my-auto">-(${discount * 100}%)</p>
+            </div>
+            <div>
+              <p class="text-end my-auto" id="rank-discount-display">-Rp. ${discountedTotalRank}</p>
+            </div>
           </div>
         `;
       }
@@ -775,6 +761,8 @@
           totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
 
           const challengeDescriptionContainer = document.getElementById("challenge-description-container");
+          const rankDescriptionContainer = document.getElementById("rank-description-container");
+
 
           if (challengeDescriptionContainer) {
             let challengeAddButton = document.querySelectorAll(".challenge-add-item");
@@ -790,6 +778,12 @@
 
           updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
             rankDiscountPercentage);
+
+          if (rankDescriptionContainer.innerHTML !== "") {
+            const rankDiscountDisplay = document.getElementById("rank-discount-display");
+            let discountedResult = itemTotal * rankDiscountPercentage;
+            rankDiscountDisplay.textContent = `Rp. ${discountedResult.toLocaleString()}`;
+          }
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
@@ -815,6 +809,7 @@
 
               updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
                 rankDiscountPercentage);
+
             }
 
             // Update the total price
@@ -830,6 +825,13 @@
             itemDiv.remove();
             updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
               rankDiscountPercentage);
+
+            if (rankDescriptionContainer.innerHTML !== "") {
+              const rankDiscountDisplay = document.getElementById("rank-discount-display");
+              let discountedResult = itemTotal * rankDiscountPercentage;
+              rankDiscountDisplay.textContent = `Rp. ${discountedResult.toLocaleString()}`;
+            }
+
             button.disabled = false;
           });
         });
