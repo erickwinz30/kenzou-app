@@ -368,13 +368,13 @@
             </button>
           `;
 
-        // checkMemberRank(nomorTelepon);
-        checkMemberVoucher(nomorTelepon);
-        checkMemberChallenge(nomorTelepon);
-
         addNoPelanggan.disabled = true;
 
         updateSubtotal(badgeDiscountPercentage, 0, 0, rankDiscountPercentage);
+
+        // checkMemberRank(nomorTelepon);
+        checkMemberVoucher(nomorTelepon);
+        checkMemberChallenge(nomorTelepon);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
 
@@ -435,6 +435,12 @@
       function createVoucherItemElement(data) {
         data.map((voucher) => {
           let voucherItem = document.createElement("div");
+          let requirementMet = false;
+
+          if (total >= voucher.minimum_transaction) {
+            requirementMet = true;
+          }
+
           voucherItem.classList.add("col");
 
           voucherItem.innerHTML = `
@@ -443,11 +449,13 @@
                 <div>
                   <h5 class="card-title p-0">${voucher.name}</h5>
                   <p class="card-text">${voucher.description}</p>
-                  <p class="card-text">Memperoleh Diskon: ${voucher.discount * 100}%</p>
+                  <p class="card-text m-0 mt-2 "><strong>Memperoleh Diskon:</strong> ${voucher.discount * 100}%</p>
+                  <p class="card-text m-0 mb-2 "><strong>Minimum Transaksi:</strong> Rp. ${Math.round(voucher.minimum_transaction)}</p>
                 </div>
                 <div>
-                  <button href="#" class="btn btn-primary voucher-add-item" data-id="${voucher.id}"
-                  data-name="${voucher.name}" data-discount="${voucher.discount}"><i class="bi bi-plus-circle"></i>
+                  <button href="#" class="btn btn-primary voucher-add-item" ${requirementMet ? '' : 'disabled'} data-id="${voucher.id}"
+                  data-name="${voucher.name}" data-discount="${voucher.discount}" 
+                  data-minimum-transaction="${voucher.minimum_transaction}"><i class="bi bi-plus-circle"></i>
                   </button>
                 </div>
               </div>
@@ -762,6 +770,7 @@
 
           const challengeDescriptionContainer = document.getElementById("challenge-description-container");
           const rankDescriptionContainer = document.getElementById("rank-description-container");
+          const voucherElement = document.getElementById("voucher-element");
 
 
           if (challengeDescriptionContainer) {
@@ -785,6 +794,19 @@
             rankDiscountDisplay.textContent = `Rp. ${discountedResult.toLocaleString()}`;
           }
 
+          if (voucherElement) {
+            const voucherAddButton = document.querySelectorAll(".voucher-add-item");
+
+            voucherAddButton.forEach((button) => {
+              button.disabled = true;
+
+              let voucherMinimumTransaction = parseInt(button.getAttribute("data-minimum-transaction"));
+              if (total >= voucherMinimumTransaction) {
+                button.disabled = false;
+              }
+            });
+          }
+
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             // let removeItemPrice = parseInt(this.getAttribute("data-price"));
@@ -792,7 +814,7 @@
               "data-price"));
             const challengeDescriptionContainer = document.getElementById(
               "challenge-description-container");
-            const voucherAddButton = document.querySelectorAll(".voucher-add-item");
+            const voucherElement = document.getElementById("voucher-element");
 
             if (challengeDescriptionContainer.innerHTML !== "") {
               console.log('Challenge Description Container is not null');
@@ -818,13 +840,35 @@
             const totalDisplay = document.getElementById("total-display");
             totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
 
-            voucherAddButton.forEach((button) => {
-              button.disabled = false;
-            });
+            // voucherAddButton.forEach((button) => {
+            //   button.disabled = false;
+            // });
 
             itemDiv.remove();
             updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
               rankDiscountPercentage);
+            console.log("Updated Subtotal counted");
+            console.log(voucherElement)
+
+            if (voucherElement) {
+              const voucherAddButton = document.querySelectorAll(".voucher-add-item");
+              console.log("Taking all voucher add button");
+
+              voucherAddButton.forEach((button) => {
+                itemTotal;
+                let voucherMinimumTransaction = parseInt(button.getAttribute(
+                  "data-minimum-transaction"));
+                console.log("Total " + itemTotal + " Minimum Transaction: " +
+                  voucherMinimumTransaction);
+                if (itemTotal >= voucherMinimumTransaction) {
+                  console.log("Checking Minimum Transaction and set button to enabled")
+                  button.disabled = false;
+                } else {
+                  console.log("Checking Minimum Transaction and set button to disabled")
+                  button.disabled = true;
+                }
+              });
+            }
 
             if (rankDescriptionContainer.innerHTML !== "") {
               const rankDiscountDisplay = document.getElementById("rank-discount-display");

@@ -343,7 +343,7 @@ class CatatTransaksiController extends Controller
             'name' => $ownedVoucher->voucher->nama,
             'description' => $ownedVoucher->voucher->description,
             'discount' => $ownedVoucher->voucher->discount,
-            'minimun_transaction' => $ownedVoucher->voucher->minimum_transaction,
+            'minimum_transaction' => $ownedVoucher->voucher->minimum_transaction,
             'to_date' => Carbon::parse($ownedVoucher->voucher->to_date)->format('d M Y'),
           ];
         }
