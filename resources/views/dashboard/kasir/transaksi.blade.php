@@ -119,8 +119,8 @@
                 <h6 class="card-text fw-semibold m-0">Total: </h6>
                 <p class="card-text" id="total-display">Rp. 0</p>
               </div>
-              <div class="mb-3" id="rank-description-container"></div>
               <div class="mb-3" id="badge-description-container"></div>
+              <div class="mb-3" id="rank-description-container"></div>
               <div class="mb-3" id="voucher-description-container"></div>
               <div class="mb-3" id="challenge-description-container"></div>
               <div class="mb-3">
@@ -252,33 +252,6 @@
         }, 800);
       }
 
-      function checkMemberRank(phoneNumber) {
-        fetch("/dashboard/transaksiBaru/fetch-check-rank", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "X-CSRF-TOKEN": "{{ csrf_token() }}",
-            },
-            body: JSON.stringify({
-              nomor_telepon: phoneNumber,
-            }),
-          })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data && Object.keys(data).length > 0) {
-              rankDiscountPercentage = data.discount;
-              let discountedResult = total * data.discount;
-              createRankElement(data.rank, data.discount, discountedResult);
-              console.log("Rank: " + data.rank + " with discount: " + data.discount + " and discounted result: " +
-                discountedResult);
-            } else {
-              rankDiscountPercentage = 0;
-              console.log("No rank data found.");
-            }
-          })
-          .catch((error) => console.error("Error Fetching Data:", error));
-      }
-
       function customerInformationElement() {
         let noHp = document.getElementById("nomor_telepon").value;
         let infoPelanggan = document.createElement("div");
@@ -291,10 +264,6 @@
             <i class="bi bi-x-circle"></i>
           </button>
         `;
-
-        // // checkMemberRank(noHp);
-        // checkMemberVoucher(noHp);
-        // checkMemberChallenge(noHp);
 
         addNoPelanggan.disabled = true;
 
@@ -313,6 +282,10 @@
         badgeDiscountPercentage = badgeDiscount;
         rankDiscountPercentage = rankDiscount;
 
+        //membuat badge description container
+        let badgeDiscountedResult = total * badgeDiscount;
+        createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
+
         if (rank !== null) {
           let discountedResult = total * rankDiscount;
           createRankElement(rank, rankDiscountPercentage, discountedResult);
@@ -329,7 +302,6 @@
             </div>
           `;
 
-        // checkMemberRank(phoneNumber);
         checkMemberVoucher(phoneNumber);
         checkMemberChallenge(phoneNumber);
 
@@ -373,15 +345,18 @@
 
         updateSubtotal(badgeDiscountPercentage, 0, 0, rankDiscountPercentage);
 
-        // checkMemberRank(nomorTelepon);
         checkMemberVoucher(nomorTelepon);
         checkMemberChallenge(nomorTelepon);
 
         document.getElementById("containerNoPelanggan").appendChild(infoPelanggan);
 
+        //membuat badge description container
+        let badgeDiscountedResult = total * badgeDiscount;
+        createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
+
         if (rank !== null) {
-          let discountedResult = total * rankDiscount;
-          createRankElement(rank, rankDiscountPercentage, discountedResult);
+          let rankDiscountedResult = total * rankDiscount;
+          createRankElement(rank, rankDiscountPercentage, rankDiscountedResult);
         }
 
         document.getElementById("nomor_telepon").value = "";
@@ -688,6 +663,26 @@
         });
       }
 
+      function createBadgeElement(badgeName, badgeRankDiscount, discountedResult) {
+        let badge = badgeName;
+        let discount = badgeRankDiscount;
+        let discountedTotalBadge = discountedResult;
+
+        const badgeElement = document.getElementById("badge-description-container");
+
+        badgeElement.innerHTML = `
+          <h6 class="card-text fw-semibold">Badge</h6>
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex justify-content-start align-items-center">
+              <p class="card-text my-auto me-2">${badge} (-${discount * 100}%)</p>
+            </div>
+            <div>
+              <p class="text-end my-auto" id="badge-discount-value">-Rp. ${discountedTotalBadge}</p>
+            </div>
+          </div>
+        `;
+      }
+
       function createRankElement(memberRank, memberRankDiscount, discountedResult) {
         let rank = memberRank;
         let discount = memberRankDiscount;
@@ -717,6 +712,11 @@
         const challengeElement = document.getElementById("challenge-element");
         if (challengeElement) {
           challengeElement.remove();
+        }
+
+        const badgeDescriptionContainer = document.getElementById("badge-description-container");
+        if (badgeDescriptionContainer) {
+          badgeDescriptionContainer.innerHTML = "";
         }
 
         const rankDescriptionContainer = document.getElementById("rank-description-container");
@@ -778,6 +778,7 @@
           const voucherDescriptionContainer = document.getElementById("voucher-description-container");
           const challengeDescriptionContainer = document.getElementById("challenge-description-container");
           const rankDescriptionContainer = document.getElementById("rank-description-container");
+          const badgeDescriptionContainer = document.getElementById("rank-description-container");
           const voucherElement = document.getElementById("voucher-element");
 
 
@@ -795,6 +796,12 @@
 
           updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
             rankDiscountPercentage);
+
+          if (badgeDescriptionContainer.innerHTML !== "") {
+            const badgeDiscountValue = document.getElementById("badge-discount-value");
+            let discountedResult = itemTotal * badgeDiscountPercentage;
+            badgeDiscountValue.textContent = `Rp. ${discountedResult.toLocaleString()}`;
+          }
 
           if (voucherDescriptionContainer.innerHTML !== "") {
             const voucherDescriptionValue = document.getElementById("voucher-description-container-value");
@@ -824,12 +831,13 @@
 
           // Add event listener to the remove button
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
-            // let removeItemPrice = parseInt(this.getAttribute("data-price"));
             let removeItemPrice = parseInt(itemDiv.querySelector(".layanan-price").getAttribute(
               "data-price"));
+            const badgeDescriptionContainer = document.getElementById("badge-description-container");
             const voucherDescriptionContainer = document.getElementById("voucher-description-container");
             const challengeDescriptionContainer = document.getElementById(
               "challenge-description-container");
+            const rankDescriptionContainer = document.getElementById("rank-description-container");
             const voucherElement = document.getElementById("voucher-element");
 
             if (challengeDescriptionContainer.innerHTML !== "") {
@@ -871,6 +879,12 @@
                   button.disabled = true;
                 }
               });
+            }
+
+            if (badgeDescriptionContainer.innerHTML !== "") {
+              const badgeDiscountValue = document.getElementById("badge-discount-value");
+              let discountedResult = itemTotal * badgeDiscountPercentage;
+              badgeDiscountValue.textContent = `Rp. ${discountedResult.toLocaleString()}`;
             }
 
             if (voucherDescriptionContainer.innerHTML !== "") {

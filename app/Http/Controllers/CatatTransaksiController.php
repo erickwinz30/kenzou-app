@@ -443,15 +443,6 @@ class CatatTransaksiController extends Controller
         ];
 
         Log::info('Member Data', ['Member Rank' => $data]);
-
-        // if ($request->wantsJson()) {
-        //   // Pastikan kita mengembalikan array kosong jika tidak ada hasil
-        //   if ($memberRank === null) {
-        //     return response()->json([]);
-        //   } else {
-        //     return response()->json($data);
-        //   }
-        // }
       }
 
       return $data;
