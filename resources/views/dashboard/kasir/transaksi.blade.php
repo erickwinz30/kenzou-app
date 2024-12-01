@@ -120,6 +120,7 @@
                 <p class="card-text" id="total-display">Rp. 0</p>
               </div>
               <div class="mb-3" id="rank-description-container"></div>
+              <div class="mb-3" id="badge-description-container"></div>
               <div class="mb-3" id="voucher-description-container"></div>
               <div class="mb-3" id="challenge-description-container"></div>
               <div class="mb-3">
@@ -497,7 +498,7 @@
           <div class="d-flex justify-content-between align-items-center">
             <p class="card-text my-auto">${voucherName}</p>
             <div class="d-flex justify-content-end align-items-center">
-              <p class="card-text my-auto">-Rp. ${discountedResult}</p>
+              <p class="card-text my-auto" id="voucher-description-container-value">-Rp. ${discountedResult}</p>
               <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
                 <i class="bi bi-x-circle"></i>
               </button>
@@ -514,18 +515,26 @@
         const challengeAddButtons = document.querySelectorAll(".challenge-add-item");
         challengeAddButtons.forEach((button) => {
           button.disabled = true;
-          console.log("Challenge Button Disabled");
         });
 
         // Enable the remove button for the selected voucher
         document.getElementById("remove-voucher").addEventListener("click", function() {
+          const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
           voucherElement.innerHTML = "";
           voucherDiscountPercentage = 0;
           updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
 
-          // Enable all voucher buttons again
+          // Enable voucher button if minimum transaction requirement met
           voucherAddItemButtons.forEach((button) => {
-            button.disabled = false;
+            // button.disabled = false;
+            let voucherMinimumTransaction = parseInt(button.getAttribute(
+              "data-minimum-transaction"));
+            console.log("Total Belanja" + total);
+            if (total >= voucherMinimumTransaction) {
+              button.disabled = false;
+            } else {
+              button.disabled = true;
+            }
           });
 
           //enable all challenge buttons again
@@ -690,8 +699,7 @@
           <h6 class="card-text fw-semibold">Leaderboard Rank</h6>
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex justify-content-start align-items-center">
-              <p class="card-text my-auto me-2">${rank}</p>
-              <p class="card-text my-auto">-(${discount * 100}%)</p>
+              <p class="card-text my-auto me-2">${rank} (-${discount * 100}%)</p>
             </div>
             <div>
               <p class="text-end my-auto" id="rank-discount-display">-Rp. ${discountedTotalRank}</p>
@@ -760,7 +768,6 @@
           button.disabled = true;
 
           // Append the new item div to the transaction container
-          // containerTransaksi = document.getElementById('item_transaksi');
           containerItem.appendChild(itemDiv);
 
           // Update the total price
@@ -768,6 +775,7 @@
           const totalDisplay = document.getElementById("total-display");
           totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
 
+          const voucherDescriptionContainer = document.getElementById("voucher-description-container");
           const challengeDescriptionContainer = document.getElementById("challenge-description-container");
           const rankDescriptionContainer = document.getElementById("rank-description-container");
           const voucherElement = document.getElementById("voucher-element");
@@ -787,6 +795,13 @@
 
           updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
             rankDiscountPercentage);
+
+          if (voucherDescriptionContainer.innerHTML !== "") {
+            const voucherDescriptionValue = document.getElementById("voucher-description-container-value");
+            let discountedResult = total * voucherDiscountPercentage;
+
+            voucherDescriptionValue.textContent = `-Rp. ${discountedResult.toLocaleString()}`;
+          }
 
           if (rankDescriptionContainer.innerHTML !== "") {
             const rankDiscountDisplay = document.getElementById("rank-discount-display");
@@ -812,12 +827,12 @@
             // let removeItemPrice = parseInt(this.getAttribute("data-price"));
             let removeItemPrice = parseInt(itemDiv.querySelector(".layanan-price").getAttribute(
               "data-price"));
+            const voucherDescriptionContainer = document.getElementById("voucher-description-container");
             const challengeDescriptionContainer = document.getElementById(
               "challenge-description-container");
             const voucherElement = document.getElementById("voucher-element");
 
             if (challengeDescriptionContainer.innerHTML !== "") {
-              console.log('Challenge Description Container is not null');
               const challengeRemoveButton = document.getElementById("remove-challenge");
               const challengeAddButton = document.querySelectorAll(".challenge-add-item");
               const challengeLayananId = challengeRemoveButton.getAttribute("data-layanan-id");
@@ -831,7 +846,6 @@
 
               updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
                 rankDiscountPercentage);
-
             }
 
             // Update the total price
@@ -840,34 +854,31 @@
             const totalDisplay = document.getElementById("total-display");
             totalDisplay.textContent = `Rp. ${itemTotal.toLocaleString()}`;
 
-            // voucherAddButton.forEach((button) => {
-            //   button.disabled = false;
-            // });
-
             itemDiv.remove();
             updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
               rankDiscountPercentage);
-            console.log("Updated Subtotal counted");
-            console.log(voucherElement)
 
             if (voucherElement) {
               const voucherAddButton = document.querySelectorAll(".voucher-add-item");
-              console.log("Taking all voucher add button");
 
               voucherAddButton.forEach((button) => {
-                itemTotal;
                 let voucherMinimumTransaction = parseInt(button.getAttribute(
                   "data-minimum-transaction"));
-                console.log("Total " + itemTotal + " Minimum Transaction: " +
-                  voucherMinimumTransaction);
+
                 if (itemTotal >= voucherMinimumTransaction) {
-                  console.log("Checking Minimum Transaction and set button to enabled")
                   button.disabled = false;
                 } else {
-                  console.log("Checking Minimum Transaction and set button to disabled")
                   button.disabled = true;
                 }
               });
+            }
+
+            if (voucherDescriptionContainer.innerHTML !== "") {
+              const voucherDescriptionValue = document.getElementById(
+                "voucher-description-container-value");
+              let discountedResult = total * voucherDiscountPercentage;
+
+              voucherDescriptionValue.textContent = `-Rp. ${discountedResult.toLocaleString()}`;
             }
 
             if (rankDescriptionContainer.innerHTML !== "") {
