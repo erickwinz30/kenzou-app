@@ -329,7 +329,6 @@
         badgeDiscountPercentage = badgeDiscount;
         rankDiscountPercentage = rankDiscount;
 
-
         let infoPelanggan = document.createElement("div");
         infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
 
@@ -354,9 +353,14 @@
         let badgeDiscountedResult = total * badgeDiscount;
         createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
 
-        if (rank !== null) {
-          let rankDiscountedResult = total * rankDiscount;
+        // Periksa apakah rank ada dan bukan string kosong
+        console.log("Rank value:", rank, "Type:", typeof rank);
+        if (rank && rank !== "null" && rank !== "") {
+          console.log("Rank is valid, proceeding with calculation.");
+          let rankDiscountedResult = total * parseFloat(rankDiscount);
           createRankElement(rank, rankDiscountPercentage, rankDiscountedResult);
+        } else {
+          console.log("Rank is not valid, skipping calculation.");
         }
 
         document.getElementById("nomor_telepon").value = "";
