@@ -462,6 +462,7 @@
         const voucherId = this.getAttribute("data-id");
         const voucherName = this.getAttribute("data-name");
         const discount = parseFloat(this.getAttribute("data-discount"));
+        const voucherMinimumTransaction = parseInt(this.getAttribute("data-minimum-transaction"));
 
         voucherDiscountPercentage = discount;
         updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage, rankDiscountPercentage);
@@ -471,7 +472,8 @@
         voucherElement.innerHTML = `
           <h6 class="card-text fw-semibold">Voucher</h6>
           <div class="d-flex justify-content-between align-items-center">
-            <p class="card-text my-auto">${voucherName}</p>
+            <p class="card-text my-auto" id="selected-voucher" data-voucher-id="${voucherId}" data-voucher-discount="${discount}"
+            data-minimum-transaction="${voucherMinimumTransaction}">${voucherName}</p>
             <div class="d-flex justify-content-end align-items-center">
               <p class="card-text my-auto" id="voucher-description-container-value">-Rp. ${discountedResult}</p>
               <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
@@ -781,7 +783,6 @@
           const badgeDescriptionContainer = document.getElementById("rank-description-container");
           const voucherElement = document.getElementById("voucher-element");
 
-
           if (challengeDescriptionContainer) {
             let challengeAddButton = document.querySelectorAll(".challenge-add-item");
 
@@ -808,25 +809,26 @@
             let discountedResult = total * voucherDiscountPercentage;
 
             voucherDescriptionValue.textContent = `-Rp. ${discountedResult.toLocaleString()}`;
+
+          } else {
+            if (voucherElement) {
+              const voucherAddButton = document.querySelectorAll(".voucher-add-item");
+
+              voucherAddButton.forEach((button) => {
+                button.disabled = true;
+
+                let voucherMinimumTransaction = parseInt(button.getAttribute("data-minimum-transaction"));
+                if (total >= voucherMinimumTransaction) {
+                  button.disabled = false;
+                }
+              });
+            }
           }
 
           if (rankDescriptionContainer.innerHTML !== "") {
             const rankDiscountDisplay = document.getElementById("rank-discount-display");
             let discountedResult = itemTotal * rankDiscountPercentage;
             rankDiscountDisplay.textContent = `Rp. ${discountedResult.toLocaleString()}`;
-          }
-
-          if (voucherElement) {
-            const voucherAddButton = document.querySelectorAll(".voucher-add-item");
-
-            voucherAddButton.forEach((button) => {
-              button.disabled = true;
-
-              let voucherMinimumTransaction = parseInt(button.getAttribute("data-minimum-transaction"));
-              if (total >= voucherMinimumTransaction) {
-                button.disabled = false;
-              }
-            });
           }
 
           // Add event listener to the remove button
@@ -866,14 +868,55 @@
             updateSubtotal(badgeDiscountPercentage, -itemPrice, voucherDiscountPercentage,
               rankDiscountPercentage);
 
-            if (voucherElement) {
-              const voucherAddButton = document.querySelectorAll(".voucher-add-item");
+            if (voucherDescriptionContainer.innerHTML !== "") {
+              const selectedVoucher = document.getElementById("selected-voucher");
+              let selectedVoucherId = selectedVoucher.getAttribute("data-voucher-id");
+              let selectedVoucherDiscount = selectedVoucher.getAttribute("data-voucher-discount");
+              let selectedVoucherMinimumTransaction = selectedVoucher.getAttribute(
+                "data-minimum-transaction"); //hasilnya null
+              console.log("Selected voucher information " + selectedVoucherId + " with discount " +
+                selectedVoucherDiscount + " and minimum transaction " +
+                selectedVoucherMinimumTransaction);
+              console.log("itemTotal Rp" + itemTotal)
+              console.log("Total Rp" + total)
 
-              voucherAddButton.forEach((button) => {
+              if (itemTotal < selectedVoucherMinimumTransaction) {
+                const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
+                voucherDescriptionContainer.innerHTML = "";
+                voucherDiscountPercentage = 0;
+                updateSubtotal(badgeDiscountPercentage, 0, voucherDiscountPercentage,
+                  rankDiscountPercentage);
+                console.log("Running total below minimum transaction condition");
+                console.log("itemTotal Rp" + itemTotal)
+                console.log("Total Rp" + total)
+
+                // Enable voucher button if minimum transaction requirement met
+                voucherAddItemButtons.forEach((button) => {
+                  // button.disabled = false;
+                  let voucherMinimumTransaction = parseInt(button.getAttribute(
+                    "data-minimum-transaction"));
+                  if (total >= voucherMinimumTransaction) {
+                    button.disabled = false;
+                  } else {
+                    button.disabled = true;
+                  }
+                });
+              } else {
+                const voucherDescriptionValue = document.getElementById(
+                  "voucher-description-container-value");
+                let discountedResult = total * voucherDiscountPercentage;
+
+                voucherDescriptionValue.textContent = `-Rp. ${discountedResult.toLocaleString()}`;
+              }
+            } else {
+              // Enable voucher button if minimum transaction requirement met
+              const voucherAddItemButtons = document.querySelectorAll(".voucher-add-item");
+
+              voucherAddItemButtons.forEach((button) => {
+                // button.disabled = false;
                 let voucherMinimumTransaction = parseInt(button.getAttribute(
                   "data-minimum-transaction"));
-
-                if (itemTotal >= voucherMinimumTransaction) {
+                if (total >= voucherMinimumTransaction) {
                   button.disabled = false;
                 } else {
                   button.disabled = true;
@@ -885,14 +928,6 @@
               const badgeDiscountValue = document.getElementById("badge-discount-value");
               let discountedResult = itemTotal * badgeDiscountPercentage;
               badgeDiscountValue.textContent = `Rp. ${discountedResult.toLocaleString()}`;
-            }
-
-            if (voucherDescriptionContainer.innerHTML !== "") {
-              const voucherDescriptionValue = document.getElementById(
-                "voucher-description-container-value");
-              let discountedResult = total * voucherDiscountPercentage;
-
-              voucherDescriptionValue.textContent = `-Rp. ${discountedResult.toLocaleString()}`;
             }
 
             if (rankDescriptionContainer.innerHTML !== "") {
