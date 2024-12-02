@@ -15,6 +15,10 @@ return new class extends Migration
       $table->uuid('id')->primary();
       $table->foreignUuid('pelanggan_id');
       $table->foreignUuid('user_id');
+      $table->foreignUuid('owned_voucher_id')->nullable();
+      $table->foreignUuid('challenge_progress_id')->nullable();
+      $table->foreignId('badge_id')->nullable();
+      $table->foreignId('leaderboard_id')->nullable();
       $table->datetime('date');
       $table->decimal('total_harga');
       $table->string('metode_pembayaran');

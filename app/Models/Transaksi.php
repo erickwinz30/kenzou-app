@@ -49,4 +49,24 @@ class Transaksi extends Model
   {
     return $this->belongsTo(PointLog::class, 'transaksi_id', 'id');
   }
+
+  public function ownedVoucher()
+  {
+    return $this->belongsTo(OwnedVoucher::class, 'owned_voucher_id');
+  }
+
+  public function challengeProgress()
+  {
+    return $this->belongsTo(ChallengeProgress::class, 'challenge_progress_id');
+  }
+
+  public function badge()
+  {
+    return $this->belongsTo(Badge::class, 'badge_id');
+  }
+
+  public function leaderboard()
+  {
+    return $this->belongsTo(BadgeLeaderboard::class, 'leaderboard_id');
+  }
 }

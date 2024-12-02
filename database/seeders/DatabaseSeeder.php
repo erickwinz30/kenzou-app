@@ -13,6 +13,7 @@ use App\Models\ChallengePrize;
 use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 use App\Models\BadgeLeaderboard;
+use App\Models\Member;
 use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
@@ -220,6 +221,50 @@ class DatabaseSeeder extends Seeder
 
     foreach ($vouchers as $voucher) {
       Voucher::create($voucher);
+    }
+
+    $members = [
+      [
+        'nama' => 'Miyawaki Sakura',
+        'email' => 'miyawakisakura@gmail.com',
+        'nomor_telepon' => '086473829177',
+        'tanggal_lahir' => Carbon::create(1998, 3, 19),
+        'experience_point' => 1940,
+        'redeemable_point' => 1940,
+        'password' => bcrypt('sakura123'),
+      ],
+      [
+        'nama' => 'Huh Yunjin',
+        'email' => 'huh.yunjin@gmail.com',
+        'nomor_telepon' => '084388749990',
+        'tanggal_lahir' => Carbon::create(2001, 10, 8),
+        'experience_point' => 1247,
+        'redeemable_point' => 1240,
+        'password' => bcrypt('yunjin123'),
+      ],
+      [
+        'nama' => 'Kim Chaewon',
+        'email' => 'kimchaewon@gmail.com',
+        'nomor_telepon' => '088999643332',
+        'tanggal_lahir' => Carbon::create(2000, 10, 1),
+        'experience_point' => 780,
+        'redeemable_point' => 780,
+        'password' => bcrypt('chaewon123'),
+      ],
+      [
+        'nama' => 'Song Hayoung',
+        'email' => 'songhayoung@gmail.com',
+        'nomor_telepon' => '081343256643',
+        'tanggal_lahir' => Carbon::create(1997, 9, 29),
+        'experience_point' => 450,
+        'redeemable_point' => 450,
+        'password' => bcrypt('hayoung123'),
+      ],
+    ];
+
+    foreach ($members as $member) {
+      // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
+      Member::create($member);
     }
   }
 }

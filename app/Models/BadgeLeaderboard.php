@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class BadgeLeaderboard extends Model
 {
   use HasFactory;
-
   protected $guarded = ['id'];
+
+  public function transaksi()
+  {
+    return $this->hasMany(Transaksi::class, 'leaderboard_id');
+  }
 }

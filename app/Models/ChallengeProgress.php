@@ -33,4 +33,9 @@ class ChallengeProgress extends Model
   {
     return $this->belongsTo(Member::class, 'member_id');
   }
+
+  public function transaksi()
+  {
+    return $this->hasOne(Transaksi::class, 'challenge_progress_id');
+  }
 }

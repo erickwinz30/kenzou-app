@@ -32,4 +32,9 @@ class OwnedVoucher extends Model
   {
     return $this->belongsTo(Voucher::class, 'voucher_id');
   }
+
+  public function transaksi()
+  {
+    return $this->hasOne(Transaksi::class, 'owned_voucher_id');
+  }
 }
