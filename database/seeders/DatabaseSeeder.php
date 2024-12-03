@@ -6,14 +6,15 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Badge;
+use App\Models\Member;
 use App\Models\Layanan;
 use App\Models\Voucher;
+use App\Models\Challenge;
 use App\Models\LayananLog;
-use App\Models\ChallengePrize;
 use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 use App\Models\BadgeLeaderboard;
-use App\Models\Member;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
@@ -198,15 +199,17 @@ class DatabaseSeeder extends Seeder
         'minimum_transaction' => 50000,
         'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
         'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'is_active' => 1,
       ],
       [
         'nama' => 'Voucher Diskon 10%',
         'description' => 'Mendapatkan diskon 10% pada saat melakukan pencucian mobil',
         'point_needed' => 100,
         'discount' => 0.1,
-        'minimum_transaction' => 10000,
+        'minimum_transaction' => 100000,
         'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
         'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'is_active' => 1,
       ],
       [
         'nama' => 'Voucher Diskon 20%',
@@ -216,6 +219,7 @@ class DatabaseSeeder extends Seeder
         'minimum_transaction' => 140000,
         'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
         'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'is_active' => 1,
       ],
     ];
 
@@ -265,6 +269,40 @@ class DatabaseSeeder extends Seeder
     foreach ($members as $member) {
       // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
       Member::create($member);
+    }
+
+    $challenges = [
+      [
+        'description' => "Melakukan pencucian sebanyak 8 kali",
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
+        'to_date' => Carbon::create(2024, 12, 31, 23, 59, 0),
+        'target' => 8,
+        'unit' => 'Transaksi',
+        'layanan_id' => 4,
+        'is_active' => 1,
+      ],
+      [
+        'description' => "Melakukan akumulasi transaksi sebesar Rp. 800000",
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
+        'to_date' => Carbon::create(2024, 12, 31, 23, 59, 0),
+        'target' => 800000,
+        'unit' => 'Total Pengeluaran Member',
+        'layanan_id' => 4,
+        'is_active' => 1,
+      ],
+    ];
+
+    foreach ($challenges as $dataChallenge) {
+      // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
+      $challenge = Challenge::create($dataChallenge);
+
+      foreach ($members as $member) {
+        $memberId = Member::where('nama', $member['nama'])->first()->id;
+        ChallengeProgress::create([
+          'member_id' => $memberId,
+          'challenge_id' => $challenge->id,
+        ]);
+      }
     }
   }
 }

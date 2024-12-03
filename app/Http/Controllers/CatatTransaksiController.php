@@ -41,6 +41,7 @@ class CatatTransaksiController extends Controller
 
   public function catat(Request $request)
   {
+    dd($request->all());
     try {
       $validatedPhoneNumber = $request->validate([
         'nomor_telepon' => 'required|min:10|max:15',
