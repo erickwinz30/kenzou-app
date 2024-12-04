@@ -18,14 +18,21 @@ class MemberController extends Controller
 {
   public function index()
   {
-    $listChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', false)
+    $listChallengeFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', true)
+      ->whereHas('challenge', function ($query) {
+        $query->where('is_active', true);
+      })
+      ->get();
+
+    $listChallengeNotFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', false)
       ->whereHas('challenge', function ($query) {
         $query->where('is_active', true);
       })
       ->get();
 
     return view('member.index', [
-      'challengeProgress' => $listChallenge,
+      'finishChallengeProgress' => $listChallengeFinish,
+      'unfinishChallengeProgress' => $listChallengeNotFinish,
     ]);
   }
 

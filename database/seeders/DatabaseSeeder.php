@@ -15,6 +15,7 @@ use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 use App\Models\BadgeLeaderboard;
 use App\Models\ChallengeProgress;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
@@ -295,13 +296,17 @@ class DatabaseSeeder extends Seeder
     foreach ($challenges as $dataChallenge) {
       // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
       $challenge = Challenge::create($dataChallenge);
+      Log::info($challenge);
 
       foreach ($members as $member) {
         $memberId = Member::where('nama', $member['nama'])->first()->id;
-        ChallengeProgress::create([
+        Log::info($memberId);
+        $createdChallengeProgress = ChallengeProgress::create([
           'member_id' => $memberId,
           'challenge_id' => $challenge->id,
         ]);
+
+        Log::info($createdChallengeProgress);
       }
     }
   }
