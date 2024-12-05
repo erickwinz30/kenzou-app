@@ -172,8 +172,10 @@ class CatatTransaksiController extends Controller
           'nama' => $result->nama,
           'email' => $result->email,
           'nomor_telepon' => $result->nomor_telepon,
+          'badgeId' => $badge->id,
           'badgeName' => $badge->nama,
           'badgeDiscount' => $badge->discount,
+          'rankId' => $memberRankCheck['id'] ?? null,
           'rank' => $memberRankCheck['rank'] ?? null,
           'rankDiscount' => $memberRankCheck['discount'] ?? 0,
         ];
@@ -436,11 +438,12 @@ class CatatTransaksiController extends Controller
       $data = [];
 
       if ($memberRank === 1 || $memberRank === 2 || $memberRank === 3) {
-        $badge = BadgeLeaderboard::where('rank', $memberRank)->first();
+        $rank = BadgeLeaderboard::where('rank', $memberRank)->first();
 
         $data = [
+          'id' => $rank->id,
           'rank' => $memberRank,
-          'discount' => $badge->discount,
+          'discount' => $rank->discount,
         ];
 
         Log::info('Member Data', ['Member Rank' => $data]);

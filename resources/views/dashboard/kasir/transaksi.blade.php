@@ -286,9 +286,14 @@
         let badgeDiscountedResult = total * badgeDiscount;
         createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
 
-        if (rank !== null) {
-          let discountedResult = total * rankDiscount;
-          createRankElement(rank, rankDiscountPercentage, discountedResult);
+        // Periksa apakah rank ada dan bukan string kosong
+        console.log("Rank value:", rank, "Type:", typeof rank);
+        if (rank && rank !== "null" && rank !== "") {
+          console.log("Rank is valid, proceeding with calculation.");
+          let rankDiscountedResult = total * parseFloat(rankDiscount);
+          createRankElement(rankId, rank, rankDiscountPercentage, rankDiscountedResult);
+        } else {
+          console.log("Rank is not valid, skipping calculation.");
         }
 
         infoPelanggan.innerHTML = `
@@ -322,8 +327,10 @@
       function memberInformationListElement(containerDataPelanggan, pelangganContainer) {
         const memberName = containerDataPelanggan.getAttribute("data-member-name");
         const nomorTelepon = containerDataPelanggan.getAttribute("data-nomor-telepon");
+        const badgeId = containerDataPelanggan.getAttribute("data-badge-id");
         const badgeName = containerDataPelanggan.getAttribute("data-badge-name");
         const badgeDiscount = containerDataPelanggan.getAttribute("data-badge-discount");
+        const rankId = containerDataPelanggan.getAttribute("data-rank-id");
         const rank = containerDataPelanggan.getAttribute("data-rank");
         const rankDiscount = containerDataPelanggan.getAttribute("data-rank-discount");
         badgeDiscountPercentage = badgeDiscount;
@@ -351,14 +358,14 @@
 
         //membuat badge description container
         let badgeDiscountedResult = total * badgeDiscount;
-        createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
+        createBadgeElement(badgeId, badgeName, badgeDiscountPercentage, badgeDiscountedResult);
 
         // Periksa apakah rank ada dan bukan string kosong
         console.log("Rank value:", rank, "Type:", typeof rank);
         if (rank && rank !== "null" && rank !== "") {
           console.log("Rank is valid, proceeding with calculation.");
           let rankDiscountedResult = total * parseFloat(rankDiscount);
-          createRankElement(rank, rankDiscountPercentage, rankDiscountedResult);
+          createRankElement(rankId, rank, rankDiscountPercentage, rankDiscountedResult);
         } else {
           console.log("Rank is not valid, skipping calculation.");
         }
@@ -476,6 +483,7 @@
         voucherElement.innerHTML = `
           <h6 class="card-text fw-semibold">Voucher</h6>
           <div class="d-flex justify-content-between align-items-center">
+            <input type="hidden" name="voucher_id" value="${voucherId}" />
             <p class="card-text my-auto" id="selected-voucher" data-voucher-id="${voucherId}" data-voucher-discount="${discount}"
             data-minimum-transaction="${voucherMinimumTransaction}">${voucherName}</p>
             <div class="d-flex justify-content-end align-items-center">
@@ -623,6 +631,7 @@
                 <p class="card-text my-auto">${challengeDescription}</p>
                 <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
+              <input type="hidden" name="challenge_progress_id" value="${challengeId}" />
               <div class="d-flex justify-content-end align-items-center">
                 <p class="card-text my-auto">-Rp. ${challengeLayananPrice}</p>
                 <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
@@ -669,7 +678,8 @@
         });
       }
 
-      function createBadgeElement(badgeName, badgeRankDiscount, discountedResult) {
+      function createBadgeElement(id, badgeName, badgeRankDiscount, discountedResult) {
+        let badgeId = id;
         let badge = badgeName;
         let discount = badgeRankDiscount;
         let discountedTotalBadge = discountedResult;
@@ -679,6 +689,7 @@
         badgeElement.innerHTML = `
           <h6 class="card-text fw-semibold">Badge</h6>
           <div class="d-flex justify-content-between align-items-center">
+            <input type="hidden" name="badge_id" value="${badgeId}" />
             <div class="d-flex justify-content-start align-items-center">
               <p class="card-text my-auto me-2">${badge} (-${discount * 100}%)</p>
             </div>
@@ -689,7 +700,8 @@
         `;
       }
 
-      function createRankElement(memberRank, memberRankDiscount, discountedResult) {
+      function createRankElement(id, memberRank, memberRankDiscount, discountedResult) {
+        let rankId = id;
         let rank = memberRank;
         let discount = memberRankDiscount;
         let discountedTotalRank = discountedResult;
@@ -699,6 +711,7 @@
         rankElement.innerHTML = `
           <h6 class="card-text fw-semibold">Leaderboard Rank</h6>
           <div class="d-flex justify-content-between align-items-center">
+            <input type="hidden" name="leaderboard_id" value="${rankId}" />
             <div class="d-flex justify-content-start align-items-center">
               <p class="card-text my-auto me-2">${rank} (-${discount * 100}%)</p>
             </div>
@@ -1037,13 +1050,14 @@
                     console.log(item.nama);
 
                     containerDataPelanggan.innerHTML = `
-                          <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
-                          data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}" data-rank="${item.rank}" data-rank-discount="${item.rankDiscount}">
-                            <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
-                            <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
-                          </div>
-                          <hr>
-                        `;
+                      <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
+                      data-badge-id="${item.badgeId}" data-badge-name="${item.badgeName}" data-badge-discount="${item.badgeDiscount}" data-rank-id="${item.rankId}"
+                      data-rank="${item.rank}" data-rank-discount="${item.rankDiscount}">
+                        <p class="card-text my-0"><strong>${item.nama}</strong> / ${item.email}</p>
+                        <p class="card-text fw-semibold my-0">${item.nomor_telepon}</p>
+                      </div>
+                      <hr>
+                    `;
 
                     pelangganContainer.appendChild(containerDataPelanggan);
                   });
