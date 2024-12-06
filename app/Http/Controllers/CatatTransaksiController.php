@@ -41,7 +41,6 @@ class CatatTransaksiController extends Controller
 
   public function catat(Request $request)
   {
-    dd($request->all());
     try {
       $validatedPhoneNumber = $request->validate([
         'nomor_telepon' => 'required|min:10|max:15',
@@ -60,6 +59,25 @@ class CatatTransaksiController extends Controller
 
       $validatedData['user_id'] = Auth::user()->id;
       $validatedData['date'] = Carbon::now('Asia/Jakarta');
+
+      if ($request->has('badge_id')) {
+        $validatedData['badge_id'] = $request->badge_id;
+      }
+
+      if ($request->has('leaderboard_id')) {
+        $validatedData['leaderboard_id'] = $request->leaderboard_id;
+      }
+
+      if ($request->has('voucher_id')) {
+        $validatedData['voucher_id'] = $request->voucher_id;
+      }
+
+      $challengeProgressPoint = null;
+
+      if ($request->has('challenge_progress_id')) {
+        $validatedData['challenge_progress_id'] = $request->challenge_progress_id;
+        $challengeProgressPoint = 15;
+      }
 
       // Log validated data
       Log::info('Validated Data:', $validatedData);
@@ -96,7 +114,7 @@ class CatatTransaksiController extends Controller
       if ($findPelanggan) {
         if ($findPelanggan->member_id) {
           // $totalPoint = intval($totalPoint);
-          $this->storeNewPoint($transaction, $findPelanggan->member_id, $totalPoint);
+          $this->storeNewPoint($transaction, $findPelanggan->member_id, $challengeProgressPoint, $totalPoint);
         }
       }
 
@@ -120,7 +138,7 @@ class CatatTransaksiController extends Controller
       $newPelanggan = Pelanggan::create(['nomor_telepon' => $validatedPhoneNumber['nomor_telepon']]);
       $findNewPelanggan = Pelanggan::where('nomor_telepon', $newPelanggan->nomor_telepon)->first();
 
-      Log::info('Pelaggan Number Created', $newPelanggan->toArray());
+      Log::info('Pelanggan Number Created', $newPelanggan->toArray());
 
       $validatedData['pelanggan_id'] = $findNewPelanggan->id;
     }
@@ -128,11 +146,15 @@ class CatatTransaksiController extends Controller
     return $validatedData;
   }
 
-  private function storeNewPoint($transaction, $memberId, $totalPoint)
+  private function storeNewPoint($transaction, $memberId, $challengePoint, $totalPoint)
   {
     if (!is_numeric($totalPoint)) {
       Log::error('Non-numeric value passed to increment method.', ['totalPoint' => $totalPoint]);
       throw new \InvalidArgumentException('Total point must be a numeric value.');
+    }
+
+    if ($challengePoint) {
+      $totalPoint = $totalPoint + $challengePoint;
     }
 
     Member::where('nomor_telepon', $transaction->pelanggan->nomor_telepon)->increment('experience_point', $totalPoint);
@@ -142,7 +164,7 @@ class CatatTransaksiController extends Controller
       'member_id' => $memberId,
       'point' => $totalPoint,
       'transaksi_id' => $transaction->id,
-      'status' => 'Transaksi',
+      'status' => $challengePoint ? 'Transaksi dan menyelesaikan challenge' : 'Transaksi',
       'date' => Carbon::now('Asia/Jakarta'),
     ]);
 

@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Layanan;
 use App\Models\Voucher;
 use App\Models\Challenge;
+use App\Models\Pelanggan;
 use App\Models\LayananLog;
 use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
@@ -269,7 +270,12 @@ class DatabaseSeeder extends Seeder
 
     foreach ($members as $member) {
       // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
-      Member::create($member);
+      $registeredMember = Member::create($member);
+
+      Pelanggan::create([
+        'nomor_telepon' => $member['nomor_telepon'],
+        'member_id' => $registeredMember->id,
+      ]);
     }
 
     $challenges = [
