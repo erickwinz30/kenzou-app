@@ -74,8 +74,8 @@ class CatatTransaksiController extends Controller
 
       $challengeProgressPoint = null;
 
-      if ($request->has('challenge_progress_id')) {
-        $validatedData['challenge_progress_id'] = $request->challenge_progress_id;
+      if ($request->has('challenge_id')) {
+        $validatedData['challenge_id'] = $request->challenge_id;
         $challengeProgressPoint = 15;
       }
 
@@ -113,7 +113,21 @@ class CatatTransaksiController extends Controller
       //check if member exists
       if ($findPelanggan) {
         if ($findPelanggan->member_id) {
-          // $totalPoint = intval($totalPoint);
+          if ($validatedData['challenge_id']) {
+            // ChallengeProgress::where('id', $validatedData['challenge_progress_id'])->update(['is_used' => true]);
+
+            Log::info('Challenge Progress ID:', ['id' => $validatedData['challenge_id']]);
+
+            $updated = ChallengeProgress::where('challenge_id', $validatedData['challenge_id'])->where('member_id', $findPelanggan->member_id)->update(['is_used' => true]);
+
+            if ($updated) {
+              Log::info('Challenge Progress updated successfully.');
+            } else {
+              Log::warning('Challenge Progress update failed. No record found with the given ID.');
+            }
+          } else {
+            Log::info('Challenge Progress ID on validated is null');
+          }
           $this->storeNewPoint($transaction, $findPelanggan->member_id, $challengeProgressPoint, $totalPoint);
         }
       }

@@ -19,7 +19,7 @@ class MemberController extends Controller
   public function index()
   {
     $listChallengeFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', true)
-      ->whereHas('challenge', function ($query) {
+      ->where('is_used', false)->whereHas('challenge', function ($query) {
         $query->where('is_active', true);
       })
       ->get();

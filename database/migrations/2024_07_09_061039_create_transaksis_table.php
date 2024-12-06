@@ -16,7 +16,7 @@ return new class extends Migration
       $table->foreignUuid('pelanggan_id');
       $table->foreignUuid('user_id');
       $table->foreignUuid('owned_voucher_id')->nullable();
-      $table->foreignUuid('challenge_progress_id')->nullable();
+      $table->foreignUuid('challenge_id')->nullable();
       $table->foreignId('badge_id')->nullable();
       $table->foreignId('leaderboard_id')->nullable();
       $table->datetime('date');

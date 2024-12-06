@@ -631,7 +631,7 @@
                 <p class="card-text my-auto">${challengeDescription}</p>
                 <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
-              <input type="hidden" name="challenge_progress_id" value="${challengeId}" />
+              <input type="hidden" name="challenge_id" value="${challengeId}" />
               <div class="d-flex justify-content-end align-items-center">
                 <p class="card-text my-auto">-Rp. ${challengeLayananPrice}</p>
                 <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
