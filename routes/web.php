@@ -143,9 +143,9 @@ Route::middleware('auth:member')->group(function () {
   Route::get('/leaderboard', [MemberController::class, 'viewLeaderboard'])->name('leaderboard');
 
   //voucher
-  Route::get('/voucher', [OwnedVoucherController::class, 'index'])->name('voucher-index');
-  Route::get('/voucher/{voucher}', [OwnedVoucherController::class, 'viewVoucher']);
-  Route::post('/voucher/claim', [OwnedVoucherController::class, 'claimVoucher']);
+  Route::get('/voucher', [MemberController::class, 'viewOwnedVoucher'])->name('voucher-index');
+  Route::get('/voucher/{voucher}', [MemberController::class, 'viewDetailVoucher']);
+  Route::post('/voucher/claim', [MemberController::class, 'claimVoucher']);
 
   //account information page
   Route::get('/account', [MemberController::class, 'account'])->name('account');
