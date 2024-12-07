@@ -48,6 +48,7 @@ class CatatTransaksiController extends Controller
 
       $validatedData = $request->validate([
         'keterangan' => 'max:255',
+        'total' => 'required',
         'subtotal' => 'required',
         'metode_pembayaran' => 'required',
       ]);
@@ -113,7 +114,7 @@ class CatatTransaksiController extends Controller
       //check if member exists
       if ($findPelanggan) {
         if ($findPelanggan->member_id) {
-          if ($validatedData['challenge_id']) {
+          if (isset($validatedData['challenge_id'])) {
             // ChallengeProgress::where('id', $validatedData['challenge_progress_id'])->update(['is_used' => true]);
 
             Log::info('Challenge Progress ID:', ['id' => $validatedData['challenge_id']]);
@@ -128,6 +129,12 @@ class CatatTransaksiController extends Controller
           } else {
             Log::info('Challenge Progress ID on validated is null');
           }
+
+          if ($validatedData['voucher_id']) {
+            Log::info('Voucher ID:', ['id' => $validatedData['voucher_id']]);
+
+            $this->claimVoucher($validatedData['voucher_id'], $findPelanggan->member_id);
+          }
           $this->storeNewPoint($transaction, $findPelanggan->member_id, $challengeProgressPoint, $totalPoint);
         }
       }
@@ -135,7 +142,7 @@ class CatatTransaksiController extends Controller
       return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
     } catch (\Exception $e) {
       // Log the error
-      Log::error('Transaction Creation Error:', ['message' => $e->getMessage()]);
+      Log::error('Transaction Creation Error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
 
       return redirect()->back()->with('error', 'Terjadi kesalahan saat mencatat transaksi.');
     }
@@ -183,6 +190,18 @@ class CatatTransaksiController extends Controller
     ]);
 
     Log::info('Point Log Created:', $pointLog->toArray());
+  }
+
+  private function claimVoucher($voucherId, $memberId)
+  {
+    $voucher = OwnedVoucher::where('member_id', $memberId)->where('voucher_id', $voucherId)->first();
+
+    if ($voucher) {
+      $voucher->update([
+        'is_used' => true,
+        'used_date' => Carbon::now('Asia/Jakarta')
+      ]);
+    }
   }
 
   public function searchPhoneNumber(Request $request)

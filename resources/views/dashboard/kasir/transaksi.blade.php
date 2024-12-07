@@ -133,7 +133,7 @@
                 <div class="card-body" style="background-color: #eeeeee; border-radius: 5px">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-text fw-semibold mt-4">Subtotal:</h6>
-                    <input type="hidden" name="subtotal" value="0" id="inputSubtotal" />
+                    <input type="hidden" name="subtotal" value="0" id="input-subtotal" />
                     <p class="card-text" id="subtotal_value">Rp. 0</p>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">

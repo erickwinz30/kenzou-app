@@ -50,14 +50,14 @@ class Transaksi extends Model
     return $this->belongsTo(PointLog::class, 'transaksi_id', 'id');
   }
 
-  public function ownedVoucher()
+  public function voucher()
   {
-    return $this->belongsTo(OwnedVoucher::class, 'owned_voucher_id');
+    return $this->belongsTo(Voucher::class, 'voucher_id');
   }
 
-  public function challengeProgress()
+  public function challenge()
   {
-    return $this->belongsTo(ChallengeProgress::class, 'challenge_progress_id');
+    return $this->belongsTo(Challenge::class, 'challenge_id');
   }
 
   public function badge()
