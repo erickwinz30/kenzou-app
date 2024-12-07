@@ -300,7 +300,6 @@ class DatabaseSeeder extends Seeder
     ];
 
     foreach ($challenges as $dataChallenge) {
-      // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
       $challenge = Challenge::create($dataChallenge);
       Log::info($challenge);
 

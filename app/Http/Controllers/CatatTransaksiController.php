@@ -48,7 +48,7 @@ class CatatTransaksiController extends Controller
 
       $validatedData = $request->validate([
         'keterangan' => 'max:255',
-        'total_harga' => 'required',
+        'subtotal' => 'required',
         'metode_pembayaran' => 'required',
       ]);
 
@@ -264,7 +264,7 @@ class CatatTransaksiController extends Controller
   {
     $today = Carbon::today()->toDateString();
 
-    $todaySales = Transaksi::whereDate('date', $today)->sum('total_harga');
+    $todaySales = Transaksi::whereDate('date', $today)->sum('subtotal');
 
     return $todaySales;
   }
@@ -276,7 +276,7 @@ class CatatTransaksiController extends Controller
     $results = DB::table('transaksis')
       ->select(
         DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
-        DB::raw('SUM(total_harga) as total_harga')
+        DB::raw('SUM(subtotal) as subtotal')
       )
       ->whereDate('date', $currentDate) // Filter by current date
       ->whereTime('date', '>=', '07:30:00')
@@ -309,7 +309,7 @@ class CatatTransaksiController extends Controller
 
       foreach ($results as $result) {
         if ($result->hour === $hourString) {
-          $totalHarga = $result->total_harga;
+          $totalHarga = $result->subtotal;
           break;
         }
       }
@@ -323,7 +323,7 @@ class CatatTransaksiController extends Controller
 
       $data[] = [
         'hour' => $hourString,
-        'total_harga' => $totalHarga,
+        'subtotal' => $totalHarga,
         'jumlah_transaksi' => $transactionCount,
       ];
 

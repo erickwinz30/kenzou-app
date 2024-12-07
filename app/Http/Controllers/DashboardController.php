@@ -11,314 +11,325 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
-    public function index() {
-        $todayTransaksi = $this->countMobil();
-        $yesterdayCarPercentage = $this->yesterdayCountMobil();
-        $todaySales = $this->todaySales();
-        $yesterdaySalesPercentage = $this->yesterdaySalesPercentage();
-        $thisMonthSales = $this->thisMonthSales();
-        $lastMonthSales = $this->lastMonthSales();
-        $recentTransaction = $this->recentTransaction();
+  public function index()
+  {
+    $todayTransaksi = $this->countMobil();
+    $yesterdayCarPercentage = $this->yesterdayCountMobil();
+    $todaySales = $this->todaySales();
+    $yesterdaySalesPercentage = $this->yesterdaySalesPercentage();
+    $thisMonthSales = $this->thisMonthSales();
+    $lastMonthSales = $this->lastMonthSales();
+    $recentTransaction = $this->recentTransaction();
 
-        return view('dashboard.index', [
-            'todayTransaksi' => $todayTransaksi,
-            'yesterdayCarPercentage' => round($yesterdayCarPercentage, 2),
-            'todaySales' => $todaySales,
-            'yesterdaySalesPercentage' => round($yesterdaySalesPercentage, 2),
-            'thisMonth' => $thisMonthSales,
-            'lastMonth' => round($lastMonthSales, 2),
-            'recentTransactions' => $recentTransaction,
-        ]);
+    return view('dashboard.index', [
+      'todayTransaksi' => $todayTransaksi,
+      'yesterdayCarPercentage' => round($yesterdayCarPercentage, 2),
+      'todaySales' => $todaySales,
+      'yesterdaySalesPercentage' => round($yesterdaySalesPercentage, 2),
+      'thisMonth' => $thisMonthSales,
+      'lastMonth' => round($lastMonthSales, 2),
+      'recentTransactions' => $recentTransaction,
+    ]);
+  }
+
+  private function countMobil()
+  {
+    $today = Carbon::today()->toDateString();
+
+    $todayTransaksi = Transaksi::whereDate('date', $today)->count();
+
+    return $todayTransaksi;
+  }
+
+  private function yesterdayCountMobil()
+  {
+    $yesterday = Carbon::yesterday()->toDateString();
+    $yesterdayCar = Transaksi::whereDate('date', $yesterday)->count();
+
+    $todayCar = $this->countMobil();
+
+    // Calculate the percentage change
+    if ($yesterdayCar > 0) {
+      $yesterdayCarPercentage = (($todayCar - $yesterdayCar) / $yesterdayCar) * 100;
+
+      return $yesterdayCarPercentage;
+    } else {
+      // Handle cases where yesterday's sales were 0 to avoid division by zero
+      $yesterdayCarPercentage = $todayCar > 0 ? 100 : 0;
+      return $yesterdayCarPercentage;
     }
+  }
 
-    private function countMobil() {
-        $today = Carbon::today()->toDateString();
+  private function todaySales()
+  {
+    $today = Carbon::today()->toDateString();
 
-        $todayTransaksi = Transaksi::whereDate('date', $today)->count();
+    $todaySales = Transaksi::whereDate('date', $today)->sum('subtotal');
 
-        return $todayTransaksi;
+    return $todaySales;
+  }
+
+  private function yesterdaySalesPercentage()
+  {
+    $yesterday = Carbon::yesterday()->toDateString();
+    $yesterdaySales = Transaksi::whereDate('date', $yesterday)->sum('subtotal');
+
+    $todaySales = $this->todaySales();
+
+    // Calculate the percentage change
+    if ($yesterdaySales > 0) {
+      $yesterdaySalesPercentage = (($todaySales - $yesterdaySales) / $yesterdaySales) * 100;
+
+      return $yesterdaySalesPercentage;
+    } else {
+      // Handle cases where yesterday's sales were 0 to avoid division by zero
+      $yesterdaySalesPercentage = $todaySales > 0 ? 100 : 0;
+      return $yesterdaySalesPercentage;
     }
+  }
 
-    private function yesterdayCountMobil() {
-        $yesterday = Carbon::yesterday()->toDateString();
-        $yesterdayCar = Transaksi::whereDate('date', $yesterday)->count();
+  private function thisMonthSales()
+  {
+    //bulan ini
+    $startOfMonth = Carbon::now()->startOfMonth();
+    $endOfMonth = Carbon::now()->endOfMonth();
 
-        $todayCar = $this->countMobil();
+    $thisMonthSales = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])->sum('subtotal');
 
-        // Calculate the percentage change
-        if ($yesterdayCar > 0) {
-            $yesterdayCarPercentage = (($todayCar - $yesterdayCar) / $yesterdayCar) * 100;
+    return $thisMonthSales;
+  }
 
-            return $yesterdayCarPercentage;
-        } else {
-            // Handle cases where yesterday's sales were 0 to avoid division by zero
-            $yesterdayCarPercentage = $todayCar > 0 ? 100 : 0;
-            return $yesterdayCarPercentage;
+  private function lastMonthSales()
+  {
+    // Bulan kemarin
+    $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
+    $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+
+    $lastMonthSales = Transaksi::whereBetween('date', [$startOfLastMonth, $endOfLastMonth])->sum('subtotal');
+
+    $thisMonthSales = $this->thisMonthSales();
+
+    // Calculate the percentage change
+    if ($lastMonthSales > 0) {
+      $lastMonthSalesPercentage = (($thisMonthSales - $lastMonthSales) / $lastMonthSales) * 100;
+
+      return $lastMonthSalesPercentage;
+    } else {
+      // Handle cases where yesterday's sales were 0 to avoid division by zero
+      $lastMonthSalesPercentage = $thisMonthSales > 0 ? 100 : 0;
+      return $lastMonthSalesPercentage;
+    }
+  }
+
+  public function perHourSales(Request $request)
+  {
+    $currentDate = Carbon::now()->format('Y-m-d');
+
+    $results = DB::table('transaksis')
+      ->select(
+        DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+        DB::raw('SUM(subtotal) as subtotal')
+      )
+      ->whereDate('date', $currentDate) // Filter by current date
+      ->whereTime('date', '>=', '07:30:00')
+      ->whereTime('date', '<=', '17:30:00')
+      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+      ->orderBy('hour')
+      ->get();
+
+    $results2 = DB::table('transaksis')
+      ->select(
+        DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+        DB::raw('COUNT(id) as transaksi_id')
+      )
+      ->whereDate('date', $currentDate) // Filter by current date
+      ->whereTime('date', '>=', '07:30:00')
+      ->whereTime('date', '<=', '17:30:00')
+      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+      ->orderBy('hour')
+      ->get();
+
+    $data = [];
+    $startHour = Carbon::createFromTimeString('07:00:00');
+    $endHour = Carbon::createFromTimeString('17:00:00');
+    $currentHour = $startHour->copy();
+
+    while ($currentHour->lte($endHour)) {
+      $hourString = $currentHour->format('Y-m-d H:00:00');
+      $totalHarga = 0;
+      $transactionCount = 0;
+
+      foreach ($results as $result) {
+        if ($result->hour === $hourString) {
+          $totalHarga = $result->subtotal;
+          break;
         }
+      }
+
+      foreach ($results2 as $result) {
+        if ($result->hour === $hourString) {
+          $transactionCount = $result->transaksi_id;
+          break;
+        }
+      }
+
+      $data[] = [
+        'hour' => $hourString,
+        'subtotal' => $totalHarga,
+        'jumlah_transaksi' => $transactionCount,
+      ];
+
+      $currentHour->addHour();
     }
 
-    private function todaySales() {
-        $today = Carbon::today()->toDateString();
-
-        $todaySales = Transaksi::whereDate('date', $today)->sum('total_harga');
-
-        return $todaySales;
+    if ($request->wantsJson()) {
+      return response()->json($data);
     }
 
-    private function yesterdaySalesPercentage() {
-        $yesterday = Carbon::yesterday()->toDateString();
-        $yesterdaySales = Transaksi::whereDate('date', $yesterday)->sum('total_harga');
+    return $data;
+  }
 
-        $todaySales = $this->todaySales();
+  private function recentTransaction()
+  {
+    $recentTransaction = Transaksi::orderBy('date', 'desc')->take(8)->get();
 
-        // Calculate the percentage change
-        if ($yesterdaySales > 0) {
-            $yesterdaySalesPercentage = (($todaySales - $yesterdaySales) / $yesterdaySales) * 100;
+    return $recentTransaction;
+  }
 
-            return $yesterdaySalesPercentage;
-        } else {
-            // Handle cases where yesterday's sales were 0 to avoid division by zero
-            $yesterdaySalesPercentage = $todaySales > 0 ? 100 : 0;
-            return $yesterdaySalesPercentage;
+  public function perDaySales(Request $request)
+  {
+    // $currentMonth = Carbon::now()->format('Y-m'); // Get current month and year
+
+    // Query for total sales per day
+    $results = DB::table('transaksis')
+      ->select(
+        DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+        DB::raw('SUM(subtotal) as subtotal')
+      )
+      ->whereYear('date', Carbon::now()->year) // Filter by current year
+      ->whereMonth('date', Carbon::now()->month) // Filter by current month
+      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+      ->orderBy('day')
+      ->get();
+
+    // Initialize the data array
+    $data = [];
+    $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
+    $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
+    $currentDay = $startDay->copy();
+
+    while ($currentDay->lte($endDay)) {
+      $dayString = $currentDay->format('Y-m-d');
+      $totalHarga = 0;
+
+      foreach ($results as $result) {
+        if ($result->day === $dayString) {
+          $totalHarga = $result->subtotal;
+          break;
         }
+      }
+
+      $data[] = [
+        'day' => $dayString,
+        'subtotal' => $totalHarga,
+      ];
+
+      $currentDay->addDay();
     }
 
-    private function thisMonthSales() {
-        //bulan ini
-        $startOfMonth = Carbon::now()->startOfMonth();
-        $endOfMonth = Carbon::now()->endOfMonth();
-
-        $thisMonthSales = Transaksi::whereBetween('date', [$startOfMonth, $endOfMonth])->sum('total_harga');
-
-        return $thisMonthSales;
+    if ($request->wantsJson()) {
+      return response()->json($data);
     }
 
-    private function lastMonthSales() {
-        // Bulan kemarin
-        $startOfLastMonth = Carbon::now()->subMonth()->startOfMonth();
-        $endOfLastMonth = Carbon::now()->subMonth()->endOfMonth();
+    return $data;
+  }
 
-        $lastMonthSales = Transaksi::whereBetween('date', [$startOfLastMonth, $endOfLastMonth])->sum('total_harga');
+  public function perDayCars(Request $request)
+  {
+    // Query for total transaction count per day
+    $results2 = DB::table('transaksis')
+      ->select(
+        DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+        DB::raw('COUNT(id) as transaksi_id')
+      )
+      ->whereYear('date', Carbon::now()->year) // Filter by current year
+      ->whereMonth('date', Carbon::now()->month) // Filter by current month
+      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+      ->orderBy('day')
+      ->get();
 
-        $thisMonthSales = $this->thisMonthSales();
+    $data = [];
+    $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
+    $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
+    $currentDay = $startDay->copy();
 
-        // Calculate the percentage change
-        if ($lastMonthSales > 0) {
-            $lastMonthSalesPercentage = (($thisMonthSales - $lastMonthSales) / $lastMonthSales) * 100;
+    while ($currentDay->lte($endDay)) {
+      $dayString = $currentDay->format('Y-m-d');
+      $transactionCount = 0;
 
-            return $lastMonthSalesPercentage;
-        } else {
-            // Handle cases where yesterday's sales were 0 to avoid division by zero
-            $lastMonthSalesPercentage = $thisMonthSales > 0 ? 100 : 0;
-            return $lastMonthSalesPercentage;
+      foreach ($results2 as $result) {
+        if ($result->day === $dayString) {
+          $transactionCount = $result->transaksi_id;
+          break;
         }
+      }
+
+      $data[] = [
+        'day' => $dayString,
+        'jumlah_transaksi' => $transactionCount,
+      ];
+
+      $currentDay->addDay();
     }
 
-    public function perHourSales(Request $request) {
-        $currentDate = Carbon::now()->format('Y-m-d');
-
-        $results = DB::table('transaksis')
-            ->select(
-                DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
-                DB::raw('SUM(total_harga) as total_harga')
-            )
-            ->whereDate('date', $currentDate) // Filter by current date
-            ->whereTime('date', '>=', '07:30:00')
-            ->whereTime('date', '<=', '17:30:00')
-            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
-            ->orderBy('hour')
-            ->get();
-        
-        $results2 = DB::table('transaksis')
-            ->select(
-                DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
-                DB::raw('COUNT(id) as transaksi_id')
-            )
-            ->whereDate('date', $currentDate) // Filter by current date
-            ->whereTime('date', '>=', '07:30:00')
-            ->whereTime('date', '<=', '17:30:00')
-            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
-            ->orderBy('hour')
-            ->get();
-
-        $data = [];
-        $startHour = Carbon::createFromTimeString('07:00:00');
-        $endHour = Carbon::createFromTimeString('17:00:00');
-        $currentHour = $startHour->copy();
-
-        while ($currentHour->lte($endHour)) {
-            $hourString = $currentHour->format('Y-m-d H:00:00');
-            $totalHarga = 0;
-            $transactionCount = 0;
-
-            foreach ($results as $result) {
-                if ($result->hour === $hourString) {
-                    $totalHarga = $result->total_harga;
-                    break;
-                }
-            }
-
-            foreach ($results2 as $result) {
-                if ($result->hour === $hourString) {
-                    $transactionCount = $result->transaksi_id;
-                    break;
-                }
-            }
-
-            $data[] = [
-                'hour' => $hourString,
-                'total_harga' => $totalHarga,
-                'jumlah_transaksi' => $transactionCount,
-            ];
-
-            $currentHour->addHour();
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json($data);
-        }
-
-        return $data;
+    if ($request->wantsJson()) {
+      return response()->json($data);
     }
 
-    private function recentTransaction() {
-        $recentTransaction = Transaksi::orderBy('date', 'desc')->take(8)->get();
+    return $data;
+  }
 
-        return $recentTransaction;
+  public function perMonthSales(Request $request)
+  {
+    // Query for total sales per month
+    $results = DB::table('transaksis')
+      ->select(
+        DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
+        DB::raw('SUM(subtotal) as subtotal')
+      )
+      ->whereYear('date', Carbon::now()->year) // Filter by the current year
+      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
+      ->orderBy('month')
+      ->get();
+
+    $data = [];
+    $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
+    $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
+    $currentMonth = $startYear->copy();
+
+    while ($currentMonth->lte($endYear)) {
+      $monthString = $currentMonth->format('Y-m');
+      $totalHarga = 0;
+
+      foreach ($results as $result) {
+        if ($result->month === $monthString) {
+          $totalHarga = $result->subtotal;
+          break;
+        }
+      }
+
+      $data[] = [
+        'month' => $monthString,
+        'subtotal' => $totalHarga,
+      ];
+
+      $currentMonth->addMonth(); // Move to the next month
     }
 
-    public function perDaySales(Request $request) {
-        // $currentMonth = Carbon::now()->format('Y-m'); // Get current month and year
-
-        // Query for total sales per day
-        $results = DB::table('transaksis')
-            ->select(
-                DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
-                DB::raw('SUM(total_harga) as total_harga')
-            )
-            ->whereYear('date', Carbon::now()->year) // Filter by current year
-            ->whereMonth('date', Carbon::now()->month) // Filter by current month
-            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
-            ->orderBy('day')
-            ->get();
-
-        // Initialize the data array
-        $data = [];
-        $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
-        $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
-        $currentDay = $startDay->copy();
-
-        while ($currentDay->lte($endDay)) {
-            $dayString = $currentDay->format('Y-m-d');
-            $totalHarga = 0;
-
-            foreach ($results as $result) {
-                if ($result->day === $dayString) {
-                    $totalHarga = $result->total_harga;
-                    break;
-                }
-            }
-
-            $data[] = [
-                'day' => $dayString,
-                'total_harga' => $totalHarga,
-            ];
-
-            $currentDay->addDay();
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json($data);
-        }
-
-        return $data;
+    if ($request->wantsJson()) {
+      return response()->json($data);
     }
 
-    public function perDayCars(Request $request) {
-        // Query for total transaction count per day
-        $results2 = DB::table('transaksis')
-            ->select(
-                DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
-                DB::raw('COUNT(id) as transaksi_id')
-            )
-            ->whereYear('date', Carbon::now()->year) // Filter by current year
-            ->whereMonth('date', Carbon::now()->month) // Filter by current month
-            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
-            ->orderBy('day')
-            ->get();
-
-        $data = [];
-        $startDay = Carbon::now()->startOfMonth(); // Start from the first day of the month
-        $endDay = Carbon::now()->endOfMonth(); // End on the last day of the month
-        $currentDay = $startDay->copy();
-
-        while ($currentDay->lte($endDay)) {
-            $dayString = $currentDay->format('Y-m-d');
-            $transactionCount = 0;
-
-            foreach ($results2 as $result) {
-                if ($result->day === $dayString) {
-                    $transactionCount = $result->transaksi_id;
-                    break;
-                }
-            }
-
-            $data[] = [
-                'day' => $dayString,
-                'jumlah_transaksi' => $transactionCount,
-            ];
-
-            $currentDay->addDay();
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json($data);
-        }
-
-        return $data;
-    }
-
-    public function perMonthSales(Request $request) {
-        // Query for total sales per month
-        $results = DB::table('transaksis')
-            ->select(
-                DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
-                DB::raw('SUM(total_harga) as total_harga')
-            )
-            ->whereYear('date', Carbon::now()->year) // Filter by the current year
-            ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
-            ->orderBy('month')
-            ->get();
-
-        $data = [];
-        $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
-        $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
-        $currentMonth = $startYear->copy();
-
-        while ($currentMonth->lte($endYear)) {
-            $monthString = $currentMonth->format('Y-m');
-            $totalHarga = 0;
-
-            foreach ($results as $result) {
-                if ($result->month === $monthString) {
-                    $totalHarga = $result->total_harga;
-                    break;
-                }
-            }
-
-            $data[] = [
-                'month' => $monthString,
-                'total_harga' => $totalHarga,
-            ];
-
-            $currentMonth->addMonth(); // Move to the next month
-        }
-
-        if ($request->wantsJson()) {
-            return response()->json($data);
-        }
-
-        return $data;
-    }
-
+    return $data;
+  }
 }

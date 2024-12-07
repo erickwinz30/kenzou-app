@@ -116,6 +116,7 @@
                 <!-- Items will be added here dynamically -->
               </div>
               <div class="d-flex justify-content-between align-items-center mb-3">
+                <input type="hidden" name="total" value="0" id="input-total">
                 <h6 class="card-text fw-semibold m-0">Total: </h6>
                 <p class="card-text" id="total-display">Rp. 0</p>
               </div>
@@ -132,7 +133,7 @@
                 <div class="card-body" style="background-color: #eeeeee; border-radius: 5px">
                   <div class="d-flex justify-content-between align-items-center">
                     <h6 class="card-text fw-semibold mt-4">Subtotal:</h6>
-                    <input type="hidden" name="total_harga" value="0" id="inputHarga" />
+                    <input type="hidden" name="subtotal" value="0" id="inputSubtotal" />
                     <p class="card-text" id="subtotal_value">Rp. 0</p>
                   </div>
                   <div class="d-flex justify-content-between align-items-center">
@@ -173,7 +174,8 @@
       const subtotalElement = document.getElementById("subtotal_value");
       const inputNomorTelepon = document.getElementById("nomor_telepon");
       const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
-      let inputHarga = document.getElementById("inputHarga");
+      let inputTotal = document.getElementById("input-total");
+      let inputSubtotal = document.getElementById("input-subtotal");
       let total = 0;
       let itemTotal = 0;
       let badgeDiscountPercentage = 0;
@@ -186,6 +188,7 @@
       // fuction untuk update subtotal
       function updateSubtotal(badgeDiscount, amount, voucherDiscount, rankDiscount) {
         total += amount;
+        inputTotal.value = total;
         console.log("Total Layanan: " + total);
 
         let badgeDiscountResult = total * badgeDiscount;
@@ -201,7 +204,7 @@
         subtotal = total - totalDiscount;
         console.log("Subtotal: " + subtotal);
 
-        inputHarga.value = subtotal;
+        inputSubtotal.value = subtotal;
         subtotalElement.textContent = `Rp. ${subtotal.toLocaleString()}`;
       }
 

@@ -37,7 +37,7 @@
         <h1 class="card-title fs-5 py-1">ID: {{ $transaksi->id }}</h1>
         <div class="d-flex mt-3 align-items-center mb-2">
           <h1 class="fs-6 fw-bold p-0 m-0 me-2" style="color: #012970;">Rp
-            {{ number_format($transaksi->total_harga, 0, ',', '.') }}</h1>
+            {{ number_format($transaksi->subtotal, 0, ',', '.') }}</h1>
           <p class="m-0 me-2">/</p>
           @if ($transaksi->metode_pembayaran == 'tunai')
             <h1 class="card-text fw-semibold p-0 fs-6" style="color: #012970;">Tunai</h1>
@@ -101,7 +101,7 @@
                   <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-between">
                       <p><strong>Subtotal: </strong></p>
-                      <p class="text-end">Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</p>
+                      <p class="text-end">Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</p>
                     </div>
                   </div>
                 </div>

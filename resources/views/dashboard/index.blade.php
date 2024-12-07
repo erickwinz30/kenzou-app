@@ -117,7 +117,7 @@
                   .then(data => {
                     console.log('Fetched data:', data); // Debug log
 
-                    const salesData = data.map(item => item.total_harga);
+                    const salesData = data.map(item => item.subtotal);
                     const perJam = data.map(item => {
                       const dateStr = item.hour.replace(' ', 'T'); // Ensure correct date format for parsing
                       const parsedDate = new Date(dateStr);
@@ -326,7 +326,7 @@
                         {{ \Carbon\Carbon::parse($transaksi->date)->locale('id')->diffForHumans() }}
                       </span>
                     </td>
-                    <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                    <td>Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
                   </tr>
                 @endforeach
               </tbody>
@@ -363,7 +363,7 @@
                   .then(data => {
                     console.log('Fetched data:', data); // Debug log
 
-                    const salesData = data.map(item => item.total_harga);
+                    const salesData = data.map(item => item.subtotal);
                     const perHari = data.map(item => {
                       const date = new Date(item.day);
                       return date.getDate(); // This will return the day of the month as a number (1-31)
@@ -575,7 +575,7 @@
                   .then(data => {
                     console.log('Fetched data:', data); // Debug log
 
-                    const salesData = data.map(item => item.total_harga);
+                    const salesData = data.map(item => item.subtotal);
                     const perBulan = data.map(item => {
                       const date = new Date(item.month);
                       return date.getMonth() + 1; // This will return the day of the month as a number (1-31)

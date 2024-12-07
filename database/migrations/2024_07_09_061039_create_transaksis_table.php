@@ -20,7 +20,8 @@ return new class extends Migration
       $table->foreignId('badge_id')->nullable();
       $table->foreignId('leaderboard_id')->nullable();
       $table->datetime('date');
-      $table->decimal('total_harga');
+      $table->decimal('total');
+      $table->decimal('subtotal');
       $table->string('metode_pembayaran');
       $table->string('keterangan')->nullable();
       $table->timestamps();
