@@ -76,7 +76,6 @@
                       <option style="color: grey" selected disabled>Pilih satuannya...</option>
                       <option value="Transaksi">Per Transaksi</option>
                       <option value="Total Pengeluaran Member">Total pengeluaran member selama periode</option>
-                      <option value="Point">Perolehan point member selama periode</option>
                     </select>
                   </div>
                   @error('unit')

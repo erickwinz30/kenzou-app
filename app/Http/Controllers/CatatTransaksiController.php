@@ -128,9 +128,43 @@ class CatatTransaksiController extends Controller
             }
           } else {
             Log::info('Challenge Progress ID on validated is null');
+            $allChallengeProgress = ChallengeProgress::where('member_id', $findPelanggan->member_id)->where('is_completed', false)->get();
+            Log::info('All Challenge Progress:', ['progress' => $allChallengeProgress]);
+
+            if ($allChallengeProgress) {
+              Log::info('Challenge Progress found for member.');
+              foreach ($allChallengeProgress as $challengeProgress) {
+                if ($challengeProgress->challenge->is_active) {
+                  Log::info('Challenge ' . $challengeProgress->challenge->description . ' is active.');
+                  if ($challengeProgress->is_completed == false) {
+                    Log::info('Challenge ' . $challengeProgress->challenge->description . ' is not completed.');
+                    $challengeUnit = $challengeProgress->challenge->unit;
+
+                    if ($challengeUnit === "Transaksi") {
+                      $transactionProgress = $challengeProgress->progress + 1;
+
+                      if ($transactionProgress === $challengeProgress->challenge->target) {
+                        $challengeProgress->update(['progress' => $transactionProgress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+                      } else {
+                        $challengeProgress->update(['progress' => $transactionProgress]);
+                      }
+                    } else if ($challengeUnit === "Total Pengeluaran Member") {
+                      $totalPengeluaran = $transaction->subtotal;
+                      $progress = $challengeProgress->progress + $totalPengeluaran;
+
+                      if ($progress >= $challengeProgress->challenge->target) {
+                        $challengeProgress->update(['progress' => $progress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+                      } else {
+                        $challengeProgress->update(['progress' => $progress]);
+                      }
+                    }
+                  }
+                } //jika kondisi challenge tidak aktif maka tidak terjadi apa"
+              }
+            }
           }
 
-          if ($validatedData['voucher_id']) {
+          if (isset($validatedData['voucher_id'])) {
             Log::info('Voucher ID:', ['id' => $validatedData['voucher_id']]);
 
             $this->claimVoucher($validatedData['voucher_id'], $findPelanggan->member_id);

@@ -80,10 +80,7 @@
                       </option>
                       <option value="Total Pengeluaran Member"
                         {{ old('unit', $challenge->unit) == 'Total Pengeluaran Member' ? 'selected' : '' }}>
-                        Total pengeluaran member selama periode</option>
-                      <option value="Point" {{ old('unit', $challenge->unit) == 'Point' ? 'selected' : '' }}>Perolehan
-                        point
-                        member selama periode</option>
+                        Total pengeluaran member selama periode
                       </option>
                     </select>
                   </div>

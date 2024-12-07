@@ -35,7 +35,7 @@
                 </div>
                 <div class="card-text p-3">
                   <strong style="color: #012970">Total harga: </strong>
-                  Rp {{ number_format($transaction->total_harga, 0, ',', '.') }}
+                  Rp {{ number_format($transaction->subtotal, 0, ',', '.') }}
                 </div>
               </div>
             </div>
