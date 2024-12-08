@@ -301,7 +301,7 @@
               <thead>
                 <tr>
                   <th scope="col">Transaksi ID</th>
-                  <th scope="col">No. Telp</th>
+                  <th scope="col">Pelanggan</th>
                   <th scope="col">Layanan</th>
                   <th scope="col">Kasir</th>
                   <th scope="col">Tanggal Transaksi</th>
@@ -312,7 +312,11 @@
                 @foreach ($recentTransactions as $transaksi)
                   <tr>
                     <td>{{ Str::limit($transaksi->id, 8) }}</td>
-                    <td>{{ $transaksi->nomor_telepon }}</td>
+                    @if ($transaksi->pelanggan->member_id)
+                      <td>{{ $transaksi->pelanggan->member->nama }}</td>
+                    @else
+                      <td>{{ $transaksi->pelanggan->nomor_telepon }}</td>
+                    @endif
                     <td>
                       @php
                         $namaLayanan = $transaksi->detail_layanan->pluck('layanan.nama_layanan')->toArray();
