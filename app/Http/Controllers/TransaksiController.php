@@ -56,7 +56,7 @@ class TransaksiController extends Controller
 
     return view('dashboard.transaksi.view', [
       'transaksi' => $transaksi,
-      'detailLayanans' => $detailLayanan,
+      // 'detailLayanans' => $detailLayanan,
     ]);
   }
 
