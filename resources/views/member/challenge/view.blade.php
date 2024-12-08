@@ -20,7 +20,9 @@
           <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
             <div>
               <h2 class="fs-5 fw-bold">Progress Challenge</h2>
-              <p>{{ $progress->progress }}/{{ $progress->challenge->target }} {{ $progress->challenge->unit }}</p>
+              <p>
+                {{ $progress->progress > $progress->challenge->target ? $progress->challenge->target : $progress->progress }}/{{ $progress->challenge->target }}
+                {{ $progress->challenge->unit }}</p>
             </div>
             <div>
               <h2 class="fs-5 fw-bold">Hadiah yang diperoleh</h2>
@@ -38,7 +40,11 @@
                 @endphp
                 <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
               </div>
-              <p class="card-text ms-2 text-decoration-none">{{ $progressPercentage }}%</p>
+              @if ($progress->is_completed == 1)
+                <p class="card-text ms-2 text-decoration-none">100%</p>
+              @else
+                <p class="card-text ms-2 text-decoration-none">{{ $progressPercentage }}%</p>
+              @endif
             </div>
           </div>
           @if ($progress->is_completed == 1)

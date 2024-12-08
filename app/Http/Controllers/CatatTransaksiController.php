@@ -466,7 +466,7 @@ class CatatTransaksiController extends Controller
       $memberId = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
       Log::info('Input Nomor Telepon:', ['Member Phone Number' => $memberId]);
 
-      $listChallenge = ChallengeProgress::where('member_id', $memberId)->where('is_completed', true)
+      $listChallenge = ChallengeProgress::where('member_id', $memberId)->where('is_completed', true)->where('is_used', false)
         ->whereHas('challenge', function ($query) {
           $query->where('is_active', true);
         })->get();

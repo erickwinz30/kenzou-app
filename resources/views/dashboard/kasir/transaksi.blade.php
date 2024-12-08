@@ -115,7 +115,7 @@
               <div class="item_transaksi" id="item_transaksi">
                 <!-- Items will be added here dynamically -->
               </div>
-              <div class="d-flex justify-content-between align-items-center mb-3">
+              <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
                 <input type="hidden" name="total" value="0" id="input-total">
                 <h6 class="card-text fw-semibold m-0">Total: </h6>
                 <p class="card-text" id="total-display">Rp. 0</p>
@@ -167,10 +167,10 @@
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Select all the "Tambah" buttons
       const addItemButtons = document.querySelectorAll(".add-item");
       const addNoPelanggan = document.getElementById("tambahNoPelanggan");
       const containerItem = document.getElementById("item_transaksi");
+      const totalElement = document.getElementById("total-display");
       const subtotalElement = document.getElementById("subtotal_value");
       const inputNomorTelepon = document.getElementById("nomor_telepon");
       const containerNoPelanggan = document.getElementById("container-informasi-pelanggan");
@@ -189,6 +189,7 @@
       function updateSubtotal(badgeDiscount, amount, voucherDiscount, rankDiscount) {
         total += amount;
         inputTotal.value = total;
+        totalElement.textContent = `Rp. ${total.toLocaleString()}`;
         console.log("Total Layanan: " + total);
 
         let badgeDiscountResult = total * badgeDiscount;
@@ -623,6 +624,8 @@
         const challengeLayananName = this.getAttribute("data-layanan-name");
         const challengeLayananPrice = parseInt(this.getAttribute("data-layanan-price"));
 
+        const containerItem = document.getElementById("item_transaksi");
+
         updateSubtotal(badgeDiscountPercentage, -challengeLayananPrice, voucherDiscountPercentage,
           rankDiscountPercentage);
 
@@ -636,13 +639,23 @@
               </div>
               <input type="hidden" name="challenge_id" value="${challengeId}" />
               <div class="d-flex justify-content-end align-items-center">
-                <p class="card-text my-auto">-Rp. ${challengeLayananPrice}</p>
                 <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
                 <i class="bi bi-x-circle"></i>
                 </button>
               </div>
             </div>
         `;
+
+        if (containerItem.children.length > 0) {
+          const layananItems = document.querySelectorAll(".layanan-price");
+          layananItems.forEach((item) => {
+            let layananId = item.getAttribute("data-layanan-id");
+
+            if (layananId === challengeLayananId) {
+              item.textContent = `Rp. 0 (-Rp. ${challengeLayananPrice})`;
+            }
+          });
+        }
 
         // Disable all other challenge buttons
         const challengeAddItemButtons = document.querySelectorAll(".challenge-add-item");
@@ -855,6 +868,7 @@
           itemDiv.querySelector(".remove-item").addEventListener("click", function() {
             let removeItemPrice = parseInt(itemDiv.querySelector(".layanan-price").getAttribute(
               "data-price"));
+
             const badgeDescriptionContainer = document.getElementById("badge-description-container");
             const voucherDescriptionContainer = document.getElementById("voucher-description-container");
             const challengeDescriptionContainer = document.getElementById(
@@ -872,10 +886,9 @@
                 challengeAddButton.forEach((button) => {
                   button.disabled = true;
                 });
+                updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
+                  rankDiscountPercentage);
               }
-
-              updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
-                rankDiscountPercentage);
             }
 
             // Update the total price

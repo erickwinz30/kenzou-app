@@ -33,7 +33,7 @@
                           @endphp
                           <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
                         </div>
-                        <p class="card-text ms-2 text-decoration-none">{{ $progressPercentage }}%</p>
+                        <p class="card-text ms-2 text-decoration-none">100%</p>
                       </div>
                     </a>
                   </div>

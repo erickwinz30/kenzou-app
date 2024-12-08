@@ -77,12 +77,87 @@
                       </tr>
                     </thead>
                     <tbody>
-                      @foreach ($transaction->detail_layanan as $detailLayanan)
+                      @if ($transaction->challenge_id)
+                        <?php
+                        $freeLayananId = $transaction->challenge->layanan_id;
+                        ?>
+                        @foreach ($transaction->detail_layanan as $detailLayanan)
+                          @if ($detailLayanan->layanan_id == $freeLayananId)
+                            <tr>
+                              <td class="p-0 py-1">{{ $detailLayanan->layanan->nama_layanan }}</td>
+                              <td class="p-0 py-1 text-end">Rp 0
+                                (-Rp. {{ number_format($detailLayanan->layanan->harga, 0, ',', '.') }})
+                              </td>
+                            </tr>
+                          @else
+                            <tr>
+                              <td class="p-0 py-1">{{ $detailLayanan->layanan->nama_layanan }}</td>
+                              <td class="p-0 py-1 text-end">Rp
+                                {{ number_format($detailLayanan->layanan->harga, 0, ',', '.') }}</td>
+                            </tr>
+                          @endif
+                        @endforeach
+                      @else
+                        @foreach ($transaction->detail_layanan as $detailLayanan)
+                          <tr>
+                            <td class="p-0 py-1">{{ $detailLayanan->layanan->nama_layanan }}</td>
+                            <td class="p-0 py-1 text-end">Rp
+                              {{ number_format($detailLayanan->layanan->harga, 0, ',', '.') }}</td>
+                          </tr>
+                        @endforeach
+                      @endif
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="d-flex justify-content-between me-1">
+                      <p><strong>Total: </strong></p>
+                      <p class="text-end">Rp {{ number_format($transaction->total, 0, ',', '.') }}</p>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row px-3">
+                  <table class="table table-borderless col-12">
+                    <thead class="table-secondary rounded-thead">
+                      <tr>
+                        <th>Bonus</th>
+                        <th class="text-end">Diskon</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @if ($transaction->badge_id)
                         <tr>
-                          <td>{{ $detailLayanan->layanan->nama_layanan }}</td>
-                          <td class="text-end">Rp {{ number_format($detailLayanan->layanan->harga, 0, ',', '.') }}</td>
+                          <td class="p-0 py-1">{{ $transaction->badge->nama }}</td>
+                          <td class="p-0 py-1 text-end">- Rp
+                            {{ number_format($transaction->total * $transaction->badge->discount, 0, ',', '.') }}</td>
                         </tr>
-                      @endforeach
+                      @endif
+                      @if ($transaction->leaderboard_id)
+                        <tr>
+                          <td class="p-0 py-1">Peringkat {{ $transaction->leaderboard->rank }}</td>
+                          <td class="p-0 py-1 text-end">- Rp
+                            {{ number_format($transaction->total * $transaction->leaderboard->discount, 0, ',', '.') }}
+                          </td>
+                        </tr>
+                      @endif
+                      @if ($transaction->voucher_id)
+                        <tr>
+                          <td class="p-0 py-1">{{ $transaction->voucher->nama }}</td>
+                          <td class="p-0 py-1 text-end">- Rp
+                            {{ number_format($transaction->total * $transaction->voucher->discount, 0, ',', '.') }}</td>
+                        </tr>
+                      @endif
+                      @if ($transaction->challenge_id)
+                        <tr>
+                          <td class="p-0 py-1">{{ $transaction->challenge->description }}</td>
+                          <td class="p-0 py-1 text-end">Gratis {{ $transaction->challenge->layanan->nama_layanan }}
+                          </td>
+                        </tr>
+                      @endif
                     </tbody>
                   </table>
                 </div>
