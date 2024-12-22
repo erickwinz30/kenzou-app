@@ -745,15 +745,9 @@
               selectedLayananItems.forEach((selectedItem) => {
                 const selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
 
-                console.log(
-                  `Comparing: selectedLayananId=${selectedLayananId}, challengeFreeLayanan=${challengeFreeLayanan}`
-                );
-
                 if (selectedLayananId === challengeFreeLayanan) {
-                  console.log(`Match found for button:`, challengeItemButton);
                   setTimeout(() => {
                     challengeItemButton.disabled = false;
-                    console.log(`Button enabled:`, challengeItemButton.disabled);
                   }, 0);
                 }
               });

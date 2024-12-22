@@ -530,10 +530,8 @@
             }
           });
 
-          //enable all challenge buttons again
-          challengeAddButtons.forEach((button) => {
-            button.disabled = false;
-          });
+          //enable challenge button if there is free layanan in selected layanan
+          refreshChallengeButton();
         });
       }
 
@@ -615,6 +613,29 @@
         });
       }
 
+      function refreshChallengeButton() {
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+
+        if (challengeDescriptionContainer.innerHTML === "" || voucherDescriptionContainer.innerHTML === "") {
+          const selectedLayananItems = document.querySelectorAll('.layanan-added-item');
+          const challengeAddButtons = document.querySelectorAll(".challenge-add-item");
+          challengeAddButtons.forEach((challengeItemButton) => {
+            challengeItemButton.disabled = true;
+
+            const challengeFreeLayananId = parseInt(challengeItemButton.getAttribute('data-layanan-id'));
+
+            selectedLayananItems.forEach((selectedItem) => {
+              let selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
+
+              if (selectedLayananId === challengeFreeLayananId) {
+                challengeItemButton.disabled = false;
+              }
+            });
+          });
+        }
+      }
+
       function handleChallengeClick(event) {
         event.preventDefault();
 
@@ -683,13 +704,18 @@
             rankDiscountPercentage);
 
           // perbaiki tombol ini karena harusnya tidak false semua
-          challengeAddItemButtons.forEach((button) => {
-            button.disabled = false;
-          });
+          refreshChallengeButton()
 
           // Enable all voucher buttons again
           voucherAddItemButtons.forEach((button) => {
-            button.disabled = false;
+            // button.disabled = false;
+            let voucherMinimumTransaction = parseInt(button.getAttribute(
+              "data-minimum-transaction"));
+            if (total >= voucherMinimumTransaction) {
+              button.disabled = false;
+            } else {
+              button.disabled = true;
+            }
           });
         });
       }
