@@ -13,12 +13,7 @@
   </div><!-- End Page Title -->
 
   @if (session()->has('error'))
-    <div class="row justify-content-center">
-      <div class="alert alert-danger alert-dismissible fade show col-lg-12 justify-content-center" role="alert">
-        {{ session('error') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    </div>
+    <x-alert-error :message="session('error')" />
   @endif
 
   <section class="section">
@@ -54,10 +49,11 @@
                   @enderror
                 </div>
                 <div class="mb-3">
-                  <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">No.
-                    Telepon</label>
-                  <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon" name="nomor_telepon"
-                    value="{{ old('nomor_telepon', $transaksi->nomor_telepon) }}" required autofocus>
+                  <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">Informasi
+                    Pelanggan</label>
+                  <p class="card-text">
+                    {{ $transaksi->pelanggan->member_id ? $transaksi->pelanggan->member->nama . ' (' . $transaksi->pelanggan->nomor_telepon . ')' : $transaksi->pelanggan->nomor_telepon }}
+                  </p>
                   @error('nomor_telepon')
                     <div class="invalid-feedback">
                       {{ $message }}
@@ -65,34 +61,11 @@
                   @enderror
                 </div>
               </div>
-              <div>
-                <div class="d-flex justify-content-between mb-2">
-                  <label for="layanan" class="form-label @error('layanan') is-invalid @enderror">Layanan: </label>
-                  <button type="button" class="btn px-2 py-0 ms-2 btn-primary" id="addLayananBtn">
-                    <i class="bi bi-plus-circle"></i>
-                  </button>
-                </div>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
-                  @foreach ($transaksi->detail_layanan as $detailLayanan)
-                    <div class="mb-3">
-                      <select class="form-select mb-2 layanan-select" name="layanan[]" id="layanan">
-                        @foreach ($layanans as $layanan)
-                          <option value="{{ $layanan->id }}" data-price="{{ $layanan->harga }}"
-                            {{ old('layanan', $detailLayanan->layanan_id) == $layanan->id ? 'selected' : '' }}>
-                            {{ $layanan->nama_layanan }}
-                          </option>
-                        @endforeach
-                        <option value="">-- Kosong --</option>
-                      </select>
-                    </div>
-                  @endforeach
-                </div>
-              </div>
               <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2">
                 <div class="mb-3">
                   <label for="date" class="form-label @error('date') is-invalid @enderror">Tgl Transaksi</label>
                   <input type="datetime-local" class="form-control" id="date" name="date"
-                    value="{{ old('date', $transaksi->date) }}" required autofocus>
+                    value="{{ old('date', $transaksi->date) }}" required>
                   @error('date')
                     <div class="invalid-feedback">
                       {{ $message }}
@@ -104,14 +77,14 @@
                   <div class="d-flex justify-content-start align-items-center">
                     <div class="form-check">
                       <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
-                        value="tunai" checked>
+                        value="tunai" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'tunai') checked @endif>
                       <label class="form-check-label" for="exampleRadios1">
                         Tunai
                       </label>
                     </div>
                     <div class="form-check ms-3">
                       <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
-                        value="qris">
+                        value="qris" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'qris') checked @endif>
                       <label class="form-check-label" for="exampleRadios2">
                         QRIS
                       </label>
@@ -128,15 +101,279 @@
                   </div>
                 @enderror
               </div>
+              <div>
+                <div class="mb-2">
+                  <label for="layanan" class="form-label @error('layanan') is-invalid @enderror">Layanan: </label>
+                </div>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
+                  @foreach ($layanans as $layanan)
+                    <div class="col">
+                      <div class="card shadow h-85" style="border-radius: 15px">
+                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                          <div>
+                            <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
+                            <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
+                          </div>
+                          <div>
+                            <button href="#" class="btn btn-primary add-item" data-layanan-id="{{ $layanan->id }}"
+                              data-layanan-name="{{ $layanan->nama_layanan }}"
+                              data-layanan-price="{{ $layanan->harga }}"
+                              @foreach ($detailLayanans as $detailLayanan)
+                                {{ $detailLayanan->layanan_id == $layanan->id ? 'disabled' : '' }} @endforeach>
+                              <i class="bi bi-plus-circle"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  @endforeach
+                </div>
+              </div>
+              <div>
+                <p class="card-text">Layanan yang terpilih</p>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="selected-layanan-container">
+                  @foreach ($detailLayanans as $detailLayanan)
+                    <div class="col selected-layanan-item" data-layanan-id="{{ $detailLayanan->layanan->id }}"
+                      data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}"
+                      @if ($transaksi->challenge_id) data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 : $detailLayanan->layanan->harga }}"
+                      @else 
+                      data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
+                      data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
+                      <div class="card shadow h-85" style="border-radius: 15px">
+                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                          <div>
+                            <h5 class="card-title p-0 m-0">
+                              {{ $detailLayanan->layanan->nama_layanan }}
+                              @if ($transaksi->challenge_id)
+                                {!! $transaksi->challenge->layanan_id === $detailLayanan->layanan_id
+                                    ? '<span style="color: green;">(Gratis)</span>'
+                                    : '' !!}
+                              @endif
+                            </h5>
+                            <input type="hidden" name="layanan_id[]" value="{{ $detailLayanan->layanan->id }}">
+                          </div>
+                          <div>
+                            <button href="#" class="btn btn-primary remove-item"
+                              data-layanan-id="{{ $detailLayanan->layanan->id }}"
+                              data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}"
+                              @if ($transaksi->challenge_id) data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 : $detailLayanan->layanan->harga }}"
+                              @else data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
+                              data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  @endforeach
+                </div>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                <div class="mb-3"></div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <label for="total" class="form-label m-0 @error('total') is-invalid @enderror">Total: </label>
+                  <div class="input-group w-50">
+                    <span class="input-group-text" id="mataUang">Rp</span>
+                    <input type="text" inputmode="numeric" class="form-control" id="total" name="total"
+                      aria-describedby="mataUang">
+                    @error('total')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
+                </div>
+              </div>
+              @if ($ownedVouchers->count() > 0)
+                <div>
+                  <p class="card-text">Voucher yang dimiliki member </p>
+                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
+                    @if ($transaksi->voucher_id)
+                      <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                        data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                        data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                        data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                        <div class="card shadow h-85" style="border-radius: 15px">
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $usedVoucher->voucher->nama }} <span
+                                  style="color: green;">(Digunakan)</span>
+                              </h5>
+                              <p class="card-text m-0">Diskon {{ $usedVoucher->voucher->discount * 100 }}%</p>
+                              <p class="card-text m-0">Min Tran: Rp.
+                                {{ number_format($usedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                              </p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary voucher-add-item"
+                                data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                                data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                                data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                                data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @endif
+                    @foreach ($ownedVouchers as $ownedVoucher)
+                      <div class="voucher-list" data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                        data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                        data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                        data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                        <div class="card shadow h-85" style="border-radius: 15px">
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $ownedVoucher->voucher->nama }}</h5>
+                              <p class="card-text m-0">Diskon {{ $ownedVoucher->voucher->discount * 100 }}%</p>
+                              <p class="card-text m-0">Min Tran: Rp.
+                                {{ number_format($ownedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                              </p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary voucher-add-item"
+                                data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                                data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                                data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                                data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @endforeach
+                  </div>
+                </div>
+              @endif
+              <p class="card-text">Challenge yang diselesaikan member </p>
+              <div id="challenge-list-container">
+                @if ($listChallenge->count() > 0)
+                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                    @if ($transaksi->challenge_id)
+                      <div class="challenge-list" data-challenge-id="{{ $usedChallenge->challenge->id }}"
+                        data-challenge-description="{{ $usedChallenge->challenge->description }}"
+                        data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
+                        data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
+                        <div class="card shadow h-85" style="border-radius: 15px">
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $usedChallenge->challenge->description }} <span
+                                  style="color: green;">(Digunakan)</span></h5>
+                              <p class="card-text">Free {{ $usedChallenge->challenge->layanan->nama_layanan }}</p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary challenge-add-item"
+                                data-challenge-id="{{ $usedChallenge->challenge->id }}"
+                                data-challenge-description="{{ $usedChallenge->challenge->description }}"
+                                data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
+                                data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @endif
+                    @foreach ($listChallenge as $progressChallenge)
+                      <div class="challenge-list" data-challenge-id="{{ $progressChallenge->challenge->id }}"
+                        data-challenge-description="{{ $progressChallenge->challenge->description }}"
+                        data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
+                        data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
+                        <div class="card shadow h-85" style="border-radius: 15px">
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $progressChallenge->challenge->description }}</h5>
+                              <p class="card-text">Free {{ $progressChallenge->challenge->layanan->nama_layanan }}</p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary challenge-add-item"
+                                data-challenge-id="{{ $progressChallenge->challenge->id }}"
+                                data-challenge-description="{{ $progressChallenge->challenge->description }}"
+                                data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
+                                data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    @endforeach
+                  </div>
+                @endif
+              </div>
+              @if ($transaksi->badge_id || $transaksi->leaderboard_id || $transaksi->voucher_id || $transaksi->challenge_id)
+                @if ($transaksi->badge_id)
+                  <div id="badge-description-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2" id="badge-description"
+                      data-badge-id="{{ $transaksi->badge->id }}"
+                      data-badge-discount="{{ $transaksi->badge->discount }}">
+                      <p class="m-0">Badge Member: {{ $transaksi->badge->nama }}</p>
+                      <p class="m-0" id="badge-description-value"></p>
+                    </div>
+                  </div>
+                @else
+                  <div id="badge-description-container"></div>
+                @endIf
+                @if ($transaksi->leaderboard_id)
+                  <div id="leaderboard-description-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2" id="leaderboard-description"
+                      data-leaderboard-id="{{ $transaksi->leaderboard->id }}"
+                      data-leaderboard-discount="{{ $transaksi->leaderboard->discount }}">
+                      <p class="m-0">Peringkat Member: {{ $transaksi->leaderboard->rank }}</p>
+                      <p class="m-0" id="leaderboard-description-value"></p>
+                    </div>
+                  </div>
+                @else
+                  <div id="leaderboard-description-container"></div>
+                @endIf
+                @if ($transaksi->voucher_id)
+                  <div id="voucher-description-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2" id="voucher-description"
+                      data-voucher-id="{{ $transaksi->voucher->id }}"
+                      data-voucher-discount="{{ $transaksi->voucher->discount }}">
+                      <input type="hidden" name="voucher_id" value="{{ $transaksi->voucher_id }}">
+                      <p class="m-0">{{ $transaksi->voucher->nama }}</p>
+                      <div class="d-flex justify-content-end align-items-center">
+                        <p class="m-0" id="voucher-description-value"></p>
+                        <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+                          <i class="bi bi-x-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                @else
+                  <div id="voucher-description-container"></div>
+                @endIf
+                @if ($transaksi->challenge_id)
+                  <div id="challenge-description-container">
+                    <div class="d-flex justify-content-between align-items-center mb-2" id="challenge-description"
+                      data-challenge-id="{{ $transaksi->challenge->id }}"
+                      data-challenge-free-layanan="{{ $transaksi->challenge->layanan_id }}"
+                      data-challenge-free-layanan-name="{{ $transaksi->challenge->layanan->nama_layanan }}">
+                      <p class="m-0">{{ $transaksi->challenge->description }}</p>
+                      <div class="d-flex justify-content-end align-items-center">
+                        <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_id }}">
+                        <p class="m-0">Gratis {{ $transaksi->challenge->layanan->nama_layanan }}</p>
+                        <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+                          <i class="bi bi-x-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                @else
+                  <div id="challenge-description-container"></div>
+                @endIf
+              @endif
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex justify-content-end">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                  <label for="subtotal" class="form-label @error('subtotal') is-invalid @enderror">Total
-                    Harga:</label>
+                  <label for="subtotal"
+                    class="form-label m-0 @error('subtotal') is-invalid @enderror">Subtotal:</label>
                   <div class="input-group w-50">
                     <span class="input-group-text" id="mataUang">Rp</span>
                     <input type="text" inputmode="numeric" class="form-control" id="subtotal" name="subtotal"
-                      value="{{ old('subtotal', $transaksi->subtotal) }}" aria-describedby="mataUang" required
-                      autofocus>
+                      aria-describedby="mataUang" required>
                     @error('subtotal')
                       <div class="invalid-feedback">
                         {{ $message }}
@@ -158,55 +395,463 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      const layananContainer = document.getElementById('layananContainer');
+      let inputTotalElement = document.getElementById('total');
+      let inputSubtotalElement = document.getElementById('subtotal');
+      let inputTotal = 0;
+      let inputSubtotal = 0;
 
-      document.getElementById('addLayananBtn').addEventListener('click', function(event) {
-        event.preventDefault();
-
-        const divDivider = document.createElement('div');
-        const newSelect = document.createElement('select');
-
-        divDivider.className = 'mb-2';
-
-        newSelect.className = 'form-select mb-2 layanan-select';
-        newSelect.name = 'layanan[]';
-        newSelect.innerHTML = `
-            @foreach ($layanans as $layanan)
-              <option value="{{ $layanan->id }}" data-price="{{ $layanan->harga }}">{{ $layanan->nama_layanan }}</option>
-            @endforeach
-            <option value="">-- Kosong --</option>
-        `;
-
-        divDivider.appendChild(newSelect);
-        layananContainer.appendChild(divDivider);
-
-        // Attach the event listener to the new dropdown
-        newSelect.addEventListener('change', updateTotalHarga);
-
-        // Update total price after adding new service
-        updateTotalHarga();
-      });
+      const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+      const addLayananItemButton = document.querySelectorAll('.add-item');
 
       function updateTotalHarga() {
-        let totalHarga = 0;
-        document.querySelectorAll('.layanan-select').forEach(selectElement => {
-          const selectedOption = selectElement.selectedOptions[0];
-          const harga = selectedOption.getAttribute('data-price');
-          if (harga) {
-            totalHarga += parseFloat(harga);
+        let total = 0;
+        const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+
+        selectedLayananItems.forEach((layananItems) => {
+          let layananPrice = parseFloat(layananItems.getAttribute('data-layanan-price'));
+
+          if (layananPrice) {
+            total += layananPrice;
           }
         });
-        console.log(totalHarga);
-        document.getElementById('subtotal').value = totalHarga;
+        console.log("Total harga: " + total);
+
+        inputTotalElement.value = total;
       }
 
-      // Attach event listeners to initial dropdowns
-      document.querySelectorAll('.layanan-select').forEach(selectElement => {
-        selectElement.addEventListener('change', updateTotalHarga);
+      function updateSubtotal() {
+        const total = parseFloat(inputTotalElement.value);
+        let subtotal = 0;
+        const badgeDescriptionContainer = document.getElementById('badge-description-container');
+        const leaderboardDescriptionContainer = document.getElementById('leaderboard-description-container');
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+
+        let badgeDiscountResult = 0;
+        let leaderboardDiscountResult = 0;
+        let voucherDiscountResult = 0;
+
+        if (badgeDescriptionContainer.innerHTML !== '') {
+          const badgeDescription = document.getElementById('badge-description');
+          const badgeDiscount = parseFloat(badgeDescription.getAttribute('data-badge-discount'));
+          const badgeDescriptionValue = document.getElementById('badge-description-value');
+          badgeDiscountResult = total * badgeDiscount;
+          badgeDescriptionValue.textContent = "- Rp. " + badgeDiscountResult;
+          console.log("Badge Discount: " + badgeDiscountResult);
+        }
+
+        if (leaderboardDescriptionContainer.innerHTML !== "") {
+          const leaderboardDescription = document.getElementById('leaderboard-description');
+          const leaderboardDiscount = parseFloat(leaderboardDescription.getAttribute('data-leaderboard-discount'));
+          const leaderboardDescriptionValue = document.getElementById('leaderboard-description-value');
+          leaderboardDiscountResult = total * leaderboardDiscount;
+          leaderboardDescriptionValue.textContent = "- Rp. " + leaderboardDiscountResult;
+          console.log("Leaderboard Discount: " + leaderboardDiscountResult);
+        }
+
+        if (voucherDescriptionContainer.innerHTML !== '') {
+          const voucherDescription = document.getElementById('voucher-description');
+          const voucherDiscount = parseFloat(voucherDescription.getAttribute('data-voucher-discount'));
+          const voucherDescriptionValue = document.getElementById('voucher-description-value');
+          voucherDiscountResult = total * voucherDiscount;
+          voucherDescriptionValue.textContent = "- Rp. " + voucherDiscountResult;
+          console.log("Voucher Discount: " + voucherDiscountResult);
+        }
+
+        subtotal = total - badgeDiscountResult - leaderboardDiscountResult - voucherDiscountResult;
+        console.log("Subtotal: " + subtotal);
+
+        inputSubtotalElement.value = subtotal;
+      }
+
+      // add new layanan item to selected layanan
+      addLayananItemButton.forEach((button) => {
+        button.addEventListener("click", function(event) {
+          event.preventDefault();
+
+          const selectedLayananItemsContainer = document.getElementById('selected-layanan-container');
+
+          const newSelectedLayananItem = document.createElement('div');
+          const layananId = button.getAttribute('data-layanan-id');
+          const layananName = button.getAttribute('data-layanan-name');
+          const layananPrice = button.getAttribute('data-layanan-price');
+          newSelectedLayananItem.classList.add('col', 'selected-layanan-item');
+          newSelectedLayananItem.setAttribute("data-layanan-id", layananId);
+          newSelectedLayananItem.setAttribute("data-layanan-name", layananName);
+          newSelectedLayananItem.setAttribute("data-layanan-price", layananPrice);
+
+          newSelectedLayananItem.innerHTML = `
+            <div class="card shadow h-85" style="border-radius: 15px">
+              <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                <div>
+                  <h5 class="card-title p-0 m-0">
+                    ${layananName}</h5>
+                  <input type="hidden" name="layanan_id[]" value="${layananId}">
+                </div>
+                <div>
+                  <button href="#" class="btn btn-primary remove-item"
+                    data-layanan-id="${layananId}"
+                    data-layanan-name="${layananName}"
+                    data-layanan-price="${layananPrice}"
+                    data-layanan-previous-price="${layananPrice}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+
+          selectedLayananItemsContainer.appendChild(newSelectedLayananItem);
+          //tambahkan event listener untuk remove item yang baru
+          const newRemoveItemButton = newSelectedLayananItem.querySelector('.remove-item');
+          addRemoveItemEventListener(newRemoveItemButton);
+
+          button.disabled = true;
+          updateTotalHarga();
+          //update voucher button is usable or not when no voucher used
+          refreshVoucherButton();
+          //update challenge button is usable or not when no challenge used
+          refreshChallengeButton();
+          updateSubtotal();
+        })
       });
+
+      //tambahkan semua event listener untuk remove item yang sudah ada
+      const removeItemButtons = document.querySelectorAll('.remove-item');
+      removeItemButtons.forEach((button) => {
+        addRemoveItemEventListener(button);
+      });
+
+      // // remove selected layanan item function
+      function addRemoveItemEventListener(button) {
+        button.addEventListener("click", function(event) {
+          event.preventDefault();
+
+          const layananItem = button.closest('.selected-layanan-item');
+          const removeLayananId = layananItem.getAttribute('data-layanan-id');
+          layananItem.remove();
+
+          const layananAddItemButtons = document.querySelectorAll('.add-item');
+          layananAddItemButtons.forEach((addItembutton) => {
+            let layananId = addItembutton.getAttribute('data-layanan-id');
+            if (layananId == removeLayananId) {
+              addItembutton.disabled = false;
+            }
+          });
+
+          const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+          if (challengeDescriptionContainer.innerHTML !== "") {
+            const challengeFreeLayananId = document.getElementById('challenge-description').getAttribute(
+              'data-challenge-free-layanan');
+
+            if (challengeFreeLayananId == removeLayananId) {
+              challengeDescriptionContainer.innerHTML = "";
+            }
+          }
+
+          updateTotalHarga();
+          refreshVoucherButton();
+          refreshChallengeButton();
+          updateSubtotal();
+        });
+      }
+
+      // voucher check initiation when first time load page
+      function checkVoucherUsed() {
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+
+        if (voucherDescriptionContainer || challengeDescriptionContainer) {
+          const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+
+          voucherAddItemButtons.forEach((button) => {
+            button.disabled = true;
+          });
+        } else {
+          refreshVoucherButton();
+        }
+      }
+
+      function refreshVoucherButton() {
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const voucherListContainer = document.getElementById('voucher-list-container');
+
+        if (voucherDescriptionContainer.innerHTML === "" || challengeDescriptionContainer.innerHTML === "") {
+          if (voucherListContainer.innerHTML !== "") {
+            const total = parseFloat(inputTotalElement.value);
+            const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+
+            voucherAddItemButtons.forEach((button) => {
+              let minimumTransaction = parseFloat(button.getAttribute(
+                'data-voucher-minimum-transaction'));
+              console.log("Minimum Transaction: " + minimumTransaction);
+
+              if (minimumTransaction <= total) {
+                button.disabled = false;
+              } else {
+                button.disabled = true;
+              }
+            });
+          }
+        }
+      }
+
+      // add voucher click event
+      function clickVoucherItem() {
+        const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+
+        voucherAddItemButtons.forEach((button) => {
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+            const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+            const voucherId = button.getAttribute('data-voucher-id');
+            const voucherName = button.getAttribute('data-voucher-name');
+            const voucherDiscount = parseFloat(button.getAttribute('data-voucher-discount'));
+            const voucherMinimumTransaction = button.getAttribute('data-voucher-minimum-transaction');
+            const total = parseFloat(document.getElementById('total').value);
+
+            const newVoucherDescription = document.createElement('div');
+            newVoucherDescription.classList.add('d-flex', 'justify-content-between', 'align-items-center',
+              'mb-2');
+            newVoucherDescription.setAttribute('id', 'voucher-description');
+            newVoucherDescription.setAttribute('data-voucher-id', voucherId);
+            newVoucherDescription.setAttribute('data-voucher-discount', voucherDiscount);
+            newVoucherDescription.setAttribute('data-voucher-minimum-transaction', voucherMinimumTransaction);
+
+            newVoucherDescription.innerHTML = `
+              <input type="hidden" name="voucher_id" value="${voucherId}">  
+              <p class="m-0">${voucherName}</p>
+              <div class="d-flex justify-content-end align-items-center">
+                <p class="m-0" id="voucher-description-value">- Rp. ${total * voucherDiscount}</p>
+                <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
+            `;
+
+            voucherDescriptionContainer.appendChild(newVoucherDescription);
+
+            // disabling all voucher add item button
+            const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+            voucherAddItemButtons.forEach((voucherItemButton) => {
+              voucherItemButton.disabled = true;
+            });
+
+            // disabling all challenge add item button
+            const challengeAddItemButtons = document.querySelectorAll('.challenge-add-item');
+            challengeAddItemButtons.forEach((challengeItemButton) => {
+              challengeItemButton.disabled = true;
+            });
+
+            updateSubtotal();
+
+            const removeVoucherButton = document.getElementById('remove-voucher');
+            removeVoucherButton.addEventListener('click', removeUsedVoucher);
+          });
+        });
+      }
+
+      // add remove used voucher button in voucher description
+      const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+      if (voucherDescriptionContainer.innerHTML !== "") {
+        const removeVoucherButton = document.getElementById('remove-voucher');
+
+        removeVoucherButton.addEventListener('click', removeUsedVoucher);
+      }
+
+      function removeUsedVoucher(event) {
+        event.preventDefault();
+        console.log("Event click berjalan")
+
+        voucherDescriptionContainer.innerHTML = "";
+
+        refreshVoucherButton();
+        refreshChallengeButton();
+        updateSubtotal();
+      }
+
+      // add remove used challenge button in challenge description
+      const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+      if (challengeDescriptionContainer.innerHTML !== '') {
+        console.log("Challenge Description Container is not empty");
+        const removeChallengeButton = document.getElementById('remove-challenge');
+
+        removeChallengeButton.addEventListener('click', removeUsedChallenge);
+      } else {
+        console.log("Challenge Description Container is empty");
+      }
+
+      function removeUsedChallenge(event) {
+        // event.preventDefault();
+        console.log("Event click berjalan");
+
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const challengeAddItemButtons = document.querySelectorAll('.challenge-add-item');
+        const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+        const total = parseFloat(document.getElementById('total').value);
+
+        // check if selected layanans are free layanans
+        const challengeList = document.querySelectorAll('.challenge-list');
+
+        challengeList.forEach((challenge) => {
+          let challengeFreeLayanan = challenge.getAttribute('data-challenge-free-layanan');
+          const selectedLayanan = document.querySelectorAll('.selected-layanan-item');
+
+          selectedLayanan.forEach((layanan) => {
+            let selectedLayananName = layanan.getAttribute('data-layanan-name');
+            let selectedLayananId = layanan.getAttribute('data-layanan-id');
+            let selectedLayananPrice = parseFloat(layanan.getAttribute('data-layanan-price'));
+            let selectedLayananPreviousPrice = parseFloat(layanan.getAttribute(
+              'data-layanan-previous-price'));
+
+            // change h5 element text content
+            let h5Element = layanan.querySelector('h5');
+            if (h5Element) {
+              h5Element.textContent = `${selectedLayananName}`;
+            }
+
+            // change free price to normal price
+            layanan.setAttribute('data-layanan-price', selectedLayananPreviousPrice);
+            const removeItemButton = layanan.querySelector('.remove-item');
+            removeItemButton.setAttribute('data-layanan-price', selectedLayananPreviousPrice);
+          });
+        });
+
+        challengeDescriptionContainer.innerHTML = "";
+
+        updateTotalHarga();
+        refreshVoucherButton();
+        refreshChallengeButton();
+        updateSubtotal();
+      }
+
+      function refreshChallengeButton() {
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+
+        if (challengeDescriptionContainer.innerHTML === "" || voucherDescriptionContainer.innerHTML === "") {
+          const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+          const challengeListContainer = document.getElementById('challenge-list-container');
+
+          if (challengeListContainer.innerHTML !== "") {
+            const challengeAddItemButtons = document.querySelectorAll('.challenge-add-item');
+
+            challengeAddItemButtons.forEach((challengeItemButton) => {
+              challengeItemButton.disabled = true;
+              const challengeFreeLayanan = parseInt(challengeItemButton.getAttribute(
+                'data-challenge-free-layanan'));
+
+              selectedLayananItems.forEach((selectedItem) => {
+                const selectedLayananId = parseInt(selectedItem.getAttribute('data-layanan-id'));
+
+                console.log(
+                  `Comparing: selectedLayananId=${selectedLayananId}, challengeFreeLayanan=${challengeFreeLayanan}`
+                );
+
+                if (selectedLayananId === challengeFreeLayanan) {
+                  console.log(`Match found for button:`, challengeItemButton);
+                  setTimeout(() => {
+                    challengeItemButton.disabled = false;
+                    console.log(`Button enabled:`, challengeItemButton.disabled);
+                  }, 0);
+                }
+              });
+            });
+          }
+        }
+      }
+
+      function clickChallengeItem() {
+        const challengeAddItemButtons = document.querySelectorAll('.challenge-add-item');
+
+        challengeAddItemButtons.forEach((button) => {
+          button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+            const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+            const challengeId = button.getAttribute('data-challenge-id');
+            const challengeDescription = button.getAttribute('data-challenge-description');
+            const challengeFreeLayanan = button.getAttribute('data-challenge-free-layanan');
+            const challengeFreeLayananName = button.getAttribute('data-challenge-free-layanan-name');
+
+            const newChallengeDescription = document.createElement('div');
+            newChallengeDescription.classList.add('d-flex', 'justify-content-between', 'align-items-center',
+              'mb-2');
+            newChallengeDescription.setAttribute('id', 'challenge-description');
+            newChallengeDescription.setAttribute('data-challenge-id', challengeId);
+            newChallengeDescription.setAttribute('data-challenge-free-layanan', challengeFreeLayanan);
+
+            newChallengeDescription.innerHTML = `
+              <p class="m-0">${challengeDescription}</p>
+              <div class="d-flex justify-content-end align-items-center">
+                <input type="hidden" name="challenge_id" value="${challengeId}">
+                <p class="m-0">Gratis ${challengeFreeLayananName}</p>
+                <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+                  <i class="bi bi-x-circle"></i>
+                </button>
+              </div>
+            `;
+
+            selectedLayananItems.forEach((layanan) => {
+              let selectedLayananId = layanan.getAttribute('data-layanan-id');
+              let selectedLayananName = layanan.getAttribute('data-layanan-name');
+              let selectedLayananPrice = parseFloat(layanan.getAttribute('data-layanan-price'));
+              let selectedLayananPreviousPrice = parseFloat(layanan.getAttribute(
+                'data-layanan-previous-price'));
+
+              if (selectedLayananId == challengeFreeLayanan) {
+                layanan.setAttribute('data-layanan-price', 0);
+                const removeItemButton = layanan.querySelector('.remove-item');
+                removeItemButton.setAttribute('data-layanan-price', 0);
+
+                // change h5 element text content
+                let h5Element = layanan.querySelector('h5');
+                if (h5Element) {
+                  h5Element.textContent = `${selectedLayananName} (Gratis)`;
+                }
+              }
+            });
+
+            button.disabled = true;
+            challengeDescriptionContainer.appendChild(newChallengeDescription);
+
+            // disabling all voucher add item button
+            const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
+            voucherAddItemButtons.forEach((voucherItemButton) => {
+              voucherItemButton.disabled = true;
+            });
+
+            updateTotalHarga();
+            updateSubtotal();
+
+            const removeChallengeButton = document.getElementById('remove-challenge');
+            removeChallengeButton.addEventListener('click', removeUsedChallenge);
+          });
+        });
+      }
+
+      function checkChallengeUsed() {
+        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+        const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+
+        if (challengeDescriptionContainer || voucherDescriptionContainer) {
+          const challengeAddItemButtons = document.querySelectorAll('.challenge-add-item');
+
+          challengeAddItemButtons.forEach((button) => {
+            button.disabled = true;
+          })
+        }
+      }
 
       // Initial call to set the total price if there are pre-selected options
       updateTotalHarga();
+      checkVoucherUsed();
+      checkChallengeUsed();
+      clickVoucherItem();
+      clickChallengeItem();
+      updateSubtotal();
     });
   </script>
 @endsection

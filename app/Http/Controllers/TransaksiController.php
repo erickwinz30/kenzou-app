@@ -6,9 +6,12 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Member;
 use App\Models\Layanan;
+use App\Models\PointLog;
 use App\Models\Transaksi;
+use App\Models\OwnedVoucher;
 use Illuminate\Http\Request;
 use App\Models\DetailLayanan;
+use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
@@ -65,10 +68,26 @@ class TransaksiController extends Controller
    */
   public function edit(Transaksi $transaksi)
   {
+    $ownedVouchers = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('is_used', false)
+      ->whereHas('voucher', function ($query) {
+        $query->where('is_active', true);
+      })->get();
+    $usedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->where('is_used', true)->first();
+    $listChallenge = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('is_completed', true)->where('is_used', false)
+      ->whereHas('challenge', function ($query) {
+        $query->where('is_active', true);
+      })->get();
+    $usedChallenge = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->where('is_used', true)->first();
+
     return view('dashboard.transaksi.edit', [
       'transaksi' => $transaksi,
       'users' => User::all(),
       'layanans' => Layanan::all(),
+      'detailLayanans' => DetailLayanan::where('transaksi_id', $transaksi->id)->get(),
+      'ownedVouchers' => $ownedVouchers,
+      'usedVoucher' => $usedVoucher,
+      'listChallenge' => $listChallenge,
+      'usedChallenge' => $usedChallenge,
     ]);
   }
 
@@ -77,58 +96,209 @@ class TransaksiController extends Controller
    */
   public function update(Request $request, Transaksi $transaksi)
   {
-    try {
-      $rules = [
-        'user_id' => 'required',
-        'nomor_telepon' => 'required|min:10|max:15',
-        'date' => 'required',
-        'metode_pembayaran' => 'required',
-        'keterangan' => 'max:255',
-        'total_harga' => 'required',
-      ];
+    // $existingDetailLayanan = $transaksi->detail_layanan;
 
+    // foreach ($existingDetailLayanan as $detailLayanan) {
+    //   // Log::info('Detail Layanan:', ['layanan' => $detailLayanan]);
+    //   dd($detailLayanan);
+    // }
+    try {
+      if ($request->user_id !== $transaksi->user_id) {
+        $rules['user_id'] = 'required';
+      }
+
+      if (date('Y-m-d\TH:i', strtotime($request->date)) !== date('Y-m-d\TH:i', strtotime($transaksi->date))) {
+        $rules['to_date'] = 'required|date';
+      }
+
+      if ($request->metode_pembayaran !== $transaksi->metode_pembayaran) {
+        $rules['metode_pembayaran'] = 'required';
+      }
+
+      if ($request->keterangan !== $transaksi->keterangan) {
+        $rules['keterangan'] = 'max:255';
+      }
+
+      if ($request->total !== $transaksi->total) {
+        $rules['total'] = 'required';
+      }
+
+      if ($request->has('voucher_id')) {
+        if ($request->voucher_id !== $transaksi->voucher_id) {
+          $rules['voucher_id'] = 'required';
+        }
+      }
+
+      if ($request->has('challenge_id')) {
+        if ($request->challenge_id !== $transaksi->challenge_id) {
+          $rules['challenge_id'] = 'required';
+        }
+      }
+
+      if ($request->subtotal !== $transaksi->subtotal) {
+        $rules['subtotal'] = 'required';
+      }
+
+      // 2. Handle mutual exclusivity
       $validatedDataTransaksi = $request->validate($rules);
 
-      Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
+      if ($request->has('voucher_id')) {
+        if ($request->voucher_id) {
+          $validatedDataTransaksi['challenge_id'] = null;
 
-      // Retrieve the updated transaction
-      $updatedTransaction = Transaksi::find($transaksi->id);
+          // update the voucher so that it is used on voucher and not on challenge
+          $previousChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->first();
+          $previousChallengeProgress->update([
+            'is_used' => false,
+          ]);
+          Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
 
-      Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
+          $updatedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $request->voucher_id)->first();
+          $updatedVoucher->update([
+            'is_used' => true,
+            'used_date' => Carbon::now('Asia/Jakarta'),
+          ]);
+          Log::info('Voucher Updated: ', ['voucher' => $updatedVoucher]);
+        } else {
+          $validatedDataTransaksi['voucher_id'] = null;
+        }
+      }
+
+      if ($request->has('challenge_id')) {
+        if ($request->challenge_id) {
+          $validatedDataTransaksi['voucher_id'] = null;
+
+          // update the voucher so that it is used on challenge and not on voucher
+          $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->first();
+          $previousOwnedVoucher->update([
+            'is_used' => false,
+            'used_date' => null,
+          ]);
+          Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
+
+          $updatedChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $request->challenge_id)->first();
+          $updatedChallengeProgress->update([
+            'is_used' => true,
+          ]);
+          Log::info('Challenge Progress Updated: ', ['challenge_progress' => $updatedChallengeProgress]);
+        } else {
+          $validatedDataTransaksi['challenge_id'] = null;
+        }
+      }
+
+      // Handle case when both are null
+      if (
+        $request->has('voucher_id') && $request->has('challenge_id')
+        && !$request->voucher_id && !$request->challenge_id
+      ) {
+        $validatedDataTransaksi['voucher_id'] = null;
+        $validatedDataTransaksi['challenge_id'] = null;
+      }
+
+      // $rules2 = [
+      //   'layanan_id' => 'array',
+      //   'layanan_id.*' => 'nullable|:layanans,id',
+      // ];
+
+      // $validatedDataLayanan = $request->validate($rules2);
+
+      // Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
+      // DetailLayanan::where('transaksi_id', $transaksi->id)->delete();
+
+      // foreach ($validatedDataLayanan['layanan_id'] as $index => $layananId) {
+      //   if ($layananId) {
+      //     DetailLayanan::create([
+      //       'transaksi_id' => $transaksi->id,
+      //       'layanan_id' => $layananId,
+      //     ]);
+      //   }
+      // }
+      $updatedTransaction = Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
+      Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction]);
 
       $rules2 = [
-        'layanan' => 'array',
-        'layanan.*' => 'nullable|:layanans,id',
+        'layanan_id' => 'array',
+        'layanan_id.*' => 'nullable|:layanans,id',
       ];
 
       $validatedDataLayanan = $request->validate($rules2);
 
+      // Get existing detail layanan
+      $existingDetailLayanan = DetailLayanan::where('transaksi_id', $transaksi->id)
+        ->pluck('layanan_id')
+        ->toArray();
+
+      // Get new layanan ids (remove null values)
+      $newLayananIds = array_filter($validatedDataLayanan['layanan_id']);
+
+      // Find differences
+      $layananToAdd = array_diff($newLayananIds, $existingDetailLayanan);
+      $layananToRemove = array_diff($existingDetailLayanan, $newLayananIds);
+      Log::info('Layanan to Add: ', ['layanan' => $layananToAdd]);
+      Log::info('Layanan to Remove: ', ['layanan' => $layananToRemove]);
+
+      // Remove unused layanan
+      if (!empty($layananToRemove)) {
+        DetailLayanan::where('transaksi_id', $transaksi->id)
+          ->whereIn('layanan_id', $layananToRemove)
+          ->delete();
+      }
+
+      // Add new layanan
+      foreach ($layananToAdd as $layananId) {
+        DetailLayanan::create([
+          'transaksi_id' => $transaksi->id,
+          'layanan_id' => $layananId,
+        ]);
+      }
+
+      // Retrieve the updated transaction
+      // $updatedTransaction = Transaksi::find($transaksi->id);
+      // Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
+
       $existingDetailLayanan = $transaksi->detail_layanan;
 
-      foreach ($validatedDataLayanan['layanan'] as $index => $layananId) {
-        if (isset($existingDetailLayanan[$index])) {
-          if (empty($layananId)) {
-            // Delete the detail_layanan entry if the option is empty
-            $existingDetailLayanan[$index]->delete();
-            Log::info('Detail Layanan Deleted: ', ['id' => $existingDetailLayanan[$index]->id]);
-          } else {
-            // Update the detail_layanan entry if the option is not empty
-            $existingDetailLayanan[$index]->update([
-              'layanan_id' => $layananId,
-            ]);
-            Log::info('Detail Layanan Updated: ', ['layanan' => $existingDetailLayanan[$index]->toArray()]);
-          }
-        } else {
-          if (!empty($layananId)) {
-            // Create a new detail_layanan entry if it does not exist and the option is not empty
-            $newDetailLayanan = $transaksi->detail_layanan()->create([
-              'layanan_id' => $layananId,
-              'transaksi_id' => $transaksi->id, // Ensure the correct transaksi_id is assigned
-            ]);
-            Log::info('Detail Layanan Created: ', ['layanan' => $newDetailLayanan->toArray()]);
+      if ($transaksi->pelanggan->member_id) {
+        $previousTotalPoint = PointLog::where('member_id', $transaksi->pelanggan->member_id)->where('transaksi_id', $transaksi->id)->sum('point');
+        $updatedTotalPoint = 0;
+
+        foreach ($validatedDataLayanan['layanan_id'] as $index => $layananId) {
+          if ($layananId) {
+            // $index is the array position
+            // $layananId is the actual layanan ID
+
+            // Access other data if needed using the same index
+            // Example: $validatedDataLayanan['other_field'][$index]
+
+            if ($transaksi->pelanggan->member_id) {
+              $layananPoint = Layanan::where('id', $layananId)->first()->point;
+              $updatedTotalPoint += $layananPoint;
+            }
           }
         }
+
+        Log::info('Updated Total Point: ', ['point' => $updatedTotalPoint]);
+
+        if ($previousTotalPoint !== $updatedTotalPoint) {
+          // updating the member point
+          $member = Member::where('id', $transaksi->pelanggan->member_id)->first();
+          Log::info('Before Member Point Updated: ', ['member' => $member]);
+
+          $member->update([
+            'experience_point' => $member->experience_point - $previousTotalPoint + $updatedTotalPoint,
+            'redeemable_point' => $member->redeemable_point - $previousTotalPoint + $updatedTotalPoint,
+          ]);
+
+          // updating the point log
+          $pointLog = PointLog::where('member_id', $transaksi->pelanggan->member_id)->where('transaksi_id', $transaksi->id)->first();
+          $pointLog->update([
+            'point' => $updatedTotalPoint,
+          ]);
+
+          Log::info('Member Point Updated: ', ['member' => $member]);
+        }
       }
+
       return redirect('/dashboard/transaksi')->with('success', 'Data transaksi telah diupdate!!');
     } catch (\Exception $e) {
       Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);

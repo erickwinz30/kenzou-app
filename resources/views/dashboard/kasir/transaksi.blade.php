@@ -682,7 +682,7 @@
           updateSubtotal(badgeDiscountPercentage, challengeLayananPrice, voucherDiscountPercentage,
             rankDiscountPercentage);
 
-          // Enable all challenge buttons again
+          // perbaiki tombol ini karena harusnya tidak false semua
           challengeAddItemButtons.forEach((button) => {
             button.disabled = false;
           });
@@ -889,6 +889,8 @@
                 updateSubtotal(badgeDiscountPercentage, itemPrice, voucherDiscountPercentage,
                   rankDiscountPercentage);
               }
+            } else {
+              // disabled challenge button if there is no free layanan in the selected layanan
             }
 
             // Update the total price

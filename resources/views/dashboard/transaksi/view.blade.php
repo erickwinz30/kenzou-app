@@ -3,20 +3,20 @@
 @section('container')
   <style>
     .rounded-thead {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
       overflow: hidden;
       /* This ensures that the corners appear correctly */
     }
 
     .rounded-thead th:first-child {
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
+      border-top-left-radius: 5px;
+      border-bottom-left-radius: 5px;
     }
 
     .rounded-thead th:last-child {
-      border-top-right-radius: 10px;
-      border-bottom-right-radius: 10px;
+      border-top-right-radius: 5px;
+      border-bottom-right-radius: 5px;
     }
   </style>
   <div class="pagetitle">
