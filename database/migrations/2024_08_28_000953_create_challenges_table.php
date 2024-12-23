@@ -19,6 +19,7 @@ return new class extends Migration
       $table->integer('target');
       $table->string('unit');
       $table->foreignId('layanan_id');
+      $table->boolean('is_repeatable');
       $table->boolean('is_active')->default(false);
       $table->timestamps();
     });

@@ -44,6 +44,7 @@
                     <th>Target</th>
                     <th>Satuan</th>
                     <th>Hadiah yang diperoleh</th>
+                    <th>Dapat diulang</th>
                     <th>Status</th>
                     <th>Aksi</th>
                   </tr>
@@ -69,6 +70,32 @@
                       <td>{{ $challenge->unit }}</td>
                       <td>{{ $challenge->layanan->nama_layanan }}</td>
                       <td class="text-center align-middle" style="padding: 0;">
+                        @if ($challenge->is_repeatable === 1)
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Aktif
+                          </span>
+                        @else
+                          <span
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Tidak Aktif
+                          </span>
+                        @endif
+                        <form action="/dashboard/toggle-challenge-repeatable" method="POST"
+                          id="toggleRepeatableForm{{ $challenge->id }}">
+                          @csrf
+                          <button type="button" class="btn btn-secondary"
+                            onclick="toggleRepeatable('{{ $challenge->id }}')">
+                            @if ($challenge->is_repeatable === 1)
+                              <i class="bi bi-toggle-on"></i>
+                            @else
+                              <i class="bi bi-toggle-off"></i>
+                            @endif
+                            <input type="hidden" name="challengeId" id="challengeId" value="{{ $challenge->id }}">
+                          </button>
+                        </form>
+                      </td>
+                      <td class="text-center align-middle" style="padding: 0;">
                         @if ($challenge->is_active === 1)
                           <span
                             style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
@@ -80,15 +107,11 @@
                             Tidak Aktif
                           </span>
                         @endif
-                      </td>
-                      <td>
-                        <a href="/dashboard/challenge/{{ $challenge->id }}/edit" class="btn btn-warning"
-                          id="edit-button"><i class="bi bi-pencil"></i></a>
                         <form action="/dashboard/toggle-challenge-activation" method="POST"
-                          id="toggleForm{{ $challenge->id }}">
+                          id="toggleActivationForm{{ $challenge->id }}">
                           @csrf
                           <button type="button" class="btn btn-secondary"
-                            onclick="toggleConfirmation('{{ $challenge->id }}')">
+                            onclick="toggleActivation('{{ $challenge->id }}')">
                             @if ($challenge->is_active === 1)
                               <i class="bi bi-toggle-on"></i>
                             @else
@@ -97,6 +120,10 @@
                             <input type="hidden" name="challengeId" id="challengeId" value="{{ $challenge->id }}">
                           </button>
                         </form>
+                      </td>
+                      <td>
+                        <a href="/dashboard/challenge/{{ $challenge->id }}/edit" class="btn btn-warning"
+                          id="edit-button"><i class="bi bi-pencil"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -111,10 +138,10 @@
   </section>
 
   <script>
-    function toggleConfirmation(id) {
+    function toggleRepeatable(id) {
       Swal.fire({
-        title: "Yakin ingin mengubah status challenge?",
-        text: "Aksi ini akan mengubah status challenge!!!",
+        title: "Yakin ingin mengubah status perulangan challenge?",
+        text: "Aksi ini akan mengubah status perulangan challenge!!!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#2980B9",
@@ -122,14 +149,30 @@
         confirmButtonText: "Yes, update it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          document.getElementById('toggleForm' + id).submit();
+          document.getElementById('toggleRepeatableForm' + id).submit();
+        }
+      });
+    };
+
+    function toggleActivation(id) {
+      Swal.fire({
+        title: "Yakin ingin mengubah status aktivasi challenge?",
+        text: "Aksi ini akan mengubah status aktivasi challenge!!!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2980B9",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, update it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('toggleActivationForm' + id).submit();
         }
       });
     };
 
     document.getElementById('activeButton').addEventListener('click', function(event) {
       event.preventDefault();
-      document.querySelector(".card-title").textContent = "Data Challenge (Aktif)";
+      document.querySelector(".card-title").textContent = "Data Challenge (Status: Aktif)";
 
       document.querySelector("tbody").innerHTML = "";
 
@@ -166,21 +209,35 @@
           <td>${challenge.layanan}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
-            color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};
-            background-color: ${challenge.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
-              ${challenge.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
+            color: ${challenge.is_repeatable === 1 ? '#219653' : '#FFB22C'};
+            background-color: ${challenge.is_repeatable === 1 ? '#e8f4ed' : '#F3FEB8'};">
+              ${challenge.is_repeatable === 1 ? 'Aktif' : 'Tidak Aktif'}
             </span>
-          </td>
-          <td>
-            <a href="/dashboard/challenge/${challenge.id}/edit" class="btn btn-warning" id="edit-button"><i
-                class="bi bi-pencil"></i></a>
-            <form action="/dashboard/toggle-challenge-activation" method="POST" id="toggleForm${challenge.id}">
+            <form action="/dashboard/toggle-challenge-repeatable" method="POST" id="toggleRepeatableForm${challenge.id}">
               @csrf
-              <button type="button" class="btn btn-secondary" onclick="toggleConfirmation('${challenge.id}')">
+              <button type="button" class="btn btn-secondary" onclick="toggleRepeatable('${challenge.id}')">
                 <i class="bi bi-toggle-on"></i>
                 <input type="hidden" name="challengeId" id="challengeId" value="${challenge.id}">
               </button>
             </form>
+          </td>
+          <td class="text-center align-middle" style="padding: 0;">
+            <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
+            color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};
+            background-color: ${challenge.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
+              ${challenge.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
+            </span>
+            <form action="/dashboard/toggle-challenge-activation" method="POST" id="toggleActivationForm${challenge.id}">
+              @csrf
+              <button type="button" class="btn btn-secondary" onclick="toggleActivation('${challenge.id}')">
+                <i class="bi bi-toggle-on"></i>
+                <input type="hidden" name="challengeId" id="challengeId" value="${challenge.id}">
+              </button>
+            </form>
+          </td>
+          <td>
+            <a href="/dashboard/challenge/${challenge.id}/edit" class="btn btn-warning" id="edit-button"><i
+                class="bi bi-pencil"></i></a>
           </td>
         `;
             iteration++;
@@ -192,7 +249,7 @@
 
     document.getElementById('nonActiveButton').addEventListener('click', function(event) {
       event.preventDefault();
-      document.querySelector(".card-title").textContent = "Data Challenge (Non-Aktif)";
+      document.querySelector(".card-title").textContent = "Data Challenge (Status: Non-Aktif)";
 
       document.querySelector("tbody").innerHTML = "";
 
@@ -229,21 +286,35 @@
           <td>${challenge.layanan}</td>
           <td class="text-center align-middle" style="padding: 0;">
             <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
-            color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};
-            background-color: ${challenge.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
-              ${challenge.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
+            color: ${challenge.is_repeatable === 1 ? '#219653' : '#FFB22C'};
+            background-color: ${challenge.is_repeatable === 1 ? '#e8f4ed' : '#F3FEB8'};">
+              ${challenge.is_repeatable === 1 ? 'Aktif' : 'Tidak Aktif'}
             </span>
-          </td>
-          <td>
-            <a href="/dashboard/challenge/${challenge.id}/edit" class="btn btn-warning" id="edit-button"><i
-                class="bi bi-pencil"></i></a>
-            <form action="/dashboard/toggle-challenge-activation" method="POST" id="toggleForm${challenge.id}">
+            <form action="/dashboard/toggle-challenge-repeatable" method="POST" id="toggleRepeatableForm${challenge.id}">
               @csrf
-              <button type="button" class="btn btn-secondary" onclick="toggleConfirmation('${challenge.id}')">
+              <button type="button" class="btn btn-secondary" onclick="toggleRepeatable('${challenge.id}')">
                 <i class="bi bi-toggle-on"></i>
                 <input type="hidden" name="challengeId" id="challengeId" value="${challenge.id}">
               </button>
             </form>
+          </td>
+          <td class="text-center align-middle" style="padding: 0;">
+            <span style="border-radius: 10px; padding: 5px 10px; display: inline-block; 
+            color: ${challenge.is_active === 1 ? '#219653' : '#FFB22C'};
+            background-color: ${challenge.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
+              ${challenge.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
+            </span>
+            <form action="/dashboard/toggle-challenge-activation" method="POST" id="toggleActivationForm${challenge.id}">
+              @csrf
+              <button type="button" class="btn btn-secondary" onclick="toggleActivation('${challenge.id}')">
+                <i class="bi bi-toggle-on"></i>
+                <input type="hidden" name="challengeId" id="challengeId" value="${challenge.id}">
+              </button>
+            </form>
+          </td>
+          <td>
+            <a href="/dashboard/challenge/${challenge.id}/edit" class="btn btn-warning" id="edit-button"><i
+                class="bi bi-pencil"></i></a>
           </td>
         `;
             iteration++;

@@ -157,6 +157,7 @@ class ChallengeController extends Controller
         'target' => $challenge->target,
         'unit' => $challenge->unit,
         'layanan' => $challenge->layanan->nama_layanan,
+        'is_repeatable' => $challenge->is_repeatable,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -186,6 +187,7 @@ class ChallengeController extends Controller
         'target' => $challenge->target,
         'unit' => $challenge->unit,
         'layanan' => $challenge->layanan->nama_layanan,
+        'is_repeatable' => $challenge->is_repeatable,
         'is_active' => $challenge->is_active,
       ];
     }
@@ -201,6 +203,20 @@ class ChallengeController extends Controller
     return $dataNonActive;
   }
 
+  public function toggleRepeatable(Request $request)
+  {
+    try {
+      $challenge = Challenge::where('id', $request->challengeId)->first();
+      $challenge->is_repeatable = !$challenge->is_repeatable;
+      $challenge->save();
+
+      return redirect('/dashboard/challenge')->with('success', 'Status perulangan challenge berhasil diubah!!!');
+    } catch (\Exception $e) {
+      Log::error("Error in ChallengeController@toggleRepeatable", ['error' => $e->getMessage()]);
+      return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+    }
+  }
+
   public function toggleActivation(Request $request)
   {
     try {
@@ -208,7 +224,7 @@ class ChallengeController extends Controller
       $challenge->is_active = !$challenge->is_active;
       $challenge->save();
 
-      return redirect('/dashboard/challenge')->with('success', 'Status challenge berhasil diubah!!!');
+      return redirect('/dashboard/challenge')->with('success', 'Status aktivasi challenge berhasil diubah!!!');
     } catch (\Exception $e) {
       Log::error("Error in ChallengeController@toggleActivation", ['error' => $e->getMessage()]);
       return response()->json(['success' => false, 'error' => $e->getMessage()], 500);

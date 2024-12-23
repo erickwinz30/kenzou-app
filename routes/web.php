@@ -84,6 +84,7 @@ Route::middleware('isAdmin')->group(function () {
   Route::resource('/dashboard/challenge', ChallengeController::class);
   Route::get('/dashboard/challenge-active-fetch', [ChallengeController::class, 'activeFetch'])->name('challenge.activeFetch');
   Route::get('/dashboard/challenge-nonactive-fetch', [ChallengeController::class, 'nonActiveFetch'])->name('challenge.nonActiveFetch');
+  Route::post('/dashboard/toggle-challenge-repeatable', [ChallengeController::class, 'toggleRepeatable'])->name('challenge.toggleRepeatable');
   Route::post('/dashboard/toggle-challenge-activation', [ChallengeController::class, 'toggleActivation'])->name('challenge.toggleActivation');
 
   //leaderboard

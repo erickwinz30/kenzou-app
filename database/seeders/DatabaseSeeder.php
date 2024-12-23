@@ -286,6 +286,7 @@ class DatabaseSeeder extends Seeder
         'target' => 8,
         'unit' => 'Transaksi',
         'layanan_id' => 4,
+        'is_repeatable' => 1,
         'is_active' => 1,
       ],
       [
@@ -295,6 +296,7 @@ class DatabaseSeeder extends Seeder
         'target' => 800000,
         'unit' => 'Total Pengeluaran Member',
         'layanan_id' => 4,
+        'is_repeatable' => 0,
         'is_active' => 1,
       ],
     ];
