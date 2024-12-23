@@ -9,6 +9,7 @@ use App\Models\Member;
 use App\Models\Layanan;
 use Twilio\Rest\Client;
 use App\Models\PointLog;
+use App\Models\Challenge;
 use App\Models\Pelanggan;
 use App\Models\Transaksi;
 use App\Models\OwnedVoucher;
@@ -145,6 +146,16 @@ class CatatTransaksiController extends Controller
 
                       if ($transactionProgress === $challengeProgress->challenge->target) {
                         $challengeProgress->update(['progress' => $transactionProgress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+
+                        $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
+                        if ($checkChallengeRepeat) {
+                          ChallengeProgress::create([
+                            'member_id' => $findPelanggan->member_id,
+                            'challenge_id' => $challengeProgress->challenge->id,
+                          ]);
+
+                          Log::info('Challenge repeated for member who finish the challenge.');
+                        }
                       } else {
                         $challengeProgress->update(['progress' => $transactionProgress]);
                       }
@@ -154,6 +165,16 @@ class CatatTransaksiController extends Controller
 
                       if ($progress >= $challengeProgress->challenge->target) {
                         $challengeProgress->update(['progress' => $progress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+
+                        $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
+                        if ($checkChallengeRepeat) {
+                          ChallengeProgress::create([
+                            'member_id' => $findPelanggan->member_id,
+                            'challenge_id' => $challengeProgress->challenge->id,
+                          ]);
+
+                          Log::info('Challenge repeated for member who finish the challenge.');
+                        }
                       } else {
                         $challengeProgress->update(['progress' => $progress]);
                       }
@@ -470,7 +491,7 @@ class CatatTransaksiController extends Controller
         ->whereHas('challenge', function ($query) {
           $query->where('is_active', true);
         })->get();
-      Log::info('Owned Voucher:', ['Voucher' => $listChallenge]);
+      Log::info('Owned Challenge:', ['Challenge' => $listChallenge]);
 
       $data = [];
 

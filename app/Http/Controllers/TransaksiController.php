@@ -193,26 +193,26 @@ class TransaksiController extends Controller
       ) {
         $validatedDataTransaksi['voucher_id'] = null;
         $validatedDataTransaksi['challenge_id'] = null;
+
+        $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->first();
+        $previousChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->first();
+
+        if ($previousOwnedVoucher) {
+          $previousOwnedVoucher->update([
+            'is_used' => false,
+            'used_date' => null,
+          ]);
+          Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
+        }
+
+        if ($previousChallengeProgress) {
+          $previousChallengeProgress->update([
+            'is_used' => false,
+          ]);
+          Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
+        }
       }
 
-      // $rules2 = [
-      //   'layanan_id' => 'array',
-      //   'layanan_id.*' => 'nullable|:layanans,id',
-      // ];
-
-      // $validatedDataLayanan = $request->validate($rules2);
-
-      // Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
-      // DetailLayanan::where('transaksi_id', $transaksi->id)->delete();
-
-      // foreach ($validatedDataLayanan['layanan_id'] as $index => $layananId) {
-      //   if ($layananId) {
-      //     DetailLayanan::create([
-      //       'transaksi_id' => $transaksi->id,
-      //       'layanan_id' => $layananId,
-      //     ]);
-      //   }
-      // }
       $updatedTransaction = Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
       Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction]);
 
@@ -253,8 +253,8 @@ class TransaksiController extends Controller
       }
 
       // Retrieve the updated transaction
-      // $updatedTransaction = Transaksi::find($transaksi->id);
-      // Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
+      $updatedTransaction = Transaksi::find($transaksi->id);
+      Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction->toArray()]);
 
       $existingDetailLayanan = $transaksi->detail_layanan;
 
