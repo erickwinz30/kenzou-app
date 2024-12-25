@@ -50,11 +50,7 @@ class LayananController extends Controller
 
     // dd($validatedData);
 
-    $layanan = Layanan::create($validatedData);
-    $validatedData['layanan_id'] = $layanan->id;
-
-    LayananLog::create($validatedData);
-
+    Layanan::create($validatedData);
     return redirect('/dashboard/layanan')->with('success', 'Layanan baru telah tertambah!');
   }
 
@@ -96,29 +92,25 @@ class LayananController extends Controller
 
     $validatedData['updated_date'] = Carbon::now('Asia/Jakarta');
 
-    LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
-
     return redirect('/dashboard/layanan')->with('success', 'Layanan telah diupdate!!');
   }
 
   /**
    * Remove the specified resource from storage.
    */
-  public function destroy(Layanan $layanan)
+  public function destroy(Layanan $layanan) {}
+
+  public function toggleActivation(Request $request)
   {
-    $validatedData['deleted_at'] = Carbon::now('Asia/Jakarta');
+    try {
+      $layanan = Layanan::where('id', $request->layananId)->first();
+      $layanan->is_active = !$layanan->is_active;
+      $layanan->save();
 
-    LayananLog::where('layanan_id', $layanan->id)->update($validatedData);
-
-    Layanan::destroy($layanan->id);
-
-    return redirect('/dashboard/layanan')->with('success', 'Layanan telah terhapus!');
-  }
-
-  public function history()
-  {
-    return view('dashboard.layanan.history', [
-      'layanans' => LayananLog::all(),
-    ]);
+      return redirect('/dashboard/layanan')->with('success', 'Status aktivasi layanan berhasil diubah!!!');
+    } catch (\Exception $e) {
+      Log::error("Error in ChallengeController@toggleActivation", ['error' => $e->getMessage()]);
+      return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
+    }
   }
 }

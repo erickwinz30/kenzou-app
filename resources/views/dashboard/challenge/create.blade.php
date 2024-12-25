@@ -105,7 +105,9 @@
                     @foreach ($categories as $category)
                       <optgroup label="{{ $category->name }}">
                         @foreach ($category->layanans as $layanan)
-                          <option value="{{ $layanan->id }}">{{ $layanan->nama_layanan }}</option>
+                          <option value="{{ $layanan->id }}">{{ $layanan->nama_layanan }}
+                            {{ $layanan->is_active ? '' : '(Tidak aktif)' }}
+                          </option>
                         @endforeach
                       </optgroup>
                     @endforeach

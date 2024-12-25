@@ -17,6 +17,7 @@ return new class extends Migration
       $table->decimal('harga', 10, 2);
       $table->integer('point');
       $table->string('detail');
+      $table->boolean('is_active')->default(true);
       $table->foreignId('category_layanan_id');
       $table->timestamps();
     });

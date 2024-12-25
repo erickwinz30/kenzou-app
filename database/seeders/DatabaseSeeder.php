@@ -95,14 +95,6 @@ class DatabaseSeeder extends Seeder
 
     foreach ($layanans as $layananData) {
       $layanan = Layanan::factory()->create($layananData);
-      $layananId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
-      LayananLog::factory()->create([
-        'layanan_id' => $layananId,
-        'nama_layanan' => $layanan->nama_layanan,
-        'harga' => $layanan->harga,
-        'point' => $layanan->point,
-        'detail' => $layanan->detail,
-      ]);
     }
 
     // Path lokal gambar
@@ -295,7 +287,7 @@ class DatabaseSeeder extends Seeder
         'to_date' => Carbon::create(2024, 12, 31, 23, 59, 0),
         'target' => 800000,
         'unit' => 'Total Pengeluaran Member',
-        'layanan_id' => 4,
+        'layanan_id' => 1,
         'is_repeatable' => 0,
         'is_active' => 1,
       ],

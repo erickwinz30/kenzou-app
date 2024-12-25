@@ -96,12 +96,6 @@ class TransaksiController extends Controller
    */
   public function update(Request $request, Transaksi $transaksi)
   {
-    // $existingDetailLayanan = $transaksi->detail_layanan;
-
-    // foreach ($existingDetailLayanan as $detailLayanan) {
-    //   // Log::info('Detail Layanan:', ['layanan' => $detailLayanan]);
-    //   dd($detailLayanan);
-    // }
     try {
       if ($request->user_id !== $transaksi->user_id) {
         $rules['user_id'] = 'required';
@@ -389,6 +383,46 @@ class TransaksiController extends Controller
       Log::error('This Year Data Error: ', ['message' => $e->getMessage()]);
 
       return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengambil data per tahun');
+    }
+  }
+
+  public function activeSwitch(Request $request)
+  {
+    try {
+      $isActive = $request->input('isActive');
+
+      if ($isActive) {
+        Log::info('Active Switch: ', ['message' => 'All Layanan']);
+        $layanans = Layanan::all();
+      } else {
+        Log::info('Active Switch: ', ['message' => 'Active Layanan']);
+        $layanans = Layanan::where('is_active', true)->get();
+      }
+      Log::info('Layanan', ['layanan' => $layanans]);
+
+      $data = [];
+
+      foreach ($layanans as $layanan) {
+        $data[] = [
+          'id' => $layanan->id,
+          'nama_layanan' => $layanan->nama_layanan,
+          'harga' => $layanan->harga,
+        ];
+      }
+      Log::info('Data Layanan', ['data' => $data]);
+
+      if ($request->expectsJson()) {
+        if ($layanans->isEmpty()) {
+          return response()->json([]);
+        } else {
+          return response()->json($data, 200);
+        }
+      }
+
+      return $data;
+    } catch (\Exception $e) {
+      Log::error('Active Switch Error:', ['message' => $e->getMessage()]);
+      return back()->with('error', 'Terjadi kesalahan saat mengubah status layanan');
     }
   }
 }

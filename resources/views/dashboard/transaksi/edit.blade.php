@@ -102,30 +102,36 @@
                 @enderror
               </div>
               <div>
-                <div class="mb-2">
+                <div class="d-flex justify-content-between align-items-center mb-2">
                   <label for="layanan" class="form-label @error('layanan') is-invalid @enderror">Layanan: </label>
+                  <div class="form-check form-switch d-flex justify-content-end align-items-center">
+                    <p class="card-text m-0 me-5">Semua layanan: </p>
+                    <input class="form-check-input" type="checkbox" role="switch" id="layanan-active-switch">
+                  </div>
                 </div>
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
                   @foreach ($layanans as $layanan)
-                    <div class="col">
-                      <div class="card shadow h-85" style="border-radius: 15px">
-                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                          <div>
-                            <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
-                            <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
-                          </div>
-                          <div>
-                            <button href="#" class="btn btn-primary add-item" data-layanan-id="{{ $layanan->id }}"
-                              data-layanan-name="{{ $layanan->nama_layanan }}"
-                              data-layanan-price="{{ $layanan->harga }}"
-                              @foreach ($detailLayanans as $detailLayanan)
-                                {{ $detailLayanan->layanan_id == $layanan->id ? 'disabled' : '' }} @endforeach>
-                              <i class="bi bi-plus-circle"></i>
-                            </button>
+                    @if ($layanan->is_active == 1)
+                      <div class="col">
+                        <div class="card shadow h-85" style="border-radius: 15px">
+                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                            <div>
+                              <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
+                              <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
+                            </div>
+                            <div>
+                              <button href="#" class="btn btn-primary add-item"
+                                data-layanan-id="{{ $layanan->id }}" data-layanan-name="{{ $layanan->nama_layanan }}"
+                                data-layanan-price="{{ $layanan->harga }}"
+                                @foreach ($detailLayanans as $detailLayanan)
+                              {{ $detailLayanan->layanan_id == $layanan->id ? 'disabled' : '' }} @endforeach>
+                                <i class="bi bi-plus-circle"></i>
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    @endif
                   @endforeach
                 </div>
               </div>
@@ -247,7 +253,7 @@
                   </div>
                 </div>
               @endif
-              <p class="card-text">Challenge yang diselesaikan member </p>
+              {{-- <p class="card-text">Challenge yang diselesaikan member </p> --}}
               <div id="challenge-list-container">
                 @if ($listChallenge->count() > 0)
                   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
@@ -464,6 +470,121 @@
         inputSubtotalElement.value = subtotal;
       }
 
+      // add layanan switch for non active layanan
+      const layananSwitch = document.getElementById('layanan-active-switch');
+      layananSwitch.addEventListener('change', function() {
+        if (this.checked) {
+          // Switch is ON
+          console.log('Switch is turned on');
+          // Add your logic here for when switch is turned on
+          fetch('/dashboard/transaksi/active-switch', {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+              },
+              body: JSON.stringify({
+                isActive: this.checked,
+              }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.length > 0) {
+                const layananContainer = document.getElementById('layananContainer');
+                layananContainer.innerHTML = ``;
+
+                data.forEach((layanan) => {
+                  console.log(`Layanan Nama: ${layanan.nama_layanan}`);
+
+                  const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+                  let selectedLayananId = '';
+                  selectedLayananItems.forEach((layananItem) => {
+                    selectedLayananId = layananItem.getAttribute('data-layanan-id');
+                  });
+
+
+                  layananContainer.innerHTML += `
+                  <div class="col">
+                    <div class="card shadow h-85" style="border-radius: 15px">
+                      <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                          <h5 class="card-title p-0">${layanan.nama_layanan}</h5>
+                          <p class="card-text">Rp ${Math.round(layanan.harga)}</p>
+                        </div>
+                        <div>
+                          <button href="#" class="btn btn-primary add-item"
+                            data-layanan-id="${layanan.id}" data-layanan-name="${layanan.nama_layanan}"
+                            data-layanan-price="${layanan.harga}" ${selectedLayananId == layanan.id ? 'disabled' : ''}>
+                            <i class="bi bi-plus-circle"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                });
+              }
+            })
+            .catch(error => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+        } else {
+          // Switch is OFF
+          console.log('Switch is turned off');
+          // Add your logic here for when switch is turned off
+          fetch('/dashboard/transaksi/active-switch', {
+              method: 'POST',
+              headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+              },
+              body: JSON.stringify({
+                isActive: this.checked,
+              }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data && data.length > 0) {
+                const layananContainer = document.getElementById('layananContainer');
+                layananContainer.innerHTML = ``;
+
+                data.forEach((layanan) => {
+                  console.log(`Layanan Nama: ${layanan.nama_layanan}`);
+
+                  const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+                  let selectedLayananId = ``;
+                  selectedLayananItems.forEach((layananItem) => {
+                    selectedLayananId = layananItem.getAttribute('data-layanan-id');
+                  });
+
+                  layananContainer.innerHTML += `
+                  <div class="col">
+                    <div class="card shadow h-85" style="border-radius: 15px">
+                      <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                          <h5 class="card-title p-0">${layanan.nama_layanan}</h5>
+                          <p class="card-text">Rp ${Math.round(layanan.harga)}</p>
+                        </div>
+                        <div>
+                          <button href="#" class="btn btn-primary add-item"
+                            data-layanan-id="${layanan.id}" data-layanan-name="${layanan.nama_layanan}"
+                            data-layanan-price="${layanan.harga}" ${selectedLayananId == layanan.id ? 'disabled' : ''}>
+                            <i class="bi bi-plus-circle"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                });
+              }
+            })
+            .catch(error => {
+              console.error('There has been a problem with your fetch operation:', error);
+            });
+        }
+      });
+
       // add new layanan item to selected layanan
       addLayananItemButton.forEach((button) => {
         button.addEventListener("click", function(event) {
@@ -578,7 +699,7 @@
         const voucherListContainer = document.getElementById('voucher-list-container');
 
         if (voucherDescriptionContainer.innerHTML === "" || challengeDescriptionContainer.innerHTML === "") {
-          if (voucherListContainer.innerHTML !== "") {
+          if (voucherListContainer) {
             const total = parseFloat(inputTotalElement.value);
             const voucherAddItemButtons = document.querySelectorAll('.voucher-add-item');
 
@@ -604,7 +725,8 @@
         voucherAddItemButtons.forEach((button) => {
           button.addEventListener('click', function(event) {
             event.preventDefault();
-            const voucherDescriptionContainer = document.getElementById('voucher-description-container');
+            const voucherDescriptionContainer = document.getElementById(
+              'voucher-description-container');
             const voucherId = button.getAttribute('data-voucher-id');
             const voucherName = button.getAttribute('data-voucher-name');
             const voucherDiscount = parseFloat(button.getAttribute('data-voucher-discount'));
@@ -612,12 +734,14 @@
             const total = parseFloat(document.getElementById('total').value);
 
             const newVoucherDescription = document.createElement('div');
-            newVoucherDescription.classList.add('d-flex', 'justify-content-between', 'align-items-center',
+            newVoucherDescription.classList.add('d-flex', 'justify-content-between',
+              'align-items-center',
               'mb-2');
             newVoucherDescription.setAttribute('id', 'voucher-description');
             newVoucherDescription.setAttribute('data-voucher-id', voucherId);
             newVoucherDescription.setAttribute('data-voucher-discount', voucherDiscount);
-            newVoucherDescription.setAttribute('data-voucher-minimum-transaction', voucherMinimumTransaction);
+            newVoucherDescription.setAttribute('data-voucher-minimum-transaction',
+              voucherMinimumTransaction);
 
             newVoucherDescription.innerHTML = `
               <input type="hidden" name="voucher_id" value="${voucherId}">  
@@ -763,7 +887,8 @@
           button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            const challengeDescriptionContainer = document.getElementById('challenge-description-container');
+            const challengeDescriptionContainer = document.getElementById(
+              'challenge-description-container');
             const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
             const challengeId = button.getAttribute('data-challenge-id');
             const challengeDescription = button.getAttribute('data-challenge-description');
@@ -771,7 +896,8 @@
             const challengeFreeLayananName = button.getAttribute('data-challenge-free-layanan-name');
 
             const newChallengeDescription = document.createElement('div');
-            newChallengeDescription.classList.add('d-flex', 'justify-content-between', 'align-items-center',
+            newChallengeDescription.classList.add('d-flex', 'justify-content-between',
+              'align-items-center',
               'mb-2');
             newChallengeDescription.setAttribute('id', 'challenge-description');
             newChallengeDescription.setAttribute('data-challenge-id', challengeId);

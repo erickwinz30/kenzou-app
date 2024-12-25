@@ -110,7 +110,7 @@
                         @foreach ($category->layanans as $layanan)
                           <option value="{{ $layanan->id }}"
                             {{ old('layanan_id', $challenge->layanan_id) == $layanan->id ? 'selected' : '' }}>
-                            {{ $layanan->nama_layanan }}
+                            {{ $layanan->nama_layanan }} {{ $layanan->is_active ? '' : '(Tidak aktif)' }}
                           </option>
                         @endforeach
                       </optgroup>

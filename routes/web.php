@@ -46,6 +46,7 @@ Route::middleware('isAdmin')->group(function () {
 
   //dashboard transaksi
   Route::resource('dashboard/transaksi', TransaksiController::class);
+  Route::post('/dashboard/transaksi/active-switch', [TransaksiController::class, 'activeSwitch']);
 
   //dateRange
   Route::get('/dashboard/transaksiThisWeek', [TransaksiController::class, 'thisWeek'])->name('transaksi.thisWeek');
@@ -55,6 +56,7 @@ Route::middleware('isAdmin')->group(function () {
   //layanan
   Route::resource('/dashboard/layanan', LayananController::class);
   Route::get('/dashboard/layananLog', [LayananController::class, 'history'])->name('layanan.history');
+  Route::post('/dashboard/toggle-layanan-activation', [LayananController::class, 'toggleActivation'])->name('layanan.toggleActivation');
 
   //category layanan
   Route::resource('dashboard/category-layanan', CategoryLayananController::class);

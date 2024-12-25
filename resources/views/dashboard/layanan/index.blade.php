@@ -27,9 +27,6 @@
                 <a href="/dashboard/layanan/create" type="button" class="btn btn-success d-inline">
                   <i class="bi bi-plus" style="margin-right: 2px;"></i>Layanan
                 </a>
-                <a href="{{ route('layanan.history') }}" type="button" class="btn btn-info d-inline">
-                  <i class="bi bi-clock-history"></i>History
-                </a>
               </div>
             </div>
 
@@ -44,6 +41,7 @@
                     <th>Point</th>
                     <th>Detail</th>
                     <th>Kategori</th>
+                    <th>Status</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Buat</th>
                     <th>Aksi</th>
                   </tr>
@@ -58,6 +56,19 @@
                       <td>{{ Str::limit($layanan->detail, 20) }}</td>
                       <td>{{ $layanan->categoryLayanan->name }}</td>
                       <td class="text-center align-middle" style="padding: 0;">
+                        @if ($layanan->is_active === 1)
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Aktif
+                          </span>
+                        @else
+                          <span
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Tidak Aktif
+                          </span>
+                        @endif
+                      </td>
+                      <td class="text-center align-middle" style="padding: 0;">
                         <span
                           style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
                           {{ $layanan->created_at }}
@@ -68,13 +79,17 @@
                             class="bi bi-eye"></i></a>
                         <a href="/dashboard/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
                             class="bi bi-pencil"></i></a>
-                        <form action="/dashboard/layanan/{{ $layanan->id }}" method="POST" class="d-inline"
-                          id="deleteForm{{ $layanan->id }}">
-                          @method('DELETE')
+                        <form action="/dashboard/toggle-layanan-activation" method="POST"
+                          id="toggleActivationForm{{ $layanan->id }}">
                           @csrf
-                          <button type="button" class="btn btn-danger"
-                            onclick="deleteConfirmation('{{ $layanan->id }}')">
-                            <i class="bi bi-trash"></i>
+                          <button type="button" class="btn btn-secondary"
+                            onclick="toggleActivation('{{ $layanan->id }}')">
+                            @if ($layanan->is_active === 1)
+                              <i class="bi bi-toggle-on"></i>
+                            @else
+                              <i class="bi bi-toggle-off"></i>
+                            @endif
+                            <input type="hidden" name="layananId" id="layananId" value="{{ $layanan->id }}">
                           </button>
                         </form>
                       </td>
@@ -144,20 +159,20 @@
 
   <script>
     //konfirmasi hapus data
-    function deleteConfirmation(id) {
+    function toggleActivation(id) {
       Swal.fire({
-        title: "Yakin ingin menghapus?",
-        text: "Aksi ini tidak bisa mengembalikan data dan beresiko karena terdapat data lain yang menggunakan data ini!",
+        title: "Yakin ingin mengubah status aktivasi layanan?",
+        text: "Aksi ini akan mengubah status aktivasi layanan!!!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonColor: "#2980B9",
         cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!"
+        confirmButtonText: "Yes, update it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          document.getElementById('deleteForm' + id).submit();
+          document.getElementById('toggleActivationForm' + id).submit();
         }
       });
-    }
+    };
   </script>
 @endsection
