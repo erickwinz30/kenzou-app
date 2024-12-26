@@ -115,7 +115,7 @@ class BadgeLeaderboardController extends Controller
     } catch (\Exception $e) {
       Log::error('Error saat update data: ' . $e->getMessage());
       Log::error('Error saat update data: ' . $e->getTraceAsString());
-      return redirect('/dashboard/leaderboard')->with('error', 'Leaderboard gagal diupdate');
+      return redirect('/dashboard/badge')->with('error', 'Leaderboard gagal diupdate');
     }
   }
 
@@ -130,5 +130,19 @@ class BadgeLeaderboardController extends Controller
     BadgeLeaderboard::destroy($badgeLeaderboard->id);
 
     return redirect('/dashboard/badge')->with('success', 'Badge Leaderboard telah berhasil dihapus!');
+  }
+
+  public function leaderboardActiveSwitch(Request $request)
+  {
+    try {
+      $badge = badgeLeaderboard::find($request->leaderboardId);
+      $badge->is_active = !$badge->is_active;
+      $badge->save();
+
+      return redirect('/dashboard/badge')->with('success', 'Status leaderboard telah diubah!');
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      return redirect('/dashboard/badge')->with('error', 'Status leaderboard gagal diubah!');
+    }
   }
 }

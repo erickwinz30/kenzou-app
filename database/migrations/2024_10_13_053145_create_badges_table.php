@@ -18,6 +18,7 @@ return new class extends Migration
       $table->integer('max_point');
       $table->decimal('discount', 3, 2);
       $table->string('image');
+      $table->boolean('is_active')->default(true);
       $table->timestamps();
     });
   }

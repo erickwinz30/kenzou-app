@@ -72,9 +72,11 @@ Route::middleware('isAdmin')->group(function () {
 
   //badge
   Route::resource('/dashboard/badge', BadgeController::class);
+  Route::post('/dashboard/badge/badge-active-switch', [BadgeController::class, 'badgeActiveSwitch']);
 
   //badge leaderboard
   Route::resource('/dashboard/badge-leaderboard', BadgeLeaderboardController::class);
+  Route::post('/dashboard/badge/leaderboard-active-switch', [BadgeLeaderboardController::class, 'leaderboardActiveSwitch']);
 
   //voucher
   Route::resource('/dashboard/voucher', VoucherController::class);

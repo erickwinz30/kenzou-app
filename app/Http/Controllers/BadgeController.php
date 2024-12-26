@@ -118,4 +118,18 @@ class BadgeController extends Controller
 
     return redirect('/dashboard/badge')->with('success', 'Badge telah berhasil dihapus!');
   }
+
+  public function badgeActiveSwitch(Request $request)
+  {
+    try {
+      $badge = Badge::find($request->badgeId);
+      $badge->is_active = !$badge->is_active;
+      $badge->save();
+
+      return redirect('/dashboard/badge')->with('success', 'Status badge telah diubah!');
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      return redirect('/dashboard/badge')->with('error', 'Status badge gagal diubah!');
+    }
+  }
 }

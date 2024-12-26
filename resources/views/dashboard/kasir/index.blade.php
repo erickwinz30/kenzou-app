@@ -285,15 +285,6 @@
                           data-username="{{ $user->username }}" data-email="{{ $user->email }}"
                           data-nomor_telepon="{{ $user->nomor_telepon }}" data-is_admin="{{ $user->is_admin }}"
                           data-is-active="{{ $user->is_active }}"><i class="bi bi-pencil"></i></button>
-                        {{-- <form action="/dashboard/kasir/{{ $user->id }}" method="POST" class="d-inline"
-                          id="deleteForm{{ $user->id }}">
-                          @method('DELETE')
-                          @csrf
-                          <button type="button" class="btn btn-danger"
-                            onclick="deleteConfirmation('{{ $user->id }}')">
-                            <i class="bi bi-trash"></i>
-                          </button>
-                        </form> --}}
                       </td>
                     </tr>
                   @endforeach
@@ -398,22 +389,5 @@
         }
       });
     };
-
-    //konfirmasi hapus data
-    // function deleteConfirmation(id) {
-    //   Swal.fire({
-    //     title: "Yakin ingin menghapus?",
-    //     text: "Aksi ini tidak bisa mengembalikan data!",
-    //     icon: "warning",
-    //     showCancelButton: true,
-    //     confirmButtonColor: "#2980B9",
-    //     cancelButtonColor: "#d33",
-    //     confirmButtonText: "Yes, delete it!"
-    //   }).then((result) => {
-    //     if (result.isConfirmed) {
-    //       document.getElementById('deleteForm' + id).submit();
-    //     }
-    //   });
-    // }
   </script>
 @endsection

@@ -17,6 +17,7 @@ return new class extends Migration
       $table->integer('rank')->unique();
       $table->decimal('discount', 3, 2);
       $table->string('image');
+      $table->boolean('is_active')->default(true);
       $table->timestamps();
     });
   }
