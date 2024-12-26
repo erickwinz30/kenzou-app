@@ -92,11 +92,17 @@ class KasirController extends Controller
       $rules['password'] = 'required|min:5|max:255';
     }
 
-    if ($request->is_admin) {
+    if ($request->is_admin != $dataKasir->is_admin) {
       $rules['is_admin'] = 'required';
     }
 
+    if ($request->is_active != $dataKasir->is_active) {
+      $rules['is_active'] = 'required';
+    }
+
     $validatedData = $request->validate($rules);
+
+    dd($validatedData);
 
     $validatedData['password'] = Hash::make($validatedData['password']);
 
@@ -110,8 +116,22 @@ class KasirController extends Controller
    */
   public function destroy($user)
   {
-    User::destroy($user->id);
+    // User::destroy($user->id);
 
-    return redirect('/dashboard/kasir')->with('success', 'Data kasir telah dihapus!');
+    // return redirect('/dashboard/kasir')->with('success', 'Data kasir telah dihapus!');
+  }
+
+  public function activeSwitch(Request $request)
+  {
+    try {
+      $user = User::find($request->userId);
+      $user->is_active = !$user->is_active;
+      $user->save();
+
+      return redirect('/dashboard/kasir')->with('success', 'Status kasir telah diubah!');
+    } catch (\Exception $e) {
+      Log::error($e->getMessage());
+      return redirect('/dashboard/kasir')->with('error', 'Status kasir gagal diubah!');
+    }
   }
 }

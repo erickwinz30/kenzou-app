@@ -63,6 +63,7 @@ Route::middleware('isAdmin')->group(function () {
 
   //kasir
   Route::resource('/dashboard/kasir', KasirController::class);
+  Route::post('/dashboard/kasir/active-switch', [KasirController::class, 'activeSwitch']);
 
   //pelanggan
   Route::resource('/dashboard/pelanggan', PelangganController::class);

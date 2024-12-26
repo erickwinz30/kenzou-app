@@ -75,10 +75,6 @@
                         </span>
                       </td>
                       <td>
-                        <a href="/dashboard/layanan/{{ $layanan->id }}" class="btn btn-info"><i
-                            class="bi bi-eye"></i></a>
-                        <a href="/dashboard/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
-                            class="bi bi-pencil"></i></a>
                         <form action="/dashboard/toggle-layanan-activation" method="POST"
                           id="toggleActivationForm{{ $layanan->id }}">
                           @csrf
@@ -92,6 +88,10 @@
                             <input type="hidden" name="layananId" id="layananId" value="{{ $layanan->id }}">
                           </button>
                         </form>
+                        <a href="/dashboard/layanan/{{ $layanan->id }}" class="btn btn-info"><i
+                            class="bi bi-eye"></i></a>
+                        <a href="/dashboard/layanan/{{ $layanan->id }}/edit" class="btn btn-warning"><i
+                            class="bi bi-pencil"></i></a>
                       </td>
                     </tr>
                   @endforeach
@@ -135,7 +135,7 @@
                       <td>
                         <a href="/dashboard/category-layanan/{{ $category->id }}/edit" class="btn btn-warning"><i
                             class="bi bi-pencil"></i></a>
-                        <form action="/dashboard/category-layanan/{{ $category->id }}" method="POST" class="d-inline"
+                        {{-- <form action="/dashboard/category-layanan/{{ $category->id }}" method="POST" class="d-inline"
                           id="deleteForm{{ $category->id }}">
                           @method('DELETE')
                           @csrf
@@ -143,7 +143,7 @@
                             onclick="deleteConfirmation('{{ $category->id }}')">
                             <i class="bi bi-trash"></i>
                           </button>
-                        </form>
+                        </form> --}}
                       </td>
                     </tr>
                   @endforeach

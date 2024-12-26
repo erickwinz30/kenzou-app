@@ -36,9 +36,11 @@
                   <select class="form-select" id="user_id" name="user_id">
                     @foreach ($users as $user)
                       @if (old('user_id', $transaksi->user->id) == $user->id)
-                        <option value="{{ $user->id }}" selected>{{ $user->nama }}</option>
+                        <option value="{{ $user->id }}" selected>{{ $user->nama }}
+                          {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
                       @else
-                        <option value="{{ $user->id }}">{{ $user->nama }}</option>
+                        <option value="{{ $user->id }}">{{ $user->nama }}
+                          {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
                       @endif
                     @endforeach
                   </select>
