@@ -12,6 +12,7 @@ use App\Models\Voucher;
 use App\Models\Challenge;
 use App\Models\Pelanggan;
 use App\Models\LayananLog;
+use Illuminate\Support\Str;
 use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 use App\Models\BadgeLeaderboard;
@@ -262,6 +263,13 @@ class DatabaseSeeder extends Seeder
 
     foreach ($members as $member) {
       // $memberId = Layanan::where('nama_layanan', $layananData['nama_layanan'])->first()->id;
+      $referralCode = strtoupper(Str::random(8));
+
+      // Optionally, filter out lowercase letters (if they appear)
+      $referralCode = preg_replace('/[^A-Z0-9]/', '', $referralCode);
+
+      $member['referral_code'] = $referralCode;
+
       $registeredMember = Member::create($member);
 
       Pelanggan::create([
