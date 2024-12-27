@@ -276,6 +276,7 @@ class CatatTransaksiController extends Controller
         $badge = DB::table('badges')
           ->where('min_point', '<=', $result->experience_point)
           ->where('max_point', '>=', $result->experience_point)
+          ->where('is_active', true)
           ->first();
 
         $data[] = [
@@ -548,7 +549,7 @@ class CatatTransaksiController extends Controller
       $data = [];
 
       if ($memberRank === 1 || $memberRank === 2 || $memberRank === 3) {
-        $rank = BadgeLeaderboard::where('rank', $memberRank)->first();
+        $rank = BadgeLeaderboard::where('rank', $memberRank)->where('is_active', true)->first();
 
         $data = [
           'id' => $rank->id,

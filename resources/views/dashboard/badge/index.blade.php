@@ -1,4 +1,4 @@
-@extends('dashboard.layout.main');
+@extends('dashboard.layout.main')
 
 @section('container')
   <div class="pagetitle">
@@ -15,6 +15,11 @@
     <x-alert-success :message="session('success')" />
   @endif
 
+  <div class="alert alert-warning" role="alert">
+    Pastikan penggunaan badge dan leaderboard sudah benar, dari min-point sampai max-point, dan urutan peringkat agar
+    tidak terjadi kesalahan saat melakukan pencatatan transaksi. Non-aktif kan jika badge tidak digunakan.
+  </div>
+
   <section class="section">
     <div class="row justify-content-center">
       <div class="col-lg-12">
@@ -23,7 +28,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <h5 class="card-title">Data Badge untuk Member</h5>
               <a href="/dashboard/badge/create" type="button" class="btn btn-success d-inline">
-                <i class="bi bi-plus me-1"></i>Badge
+                <i class="bi bi-plus me-1"></i>Tambah
               </a>
             </div>
 
@@ -101,7 +106,7 @@
             <div class="d-flex justify-content-between align-items-center">
               <h5 class="card-title">Data Badge untuk Leaderboard</h5>
               <a href="/dashboard/badge-leaderboard/create" type="button" class="btn btn-success d-inline">
-                <i class="bi bi-plus me-1"></i>Leaderboard
+                <i class="bi bi-plus me-1"></i>Tambah
               </a>
             </div>
 
