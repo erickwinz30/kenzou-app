@@ -71,4 +71,9 @@ class Member extends Authenticatable
   {
     return $this->hasMany(ChallengeProgress::class, 'member_id');
   }
+
+  public function feedback()
+  {
+    return $this->hasMany(Feedback::class, 'member_id');
+  }
 }
