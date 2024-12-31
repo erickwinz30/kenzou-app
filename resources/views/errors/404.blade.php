@@ -1,4 +1,8 @@
-@extends('member.layout.main')
+@if (Auth::guard('member')->check())
+  @extends('member.layout.main')
+@else
+  @extends('dashboard.layout.main')
+@endif
 
 @section('container')
   <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
