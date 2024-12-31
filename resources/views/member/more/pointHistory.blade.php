@@ -18,13 +18,16 @@
               @endphp
               <div class="card-title p-3 m-0">{{ $formattedDate }}</div>
               <div class="d-flex justify-content-between align-items-center p-3">
-                <div class="card-text"><strong style="color: #012970">Dari: </strong> {{ $information->status }}</div>
-                <div class="card-text"><strong style="color: #012970">Point: </strong> {{ $information->point }}</div>
+                <p class="fw-semibold m-0"><strong style="color: #012970">Dari: </strong>{{ $information->status }}</p>
+                <p class="fw-semibold m-0" style="color: {{ $information->is_increase ? 'green' : 'red' }}"><strong
+                    style="color: #012970">Point: </strong>
+                  {{ $information->is_increase ? '+' : '-' }}{{ $information->point }}</p>
               </div>
             </div>
           </div>
-        @endforeach
       </div>
+      @endforeach
+    </div>
     </div>
   </section>
 @endsection

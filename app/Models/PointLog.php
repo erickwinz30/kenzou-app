@@ -19,6 +19,7 @@ class PointLog extends Model
     'point',
     'status',
     'point_from',
+    'is_increase',
     'date',
   ];
 
