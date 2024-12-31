@@ -13,7 +13,10 @@
     </a>
   </div><!-- End Logo -->
 
-  <nav class="header-nav ms-auto">
+  <div>
+    <p class="m-0 me-3 fw-semibold" style="color: #012970">{{ Str::limit(Auth::guard('member')->user()->nama, 12) }}</p>
+  </div>
+  {{-- <nav class="header-nav ms-auto">
     <ul class="d-flex align-items-center">
 
       <li class="nav-item dropdown pe-3">
@@ -73,6 +76,6 @@
 
 
     </ul>
-  </nav><!-- End Icons Navigation -->
+  </nav><!-- End Icons Navigation --> --}}
 
 </header><!-- End Header -->
