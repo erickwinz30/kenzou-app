@@ -11,6 +11,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\VoucherController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
@@ -94,6 +95,9 @@ Route::middleware('isAdmin')->group(function () {
 
   //leaderboard
   Route::get('/dashboard/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard-index');
+
+  // feedback
+  Route::resource('/dashboard/feedback', FeedbackController::class);
 });
 
 Route::middleware('notAdmin')->group(function () {
@@ -160,4 +164,6 @@ Route::middleware('auth:member')->group(function () {
   Route::get('/account/transaction-history', [MemberController::class, 'transactionHistory'])->name('transaction-history');
   Route::get('/account/view-transaction-history/{transaksi:id}', [MemberController::class, 'viewTransactionHistory']);
   Route::get('/account/point-history', [MemberController::class, 'pointHistory'])->name('point-history');
+  Route::get('/account/feedback', [MemberController::class, 'viewFeedback'])->name('member-feedback');
+  Route::post('/account/feedback', [MemberController::class, 'postFeedback']);
 });

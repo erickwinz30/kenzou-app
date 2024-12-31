@@ -1,71 +1,74 @@
 @extends('member.layout.main')
 
 @section('container')
-<div class="pagetitle">
-  <h1>Informasi Akun</h1>
-</div><!-- End Page Title -->
+  <div class="pagetitle">
+    <h1>Informasi Akun</h1>
+  </div><!-- End Page Title -->
 
-<section class="section mt-4">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
-      <div class="d-flex justify-content-center mb-4">
-        <div class="d-block">
-          <h1 class="fs-1 fw-bold text-center">{{ $information->nama }}</h1>
-          <div class="mb-4">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex align-items-center my-3">
-              <div class="d-flex justify-content-center">
-                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}" style="max-width: 100px">
+  <section class="section mt-4">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-8">
+        <div class="d-flex justify-content-center mb-4">
+          <div class="d-block">
+            <h1 class="fs-1 fw-bold text-center">{{ $information->nama }}</h1>
+            <div class="mb-4">
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex align-items-center my-3">
+                <div class="d-flex justify-content-center">
+                  <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}" style="max-width: 100px">
+                </div>
+                <div>
+                  <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>
+                </div>
               </div>
-              <div>
-                <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="progress w-100" role="progressbar" aria-label="Basic example"
+                  aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
+                  aria-valuemax="{{ $badge->max_point }}">
+                  @php
+                    // Calculate the progress percentage
+                    $progressPercentage =
+                        (($information->experience_point - $badge->min_point) /
+                            ($badge->max_point - $badge->min_point)) *
+                        100;
+                  @endphp
+
+                  <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
+                </div>
+                <p class="card-text ms-2">{{ round($progressPercentage) }}%</p>
               </div>
             </div>
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="progress w-100" role="progressbar" aria-label="Basic example"
-                aria-valuenow="{{ $information->experience_point }}" aria-valuemin="{{ $badge->min_point }}"
-                aria-valuemax="{{ $badge->max_point }}">
-                @php
-                // Calculate the progress percentage
-                $progressPercentage = (($information->experience_point - $badge->min_point) /
-                ($badge->max_point - $badge->min_point)) * 100;
-                @endphp
-
-                <div class="progress-bar" style="width: {{ $progressPercentage }}%;"></div>
-              </div>
-              <p class="card-text ms-2">{{ round($progressPercentage) }}%</p>
+            <div class="d-flex justify-content-center">
+              <h2 class="fs-4 text-center"><strong>Exp: </strong> {{ $information->experience_point }} Point</h2>
+              <p class="mx-4">|</p>
+              <h2 class="fs-4 text-center"><strong>Redeemable: </strong> {{ $information->redeemable_point }} Point</h2>
             </div>
-          </div>
-          <div class="d-flex justify-content-center">
-            <h2 class="fs-4 text-center"><strong>Exp: </strong> {{ $information->experience_point }} Point</h2>
-            <p class="mx-4">|</p>
-            <h2 class="fs-4 text-center"><strong>Redeemable: </strong> {{ $information->redeemable_point }} Point</h2>
-          </div>
-          <div class="mt-3">
-            <h2 class="fs-4 text-center"><strong>Referral: </strong> {{ $information->referral_code }}</h2>
+            <div class="mt-3">
+              <h2 class="fs-4 text-center"><strong>Referral: </strong> {{ $information->referral_code }}</h2>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="card">
-          <div class="card-body p-0">
-            <div class="d-flex flex-column">
-              <a href="{{ route('account-edit') }}" class="card-text fs-5 text-decoration-none text-reset mt-3">Edit
-                Profil</a>
-              <hr class="my-2">
-              <a href="{{ route('transaction-history') }}"
-                class="card-text fs-5 text-decoration-none text-reset">Riwayat Transaksi</a>
-              <hr class="my-2">
-              <a href="{{ route('point-history') }}" class="card-text fs-5 text-decoration-none text-reset">Riwayat
-                Point</a>
-              <hr class="my-2">
-              <a href="#" class="card-text fs-5 text-decoration-none text-reset">Feedback ke Kenzou</a>
-              <hr class="my-2">
-              <a href="/logout" class="card-text fs-5 text-decoration-none text-reset mb-3">Logout</a>
+        <div class="row">
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="d-flex flex-column">
+                <a href="{{ route('account-edit') }}" class="card-text fs-5 text-decoration-none text-reset mt-3">Edit
+                  Profil</a>
+                <hr class="my-2">
+                <a href="{{ route('transaction-history') }}"
+                  class="card-text fs-5 text-decoration-none text-reset">Riwayat Transaksi</a>
+                <hr class="my-2">
+                <a href="{{ route('point-history') }}" class="card-text fs-5 text-decoration-none text-reset">Riwayat
+                  Point</a>
+                <hr class="my-2">
+                <a href="{{ route('member-feedback') }}" class="card-text fs-5 text-decoration-none text-reset">Feedback
+                  ke Kenzou</a>
+                <hr class="my-2">
+                <a href="/logout" class="card-text fs-5 text-decoration-none text-reset mb-3">Logout</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 @endsection

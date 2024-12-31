@@ -8,9 +8,9 @@
           <strong>{{ Auth::user()->nama }}</strong>
           <span class="fs-6 ms-1">(
             @if (Auth::user()->is_admin == 1)
-            Admin
+              Admin
             @else
-            Kasir
+              Kasir
             @endif
             )
           </span>
@@ -34,31 +34,31 @@
 
   <ul class="sidebar-nav" id="sidebar-nav">
     @can('notAdmin')
-    <li class="nav-heading">Kasir</li>
+      <li class="nav-heading">Kasir</li>
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard') ? '' : 'collapsed' }}" href="/dashboard">
-        <i class="bi bi-grid"></i>
-        <span>Dashboard Kasir</span>
-      </a>
-    </li><!-- End Dashboard Kasir Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard') ? '' : 'collapsed' }}" href="/dashboard">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard Kasir</span>
+        </a>
+      </li><!-- End Dashboard Kasir Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/transaksiBaru') ? '' : 'collapsed' }}"
-        href="/dashboard/transaksiBaru">
-        <i class="bi bi-cart"></i>
-        <span>Transaksi Baru</span>
-      </a>
-    </li><!-- End Transaksi Baru Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/transaksiBaru') ? '' : 'collapsed' }}"
+          href="/dashboard/transaksiBaru">
+          <i class="bi bi-cart"></i>
+          <span>Transaksi Baru</span>
+        </a>
+      </li><!-- End Transaksi Baru Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/list-layanan') ? '' : 'collapsed' }}" href="/dashboard/list-layanan">
-        <i class="bi bi-collection"></i>
-        <span>Layanan</span>
-      </a>
-    </li><!-- End Layanan Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/list-layanan') ? '' : 'collapsed' }}" href="/dashboard/list-layanan">
+          <i class="bi bi-collection"></i>
+          <span>Layanan</span>
+        </a>
+      </li><!-- End Layanan Page Nav -->
 
-    {{-- <li class="nav-item">
+      {{-- <li class="nav-item">
       <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
         <i class="bi bi-layout-text-window-reverse"></i><span>Tables</span><i class="bi bi-chevron-down ms-auto"></i>
       </a>
@@ -78,84 +78,85 @@
     @endcan
 
     @can('isAdmin')
-    <li class="nav-heading">Admin</li>
+      <li class="nav-heading">Admin</li>
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/admin') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}">
-        <i class="bi bi-grid"></i>
-        <span>Dashboard</span>
-      </a>
-    </li><!-- End Dashboard Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/admin') ? '' : 'collapsed' }}" href="{{ route('dashboard') }}">
+          <i class="bi bi-grid"></i>
+          <span>Dashboard</span>
+        </a>
+      </li><!-- End Dashboard Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/transaksi') || Request::is('dashboard/transaksi/*') ? '' : 'collapsed' }}"
-        href="/dashboard/transaksi">
-        <i class="bi bi-wallet2"></i>
-        <span>Transaksi</span>
-      </a>
-    </li><!-- End Transaksi Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/transaksi') || Request::is('dashboard/transaksi/*') ? '' : 'collapsed' }}"
+          href="/dashboard/transaksi">
+          <i class="bi bi-wallet2"></i>
+          <span>Transaksi</span>
+        </a>
+      </li><!-- End Transaksi Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/kasir') || Request::is('dashboard/kasir/*') ? '' : 'collapsed' }}"
-        href="/dashboard/kasir">
-        <i class="bi bi-person-gear"></i>
-        <span>Kasir</span>
-      </a>
-    </li><!-- End Kasir Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/kasir') || Request::is('dashboard/kasir/*') ? '' : 'collapsed' }}"
+          href="/dashboard/kasir">
+          <i class="bi bi-person-gear"></i>
+          <span>Kasir</span>
+        </a>
+      </li><!-- End Kasir Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') || Request::is('dashboard/layananLog') ? '' : 'collapsed' }}"
-        href="/dashboard/layanan">
-        <i class="bi bi-collection"></i>
-        <span>Layanan</span>
-      </a>
-    </li><!-- End Layanan Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/layanan') || Request::is('dashboard/layanan/*') || Request::is('dashboard/layananLog') ? '' : 'collapsed' }}"
+          href="/dashboard/layanan">
+          <i class="bi bi-collection"></i>
+          <span>Layanan</span>
+        </a>
+      </li><!-- End Layanan Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/pelanggan') || Request::is('dashboard/pelanggan/*') ? '' : 'collapsed' }}"
-        href="/dashboard/pelanggan">
-        <i class="bi bi-person"></i>
-        <span>Pelanggan</span>
-      </a>
-    </li><!-- End Kasir Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/pelanggan') || Request::is('dashboard/pelanggan/*') ? '' : 'collapsed' }}"
+          href="/dashboard/pelanggan">
+          <i class="bi bi-person"></i>
+          <span>Pelanggan</span>
+        </a>
+      </li><!-- End Kasir Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link collapsed" href="pages-contact.html">
-        <i class="bi bi-envelope"></i>
-        <span>Feedback</span>
-      </a>
-    </li><!-- End Feedback Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/feedback') || Request::is('dashboard/feedback/*') ? '' : 'collapsed' }}"
+          href="/dashboard/feedback">
+          <i class="bi bi-envelope"></i>
+          <span>Feedback</span>
+        </a>
+      </li><!-- End Feedback Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/voucher') || Request::is('dashboard/voucher/*') ? '' : 'collapsed' }}"
-        href="/dashboard/voucher">
-        <i class="bi bi-ticket-perforated"></i>
-        <span>Voucher</span>
-      </a>
-    </li><!-- End Voucher Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/voucher') || Request::is('dashboard/voucher/*') ? '' : 'collapsed' }}"
+          href="/dashboard/voucher">
+          <i class="bi bi-ticket-perforated"></i>
+          <span>Voucher</span>
+        </a>
+      </li><!-- End Voucher Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/challenge') || Request::is('dashboard/challenge/*') ? '' : 'collapsed' }}"
-        href="/dashboard/challenge">
-        <i class="bi bi-graph-up"></i>
-        <span>Challenge</span>
-      </a>
-    </li><!-- End Challenge Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/challenge') || Request::is('dashboard/challenge/*') ? '' : 'collapsed' }}"
+          href="/dashboard/challenge">
+          <i class="bi bi-graph-up"></i>
+          <span>Challenge</span>
+        </a>
+      </li><!-- End Challenge Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/badge') || Request::is('dashboard/badge/*') ? '' : 'collapsed' }}"
-        href="/dashboard/badge">
-        <i class="bi bi-person-badge"></i>
-        <span>Badge</span>
-      </a>
-    </li><!-- End Badge Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/badge') || Request::is('dashboard/badge/*') ? '' : 'collapsed' }}"
+          href="/dashboard/badge">
+          <i class="bi bi-person-badge"></i>
+          <span>Badge</span>
+        </a>
+      </li><!-- End Badge Page Nav -->
 
-    <li class="nav-item">
-      <a class="nav-link {{ Request::is('dashboard/leaderboard') ? '' : 'collapsed' }}" href="/dashboard/leaderboard">
-        <i class="bi bi-reception-4"></i>
-        <span>Leaderboard</span>
-      </a>
-    </li><!-- End Leaderboard Page Nav -->
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('dashboard/leaderboard') ? '' : 'collapsed' }}" href="/dashboard/leaderboard">
+          <i class="bi bi-reception-4"></i>
+          <span>Leaderboard</span>
+        </a>
+      </li><!-- End Leaderboard Page Nav -->
     @endcan
 
   </ul>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Voucher;
+use App\Models\Feedback;
 use App\Models\PointLog;
 use App\Models\Transaksi;
 use App\Models\OwnedVoucher;
@@ -209,5 +210,30 @@ class MemberController extends Controller
       'rankSecond' => $rankSecond,
       'rankThird' => $rankThird,
     ]);
+  }
+
+  public function viewfeedback()
+  {
+    return view('member.more.feedback');
+  }
+  public function postFeedback(Request $request)
+  {
+    try {
+      $validatedData = $request->validate([
+        'subject' => 'required|min:5|max:255',
+        'description' => 'required|min:5|max:255',
+      ]);
+
+      $memberId = Auth::guard('member')->user()->id;
+      $validatedData['member_id'] = $memberId;
+
+      Feedback::create($validatedData);
+
+      return redirect()->back()->with('success', 'Feedback berhasil dikirim!');
+    } catch (\Exception $e) {
+      Log::error('Error when posting feedback: ', ['error' => $e->getMessage()]);
+      Log::error('Error when posting feedback: ', ['error' => $e->getTraceAsString()]);
+      return redirect()->back()->with('error', 'Terjadi kesalahan saat membuat feedback!' + $e->getMessage());
+    }
   }
 }
