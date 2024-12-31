@@ -68,6 +68,7 @@ class MemberRegisterController extends Controller
             'member_id' => $newMemberId->id,
             'point' => 25,
             'status' => 'Pendaftaran Member Baru dengan Referral',
+            'is_increase' => true,
             'date' => Carbon::now('Asia/Jakarta'),
           ]);
 
@@ -76,6 +77,7 @@ class MemberRegisterController extends Controller
             'point' => 25,
             'status' => 'Referral dari Member Baru',
             'point_from' => $newMemberId->id,
+            'is_increase' => true,
             'date' => Carbon::now('Asia/Jakarta'),
           ]);
 
@@ -107,6 +109,7 @@ class MemberRegisterController extends Controller
           'member_id' => $newMemberId->id,
           'point' => 10,
           'status' => 'Pendaftaran Member Baru',
+          'is_increase' => true,
           'date' => Carbon::now('Asia/Jakarta'),
         ]);
 

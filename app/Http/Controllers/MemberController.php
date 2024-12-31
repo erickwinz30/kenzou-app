@@ -163,6 +163,7 @@ class MemberController extends Controller
         'member_id' => Auth::guard('member')->user()->id,
         'point' => $voucher->point_needed,
         'status' => 'Redeem Voucher',
+        'is_increase' => false,
         'date' => Carbon::now('Asia/Jakarta'),
       ]);
 

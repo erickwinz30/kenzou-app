@@ -242,6 +242,7 @@ class CatatTransaksiController extends Controller
       'transaksi_id' => $transaction->id,
       'status' => $challengePoint ? 'Transaksi dan menyelesaikan challenge' : 'Transaksi',
       'date' => Carbon::now('Asia/Jakarta'),
+      'is_increase' => true,
     ]);
 
     Log::info('Point Log Created:', $pointLog->toArray());
