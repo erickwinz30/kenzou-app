@@ -603,7 +603,9 @@
                       markers: {
                         size: 4
                       },
-                      colors: ['#ff6b6b', '#ffca3a', '#8ac926'],
+                      colors: ['#ff6b6b', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93', '#f72585', '#7209b7', '#3a0ca3',
+                        '#4361ee', '#4cc9f0'
+                      ],
                       fill: {
                         type: "gradient",
                         gradient: {

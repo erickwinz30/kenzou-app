@@ -340,24 +340,19 @@ class DashboardController extends Controller
       DB::table('detail_layanans')
       ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
       ->select(
-        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%Y-%m') AS month"),
+        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%b') AS month"),
         'layanans.nama_layanan',
         DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan')
       )
       ->whereYear('detail_layanans.created_at', Carbon::now()->year)
       ->groupBy(
-        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%Y-%m')"),
+        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%b')"),
         'layanans.nama_layanan'
       )
-      ->orderBy('month')
+      ->orderBy(DB::raw("STR_TO_DATE(month, '%b')")) // Urutkan berdasarkan bulan
       ->get();
 
-    // dd($results);
-
     $data = [];
-    $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
-    $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
-    $currentMonth = $startYear->copy();
 
     foreach ($results as $result) {
       $data[] = [
@@ -366,19 +361,6 @@ class DashboardController extends Controller
         'jumlah_penggunaan' => $result->jumlah_penggunaan
       ];
     }
-
-    // while ($currentMonth->lte($endYear)) {
-    //   $monthString = $currentMonth->format('Y-m');
-    //   $totalHarga = 0;
-
-
-    //   // $data[] = [
-    //   //   'nama_layanan' => $results->nama_layanan,
-    //   //   'subtotal' => $totalHarga,
-    //   // ];
-
-    //   $currentMonth->addMonth(); // Move to the next month
-    // }
 
     if ($request->wantsJson()) {
       return response()->json($data);
