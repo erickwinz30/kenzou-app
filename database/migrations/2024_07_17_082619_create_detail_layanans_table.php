@@ -16,7 +16,6 @@ return new class extends Migration
       $table->foreignUuid('transaksi_id');
       $table->foreignId('layanan_id');
       $table->timestamps();
-      //pertimbangkan kolom total_point yang akan diterima oleh pelanggan
     });
   }
 

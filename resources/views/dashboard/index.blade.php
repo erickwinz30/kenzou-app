@@ -621,12 +621,7 @@
                         width: 2
                       },
                       xaxis: {
-                        categories: perBulan.map(date => `${date}`), // Display hours in a readable format
-                        labels: {
-                          formatter: function(value) {
-                            return `${value}`; // Format the x-axis labels to display hours
-                          }
-                        }
+                        categories: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Des']
                       },
                       yaxis: {
                         labels: {
@@ -646,6 +641,99 @@
                         },
                       }
                     }).render();
+                  })
+                  .catch(error => {
+                    console.error('Error fetching data:', error);
+                  });
+              });
+            </script>
+            <!-- End Line Chart -->
+
+          </div>
+
+        </div>
+        <!-- End Penjualan Bulan Ini -->
+
+        <!-- Penjualan Bulan Ini -->
+
+        <div class="card">
+
+          <div class="card-body">
+            <h5 class="card-title">Jumlah Layanan yang Dipilih <span>/ per Bulan</span></h5>
+
+            <!-- Line Chart -->
+            <div id="thisYearLayananChart"></div>
+
+            <script>
+              document.addEventListener("DOMContentLoaded", () => {
+                fetch('/dashboard/fetch-layanan-this-year', {
+                    headers: {
+                      'Accept': 'application/json'
+                    }
+                  })
+                  .then(response => {
+                    if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                  })
+                  .then(data => {
+                    console.log('Jumlah layanan data:', data); // Debug log
+
+                    // 1) Kumpulkan semua bulan unik
+                    const allMonths = [...new Set(data.map(item => item.month))];
+
+                    // 2) Kumpulkan semua nama layanan unik
+                    const allLayanans = [...new Set(data.map(item => item.nama_layanan))];
+
+                    // 3) Bentuk struktur series: masing-masing layanan jadi 1 series
+                    const seriesData = allLayanans.map(layanan => {
+                      return {
+                        name: layanan,
+                        data: allMonths.map(bulan => {
+                          // Cari data yang cocok (bulan & layanan)
+                          const found = data.find(row => row.month === bulan && row.nama_layanan === layanan);
+                          return found ? found.jumlah_penggunaan : 0;
+                        })
+                      };
+                    });
+
+                    // 4) Inisialisasi Chart
+                    const options = {
+                      series: seriesData,
+                      chart: {
+                        type: 'bar',
+                        height: 350
+                      },
+                      markers: {
+                        size: 4
+                      },
+                      colors: ['#ff6b6b', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93', '#f72585', '#7209b7', '#3a0ca3',
+                        '#4361ee', '#4cc9f0'
+                      ],
+                      fill: {
+                        type: "gradient",
+                        gradient: {
+                          shadeIntensity: 1,
+                          opacityFrom: 0.3,
+                          opacityTo: 0.4,
+                          stops: [0, 90, 100]
+                        }
+                      },
+                      dataLabels: {
+                        enabled: false
+                      },
+                      stroke: {
+                        curve: 'smooth',
+                        width: 2
+                      },
+                      xaxis: {
+                        categories: allMonths // Daftar bulan sebagai label sumbu-X
+                      },
+                    };
+
+                    const chart = new ApexCharts(document.querySelector("#thisYearLayananChart"), options);
+                    chart.render();
                   })
                   .catch(error => {
                     console.error('Error fetching data:', error);

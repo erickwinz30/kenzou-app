@@ -44,6 +44,7 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard/fetch-sales-this-month', [DashboardController::class, 'perDaySales'])->name('fetch-sales-this-month');
   Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-sales-this-month');
   Route::get('/dashboard/fetch-sales-this-year', [DashboardController::class, 'perMonthSales'])->name('fetch-sales-this-year');
+  Route::get('/dashboard/fetch-layanan-this-year', [DashboardController::class, 'perMonthLayanan'])->name('fetch-layanan-this-year');
 
   //dashboard transaksi
   Route::resource('dashboard/transaksi', TransaksiController::class);

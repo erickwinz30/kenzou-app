@@ -332,4 +332,58 @@ class DashboardController extends Controller
 
     return $data;
   }
+
+  public function perMonthLayanan(Request $request)
+  {
+    // Query for total sales per month
+    $results =
+      DB::table('detail_layanans')
+      ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
+      ->select(
+        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%Y-%m') AS month"),
+        'layanans.nama_layanan',
+        DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan')
+      )
+      ->whereYear('detail_layanans.created_at', Carbon::now()->year)
+      ->groupBy(
+        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%Y-%m')"),
+        'layanans.nama_layanan'
+      )
+      ->orderBy('month')
+      ->get();
+
+    // dd($results);
+
+    $data = [];
+    $startYear = Carbon::now()->startOfYear(); // Start from the first day of the year
+    $endYear = Carbon::now()->endOfYear(); // End on the last day of the year
+    $currentMonth = $startYear->copy();
+
+    foreach ($results as $result) {
+      $data[] = [
+        'month' => $result->month,
+        'nama_layanan' => $result->nama_layanan,
+        'jumlah_penggunaan' => $result->jumlah_penggunaan
+      ];
+    }
+
+    // while ($currentMonth->lte($endYear)) {
+    //   $monthString = $currentMonth->format('Y-m');
+    //   $totalHarga = 0;
+
+
+    //   // $data[] = [
+    //   //   'nama_layanan' => $results->nama_layanan,
+    //   //   'subtotal' => $totalHarga,
+    //   // ];
+
+    //   $currentMonth->addMonth(); // Move to the next month
+    // }
+
+    if ($request->wantsJson()) {
+      return response()->json($data);
+    }
+
+    return $data;
+  }
 }
