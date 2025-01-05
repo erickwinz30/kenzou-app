@@ -71,6 +71,7 @@ class LayananController extends Controller
   {
     return view('dashboard.layanan.edit', [
       'layanan' => $layanan,
+      'categories' => CategoryLayanan::all(),
     ]);
   }
 

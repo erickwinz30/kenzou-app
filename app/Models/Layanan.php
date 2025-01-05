@@ -29,11 +29,6 @@ class Layanan extends Model
     return $this->hasMany(Transaksi::class);
   }
 
-  public function layananLog()
-  {
-    return $this->hasMany(LayananLog::class);
-  }
-
   public function detailLayanan()
   {
     return $this->hasMany(DetailLayanan::class, 'detail_layanan_id');

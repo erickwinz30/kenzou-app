@@ -41,26 +41,40 @@
                   @enderror
                 </div>
                 <div class="mb-3">
-                  <label for="harga" class="form-label @error('harga') is-invalid @enderror">Harga</label>
-                  <input type="text" inputmode="numeric" class="form-control" id="harga" name="harga"
-                    value="{{ old('harga', $layanan->harga) }}" required autofocus>
-                  @error('harga')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+                  <label for="category_layanan_id" class="form-label">Kategori Layanan</label>
+                  <select class="form-select @error('category_layanan_id') is-invalid @enderror"
+                    aria-label="Default select example" name="category_layanan_id" id="category_layanan_id">
+                    {{-- <option value="Pencucian">Pencucian</option> --}}
+                    @foreach ($categories as $category)
+                      <option value="{{ $category->id }}"
+                        label="{{ $category->is_active ? $category->name : $category->name . ' (Tidak Aktif)' }}"
+                        {{ $category->id == $layanan->category_layanan_id ? 'selected' : '' }}>
+                    @endforeach
+                  </select>
                 </div>
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="point" class="form-label @error('point') is-invalid @enderror">Point</label>
-                  <input type="text" inputmode="numeric" class="form-control" id="point" name="point"
-                    value="{{ old('point', $layanan->point) }}" required autofocus>
-                  @error('point')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                  <div class="mb-3">
+                    <label for="harga" class="form-label @error('harga') is-invalid @enderror">Harga</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="harga" name="harga"
+                      value="{{ old('harga', $layanan->harga) }}" required autofocus>
+                    @error('harga')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
+                  <div class="mb-3">
+                    <label for="point" class="form-label @error('point') is-invalid @enderror">Point</label>
+                    <input type="text" inputmode="numeric" class="form-control" id="point" name="point"
+                      value="{{ old('point', $layanan->point) }}" required autofocus>
+                    @error('point')
+                      <div class="invalid-feedback">
+                        {{ $message }}
+                      </div>
+                    @enderror
+                  </div>
                 </div>
                 <div class="mb-3">
                   <label for="detail" class="form-label @error('detail') is-invalid @enderror">Deskripsi Layanan</label>

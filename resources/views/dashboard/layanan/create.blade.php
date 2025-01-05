@@ -43,7 +43,9 @@
                     <option selected style="color: gray" disabled>Silahkan pilih kategori layanan...</option>
                     {{-- <option value="Pencucian">Pencucian</option> --}}
                     @foreach ($categories as $category)
-                      <option value="{{ $category->id }}" label="{{ $category->name }}">
+                      @if ($category->is_active)
+                        <option value="{{ $category->id }}" label="{{ $category->name }}">
+                      @endif
                     @endforeach
                   </select>
                 </div>

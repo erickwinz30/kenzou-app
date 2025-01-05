@@ -11,6 +11,7 @@ class Voucher extends Model
   use HasFactory;
 
   protected $keyType = 'string';
+  public $incrementing = false;
   protected $guarded = ['id'];
 
   protected static function boot()

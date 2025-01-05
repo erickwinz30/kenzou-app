@@ -12,6 +12,7 @@ class OwnedVoucher extends Model
 
   protected $keyType = 'string';
   protected $guarded = ['id'];
+  public $incrementing = false;
   protected $with = ['member', 'voucher'];
 
   protected static function boot()

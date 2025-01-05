@@ -76,10 +76,10 @@
                       </td>
                       <td>
                         <form action="/dashboard/toggle-layanan-activation" method="POST"
-                          id="toggleActivationForm{{ $layanan->id }}">
+                          id="toggleActivationLayananForm{{ $layanan->id }}">
                           @csrf
                           <button type="button" class="btn btn-secondary"
-                            onclick="toggleActivation('{{ $layanan->id }}')">
+                            onclick="toggleActivationLayanan('{{ $layanan->id }}')">
                             @if ($layanan->is_active === 1)
                               <i class="bi bi-toggle-on"></i>
                             @else
@@ -124,6 +124,7 @@
                   <tr>
                     <th>No</th>
                     <th>Nama Kategori</th>
+                    <th>Status Aktif</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -132,18 +133,35 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $category->name }}</td>
+                      <td class="text-center align-middle" style="padding: 0;">
+                        @if ($category->is_active === 1)
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Aktif
+                          </span>
+                        @else
+                          <span
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block;">
+                            Tidak Aktif
+                          </span>
+                        @endif
+                      </td>
                       <td>
+                        <form action="/dashboard/toggle-category-layanan-activation" method="POST"
+                          id="toggleActivationCategoryLayananForm{{ $category->id }}">
+                          @csrf
+                          <button type="button" class="btn btn-secondary"
+                            onclick="toggleActivationCategoryLayanan('{{ $category->id }}')">
+                            @if ($category->is_active === 1)
+                              <i class="bi bi-toggle-on"></i>
+                            @else
+                              <i class="bi bi-toggle-off"></i>
+                            @endif
+                            <input type="hidden" name="layananId" id="layananId" value="{{ $category->id }}">
+                          </button>
+                        </form>
                         <a href="/dashboard/category-layanan/{{ $category->id }}/edit" class="btn btn-warning"><i
                             class="bi bi-pencil"></i></a>
-                        {{-- <form action="/dashboard/category-layanan/{{ $category->id }}" method="POST" class="d-inline"
-                          id="deleteForm{{ $category->id }}">
-                          @method('DELETE')
-                          @csrf
-                          <button type="button" class="btn btn-danger"
-                            onclick="deleteConfirmation('{{ $category->id }}')">
-                            <i class="bi bi-trash"></i>
-                          </button>
-                        </form> --}}
                       </td>
                     </tr>
                   @endforeach
@@ -159,7 +177,7 @@
 
   <script>
     //konfirmasi hapus data
-    function toggleActivation(id) {
+    function toggleActivationLayanan(id) {
       Swal.fire({
         title: "Yakin ingin mengubah status aktivasi layanan?",
         text: "Aksi ini akan mengubah status aktivasi layanan!!!",
@@ -170,7 +188,23 @@
         confirmButtonText: "Yes, update it!"
       }).then((result) => {
         if (result.isConfirmed) {
-          document.getElementById('toggleActivationForm' + id).submit();
+          document.getElementById('toggleActivationLayananForm' + id).submit();
+        }
+      });
+    };
+
+    function toggleActivationCategoryLayanan(id) {
+      Swal.fire({
+        title: "Yakin ingin mengubah status aktivasi ketegori layanan?",
+        text: "Aksi ini akan mengubah status aktivasi kategori layanan!!!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#2980B9",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, update it!"
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById('toggleActivationCategoryLayananForm' + id).submit();
         }
       });
     };

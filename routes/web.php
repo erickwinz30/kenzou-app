@@ -62,6 +62,7 @@ Route::middleware('isAdmin')->group(function () {
 
   //category layanan
   Route::resource('dashboard/category-layanan', CategoryLayananController::class);
+  Route::post('/dashboard/toggle-category-layanan-activation', [CategoryLayananController::class, 'toggleActivation'])->name('categoryLayanan.toggleActivation');
 
   //kasir
   Route::resource('/dashboard/kasir', KasirController::class);

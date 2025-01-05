@@ -12,7 +12,7 @@ class Transaksi extends Model
 
   protected $keyType = 'string';
   protected $guarded = ['id'];
-  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs'];
+  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs', 'voucher', 'challenge', 'badge', 'leaderboard'];
 
   public $incrementing = false;
 
