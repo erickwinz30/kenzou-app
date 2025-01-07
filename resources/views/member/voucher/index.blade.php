@@ -64,7 +64,7 @@
                         Point</strong></div>
                   </div>
                   <div class="px-3 pb-3">
-                    <form action="voucher/claim" method="POST" id="claimForm{{ $voucher->id }}"
+                    <form action="/voucher/claim" method="POST" id="claimForm{{ $voucher->id }}"
                       onclick="voucherClaim({{ $voucher->id }})">
                       @csrf
                       @if (!$ownedVouchers->contains('voucher_id', $voucher->id))

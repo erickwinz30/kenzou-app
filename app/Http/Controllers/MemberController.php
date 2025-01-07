@@ -181,8 +181,10 @@ class MemberController extends Controller
 
   public function viewDetailVoucher(Voucher $voucher)
   {
-    $member = Auth::guard('member')->user();
-    $ownedVouchers = $member->ownedVouchers;
+    $ownedVouchers = OwnedVoucher::where('member_id', Auth::guard('member')->user()->id)->where('is_used', false)
+      ->whereHas('voucher', function ($query) {
+        $query->where('is_active', true);
+      })->get();
 
     return view('member.voucher.view', compact('voucher', 'ownedVouchers'));
   }

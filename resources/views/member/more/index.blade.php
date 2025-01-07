@@ -5,7 +5,7 @@
     <h1>Informasi Akun</h1>
   </div><!-- End Page Title -->
 
-  <section class="section mt-4">
+  <section class="section my-4">
     <div class="row justify-content-center">
       <div class="col-12 col-md-10 col-lg-8">
         <div class="d-flex justify-content-center mb-4">

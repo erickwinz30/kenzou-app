@@ -35,18 +35,20 @@
           </div>
           <div>
             @if (!$ownedVouchers->contains('voucher_id', $voucher->id))
-              <form action="voucher/claim" method="POST" id="claimForm{{ $voucher->id }}"
+              <form action="/voucher/claim" method="POST" id="claimForm{{ $voucher->id }}"
                 onclick="voucherClaim({{ $voucher->id }})">
                 @csrf
-                @if ($voucher->point_needed > Auth::guard('member')->user()->redeemable_point)
-                  <p class="card-text fw-bold p-0 m-0" style="color: #012970">Point belum mencukupi!</p>
-                @else
-                  <button class="btn btn-primary" style="background-color: #012970; border-color:#012970">Redeem</button>
+                @if (!$ownedVouchers->contains('voucher_id', $voucher->id))
+                  @if ($voucher->point_needed > Auth::guard('member')->user()->redeemable_point)
+                    <p class="card-text fw-bold p-0 m-0" style="color: #012970">Point belum mencukupi!</p>
+                  @else
+                    <button class="btn btn-primary"
+                      style="background-color: #012970; border-color:#012970">Redeem</button>
+                  @endif
+                  <input type="hidden" value="{{ $voucher->id }}" name='voucher_id'>
                 @endif
-                <input type="hidden" value="{{ $voucher->id }}" name='voucher_id'>
               </form>
             @endif
-
             @if (
                 $ownedVouchers->contains('voucher_id', $voucher->id) &&
                     $ownedVouchers->contains('member_id', Auth::guard('member')->user()->id))
@@ -59,4 +61,11 @@
       </div>
     </div>
   </section>
+
+  <script>
+    function voucherClaim(id) {
+      var form = document.getElementById('claimForm' + id);
+      form.submit();
+    }
+  </script>
 @endsection

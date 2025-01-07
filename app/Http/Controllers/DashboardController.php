@@ -336,21 +336,23 @@ class DashboardController extends Controller
   public function perMonthLayanan(Request $request)
   {
     // Query for total sales per month
-    $results =
-      DB::table('detail_layanans')
+    $results = DB::table('detail_layanans')
       ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
+      ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
       ->select(
-        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%b') AS month"),
+        DB::raw("DATE_FORMAT(transaksis.date, '%b') AS month"),
         'layanans.nama_layanan',
-        DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan')
+        DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan'),
+        DB::raw("MIN(transaksis.date) as first_date_of_month")
       )
-      ->whereYear('detail_layanans.created_at', Carbon::now()->year)
+      ->whereYear('transaksis.date', Carbon::now()->year)
       ->groupBy(
-        DB::raw("DATE_FORMAT(detail_layanans.created_at, '%b')"),
+        DB::raw("DATE_FORMAT(transaksis.date, '%b')"),
         'layanans.nama_layanan'
       )
-      ->orderBy(DB::raw("STR_TO_DATE(month, '%b')")) // Urutkan berdasarkan bulan
+      ->orderBy('first_date_of_month')
       ->get();
+
 
     $data = [];
 
@@ -361,6 +363,8 @@ class DashboardController extends Controller
         'jumlah_penggunaan' => $result->jumlah_penggunaan
       ];
     }
+
+    Log::info('Data Layanan: ', ['data' => $data]);
 
     if ($request->wantsJson()) {
       return response()->json($data);

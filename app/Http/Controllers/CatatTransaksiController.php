@@ -444,7 +444,10 @@ class CatatTransaksiController extends Controller
       $memberId = Member::where('nomor_telepon', $request->nomor_telepon)->first()->id;
       Log::info('Input Nomor Telepon:', ['Member Phone Number' => $memberId]);
 
-      $listVoucher = OwnedVoucher::where('member_id', $memberId)->get();
+      $listVoucher = OwnedVoucher::where('member_id', $memberId)->where('is_used', false)
+        ->whereHas('voucher', function ($query) {
+          $query->where('is_active', true);
+        })->get();
       Log::info('Owned Voucher:', ['Voucher' => $listVoucher]);
 
       $data = [];

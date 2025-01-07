@@ -102,7 +102,7 @@ class TransaksiController extends Controller
       }
 
       if (date('Y-m-d\TH:i', strtotime($request->date)) !== date('Y-m-d\TH:i', strtotime($transaksi->date))) {
-        $rules['to_date'] = 'required|date';
+        $rules['date'] = 'required|date';
       }
 
       if ($request->metode_pembayaran !== $transaksi->metode_pembayaran) {
@@ -113,7 +113,7 @@ class TransaksiController extends Controller
         $rules['keterangan'] = 'max:255';
       }
 
-      if ($request->total !== $transaksi->total) {
+      if ($request->total != $transaksi->total) {
         $rules['total'] = 'required';
       }
 
@@ -129,7 +129,7 @@ class TransaksiController extends Controller
         }
       }
 
-      if ($request->subtotal !== $transaksi->subtotal) {
+      if ($request->subtotal != $transaksi->subtotal) {
         $rules['subtotal'] = 'required';
       }
 
@@ -386,6 +386,7 @@ class TransaksiController extends Controller
     }
   }
 
+  // activeSwitch for edit transaksi when changing between displaying all layanan or only active layanan
   public function activeSwitch(Request $request)
   {
     try {

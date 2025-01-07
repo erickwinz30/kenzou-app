@@ -164,7 +164,7 @@ class DatabaseSeeder extends Seeder
       [
         'badge_name' => 'Bronze',
         'rank' => 3,
-        'discount' => 0,
+        'discount' => 0.03,
         'image' => $storagePathLeaderboards['bronze'],
       ],
       [
