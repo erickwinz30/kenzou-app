@@ -95,9 +95,6 @@ Route::middleware('isAdmin')->group(function () {
   Route::post('/dashboard/toggle-challenge-repeatable', [ChallengeController::class, 'toggleRepeatable'])->name('challenge.toggleRepeatable');
   Route::post('/dashboard/toggle-challenge-activation', [ChallengeController::class, 'toggleActivation'])->name('challenge.toggleActivation');
 
-  //leaderboard
-  Route::get('/dashboard/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard-index');
-
   // feedback
   Route::resource('/dashboard/feedback', FeedbackController::class);
 });

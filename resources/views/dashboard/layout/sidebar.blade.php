@@ -152,7 +152,8 @@
       </li><!-- End Badge Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('dashboard/leaderboard') ? '' : 'collapsed' }}" href="/dashboard/leaderboard">
+        <a class="nav-link {{ Request::is('dashboard/badge-leaderboard') ? '' : 'collapsed' }}"
+          href="/dashboard/badge-leaderboard">
           <i class="bi bi-reception-4"></i>
           <span>Leaderboard</span>
         </a>
