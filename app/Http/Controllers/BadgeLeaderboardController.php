@@ -22,7 +22,7 @@ class BadgeLeaderboardController extends Controller
     $rankSecond = BadgeLeaderboard::where('rank', 2)->first()->image;
     $rankThird = BadgeLeaderboard::where('rank', 3)->first()->image;
 
-    return view('dashboard.leaderboard.index', [
+    return view('dashboard.badge.leaderboard.index', [
       'leaderboards' => $leaderboards,
       'rankFirst' => $rankFirst,
       'rankSecond' => $rankSecond,
