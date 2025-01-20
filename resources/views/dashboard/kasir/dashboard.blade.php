@@ -82,7 +82,7 @@
                       .then(data => {
                         console.log('Fetched data:', data); // Debug log
 
-                        const salesData = data.map(item => item.total_harga);
+                        const salesData = data.map(item => item.subtotal);
                         const perJam = data.map(item => {
                           const dateStr = item.hour.replace(' ', 'T'); // Ensure correct date format for parsing
                           const parsedDate = new Date(dateStr);

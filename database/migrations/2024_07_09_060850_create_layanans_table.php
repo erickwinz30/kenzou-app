@@ -18,7 +18,7 @@ return new class extends Migration
       $table->integer('point');
       $table->string('detail');
       $table->boolean('is_active')->default(true);
-      $table->foreignId('category_layanan_id');
+      $table->foreignId('category_layanan_id')->constrained('category_layanans');
       $table->timestamps();
     });
   }

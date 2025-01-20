@@ -15,10 +15,10 @@ return new class extends Migration
       $table->uuid('id')->primary();
       $table->foreignUuid('pelanggan_id');
       $table->foreignUuid('user_id');
-      $table->foreignUuid('voucher_id')->nullable();
-      $table->foreignUuid('challenge_id')->nullable();
-      $table->foreignId('badge_id')->nullable();
-      $table->foreignId('leaderboard_id')->nullable();
+      $table->foreignUuid('voucher_id')->nullable()->constrained('vouchers');
+      $table->foreignUuid('challenge_id')->nullable()->constrained('challenges');
+      $table->foreignId('badge_id')->nullable()->constrained('badges');
+      $table->foreignId('leaderboard_id')->nullable()->constrained('badge_leaderboards');
       $table->datetime('date');
       $table->decimal('total');
       $table->decimal('subtotal');

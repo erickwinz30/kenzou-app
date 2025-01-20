@@ -217,6 +217,8 @@ class CatatTransaksiController extends Controller
       Log::info('Pelanggan Number Created', $newPelanggan->toArray());
 
       $validatedData['pelanggan_id'] = $findNewPelanggan->id;
+
+      //tambahkan sendMessage untuk pelanggan yang bukan member
     }
 
     return $validatedData;
@@ -405,6 +407,8 @@ class CatatTransaksiController extends Controller
 
       $currentHour->addHour();
     }
+
+    Log::info('Sales Data:', $data);
 
     if ($request->wantsJson()) {
       return response()->json($data);

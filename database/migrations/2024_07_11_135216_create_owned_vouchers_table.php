@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('owned_vouchers', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignUuid('member_id');
-      $table->foreignUuid('voucher_id');
+      $table->foreignUuid('member_id')->constrained('members');
+      $table->foreignUuid('voucher_id')->constrained('vouchers');
       $table->boolean('is_used')->default(false);
       $table->datetime('used_date')->nullable();
       $table->timestamps();

@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('point_logs', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignUuid('transaksi_id')->nullable();
-      $table->foreignUuid('member_id');
+      $table->foreignUuid('transaksi_id')->nullable()->constrained('transaksis');
+      $table->foreignUuid('member_id')->constrained('members');
       $table->integer('point');
       $table->string('status');
       $table->boolean('is_increase');

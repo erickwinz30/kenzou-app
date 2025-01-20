@@ -52,7 +52,7 @@
                       <p>{{ $transaction->keterangan }}</p>
                     </div>
                   </div>
-                  <div class="col-12 col-md-6 mt-4">
+                  <div class="col-12 col-md-6">
                     <div class="d-flex justify-content-between">
                       <p><strong>Transaksi ID: </strong></p>
                       <p class="text-end">{{ $transaction->id }}</p>

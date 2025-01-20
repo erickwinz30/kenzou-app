@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('detail_layanans', function (Blueprint $table) {
       $table->id();
-      $table->foreignUuid('transaksi_id');
-      $table->foreignId('layanan_id');
+      $table->foreignUuid('transaksi_id')->constrained('transaksis');
+      $table->foreignId('layanan_id')->constrained('layanans');
       $table->timestamps();
     });
   }

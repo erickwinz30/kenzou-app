@@ -13,8 +13,8 @@ return new class extends Migration
   {
     Schema::create('challenge_progress', function (Blueprint $table) {
       $table->uuid('id')->primary();
-      $table->foreignUuid('challenge_id');
-      $table->foreignUuid('member_id');
+      $table->foreignUuid('challenge_id')->constrained('challenges');
+      $table->foreignUuid('member_id')->constrained('members');
       $table->integer('progress')->default(0);
       $table->boolean('is_completed')->default(false);
       $table->boolean('is_used')->default(false);
