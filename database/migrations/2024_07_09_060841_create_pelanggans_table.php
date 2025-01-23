@@ -14,7 +14,7 @@ return new class extends Migration
     Schema::create('pelanggans', function (Blueprint $table) {
       $table->uuid('id')->primary();
       $table->string('nomor_telepon')->unique();
-      $table->foreignUuid('member_id')->constrained('members')->nullable();
+      $table->foreignUuid('member_id')->nullable()->constrained('members');
       $table->timestamps();
     });
   }

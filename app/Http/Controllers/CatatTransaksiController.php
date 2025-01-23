@@ -58,6 +58,8 @@ class CatatTransaksiController extends Controller
 
       //check if pelanggan exists
       $validatedData = $this->checkRegisteredPelanggan($findPelanggan, $validatedPhoneNumber, $validatedData);
+      //check again if pelanggan exists just in case the previous phone number is not member
+      $findPelangganAgain = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
 
       $validatedData['user_id'] = Auth::user()->id;
       $validatedData['date'] = Carbon::now('Asia/Jakarta');
@@ -113,14 +115,14 @@ class CatatTransaksiController extends Controller
       }
 
       //check if member exists
-      if ($findPelanggan) {
-        if ($findPelanggan->member_id) {
+      if ($findPelangganAgain) {
+        if ($findPelangganAgain->member_id) {
           if (isset($validatedData['challenge_id'])) {
             // ChallengeProgress::where('id', $validatedData['challenge_progress_id'])->update(['is_used' => true]);
 
             Log::info('Challenge Progress ID:', ['id' => $validatedData['challenge_id']]);
 
-            $updated = ChallengeProgress::where('challenge_id', $validatedData['challenge_id'])->where('member_id', $findPelanggan->member_id)->update(['is_used' => true]);
+            $updated = ChallengeProgress::where('challenge_id', $validatedData['challenge_id'])->where('member_id', $findPelangganAgain->member_id)->update(['is_used' => true]);
 
             if ($updated) {
               Log::info('Challenge Progress updated successfully.');
@@ -129,7 +131,7 @@ class CatatTransaksiController extends Controller
             }
           } else {
             Log::info('Challenge Progress ID on validated is null');
-            $allChallengeProgress = ChallengeProgress::where('member_id', $findPelanggan->member_id)->where('is_completed', false)->get();
+            $allChallengeProgress = ChallengeProgress::where('member_id', $findPelangganAgain->member_id)->where('is_completed', false)->get();
             Log::info('All Challenge Progress:', ['progress' => $allChallengeProgress]);
 
             if ($allChallengeProgress) {
@@ -150,7 +152,7 @@ class CatatTransaksiController extends Controller
                         $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
                         if ($checkChallengeRepeat) {
                           ChallengeProgress::create([
-                            'member_id' => $findPelanggan->member_id,
+                            'member_id' => $findPelangganAgain->member_id,
                             'challenge_id' => $challengeProgress->challenge->id,
                           ]);
 
@@ -169,7 +171,7 @@ class CatatTransaksiController extends Controller
                         $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
                         if ($checkChallengeRepeat) {
                           ChallengeProgress::create([
-                            'member_id' => $findPelanggan->member_id,
+                            'member_id' => $findPelangganAgain->member_id,
                             'challenge_id' => $challengeProgress->challenge->id,
                           ]);
 
@@ -180,7 +182,7 @@ class CatatTransaksiController extends Controller
                       }
                     }
                   }
-                } //jika kondisi challenge tidak aktif maka tidak terjadi apa"
+                }
               }
             }
           }
@@ -188,9 +190,31 @@ class CatatTransaksiController extends Controller
           if (isset($validatedData['voucher_id'])) {
             Log::info('Voucher ID:', ['id' => $validatedData['voucher_id']]);
 
-            $this->claimVoucher($validatedData['voucher_id'], $findPelanggan->member_id);
+            $this->claimVoucher($validatedData['voucher_id'], $findPelangganAgain->member_id);
           }
-          $this->storeNewPoint($transaction, $findPelanggan->member_id, $challengeProgressPoint, $totalPoint);
+          $this->storeNewPoint($transaction, $findPelangganAgain->member_id, $challengeProgressPoint, $totalPoint);
+        } else {
+          Log::info('Old customer without member and need to send invoice through WhatsApp.');
+
+          $transactionData = [];
+          $transactionLayananData = [];
+          $layanans = Layanan::whereIn('id', $validatedData2['layanan_id'])->get();
+          Log::info('Layanan:', ['layanans' => $layanans]);
+
+          $transactionData['transactionId'] = $transaction->id;
+          $transactionData['phoneNumber'] = $validatedPhoneNumber['nomor_telepon'];
+          $transactionData['subtotal'] = $validatedData['subtotal'];
+          $transactionData['layanans'] = $validatedData2['layanan_id'];
+          $transactionData['date'] = $transaction->date;
+
+          foreach ($layanans as $layanan) {
+            $transactionLayananData[] = [
+              'nama_layanan' => $layanan->nama_layanan,
+              'harga' => $layanan->harga,
+            ];
+          }
+
+          $this->sendMessage($transactionData, $transactionLayananData);
         }
       }
 
@@ -408,8 +432,6 @@ class CatatTransaksiController extends Controller
       $currentHour->addHour();
     }
 
-    Log::info('Sales Data:', $data);
-
     if ($request->wantsJson()) {
       return response()->json($data);
     }
@@ -424,8 +446,28 @@ class CatatTransaksiController extends Controller
     return $recentTransaction;
   }
 
-  private function sendMessage()
+  private function sendMessage($transactionData, $transactionLayananData)
   {
+    // Buat pesan invoice
+    $body = "Invoice Transaksi\n";
+    $body .= "=================\n";
+    $body .= "ID Transaksi: {$transactionData['transactionId']}\n";
+    $body .= "No.Telp Pelanggan: {$transactionData['phoneNumber']}\n";
+    $body .= "Tanggal: {$transactionData['date']->format('Y-m-d')}\n";
+    $body .= "-----------------\n";
+    $body .= "Layanan yang Dipilih:\n";
+
+    foreach ($transactionLayananData as $layanan) {
+      $body .= "- {$layanan['nama_layanan']}: Rp. " . number_format($layanan['harga'], 0, ',', '.') . "\n";
+    }
+
+    $body .= "-----------------\n";
+    $body .= "Subtotal: Rp. " . number_format($transactionData['subtotal'], 0, ',', '.') . "\n";
+    $body .= "=================\n";
+    $body .= "Terima kasih telah menggunakan layanan kami.\n";
+
+
+    // using twillio
     $sid    = env('TWILIO_SID');
     $token  = env('TWILIO_AUTH_TOKEN');
     $twilio = new Client($sid, $token);
@@ -435,11 +477,28 @@ class CatatTransaksiController extends Controller
         "whatsapp:+6285155431948", // to
         array(
           "from" => "whatsapp:+14155238886",
-          "body" => "Your Yummy Cupcakes Company order of 1 dozen frosted cupcakes has shipped and should be delivered on July 10, 2019. Details: http://www.yummycupcakes.com/",
+          "body" => $body,
         )
       );
 
     print($message->sid);
+
+    // $sid    = env('TWILIO_SID');
+    // $token  = env('TWILIO_AUTH_TOKEN');
+    // $twilio = new Client($sid,
+    //   $token
+    // );
+
+    // $message = $twilio->messages
+    // ->create(
+    //   "whatsapp:+6285155431948", // to
+    //   array(
+    //     "from" => "whatsapp:+14155238886",
+    //     "body" => "Your Yummy Cupcakes Company order of 1 dozen frosted cupcakes has shipped and should be delivered on July 10, 2019. Details: http://www.yummycupcakes.com/",
+    //   )
+    // );
+
+    // print($message->sid);
   }
 
   public function checkMemberVoucher(Request $request)
