@@ -118,6 +118,25 @@
                     </div>
                   @enderror
                 </div>
+                <div>
+                  <p>Dapat diulang?</p>
+                  <div class="d-flex justify-content-evenly align-items-center">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="is_repeatable" id="flexRadioDefault1"
+                        value="0">
+                      <label class="form-check-label" for="flexRadioDefault1">
+                        Tidak
+                      </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="is_repeatable" id="flexRadioDefault2"
+                        value="1" checked>
+                      <label class="form-check-label" for="flexRadioDefault2">
+                        Ya
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="modal-footer">
                 <a href="/dashboard/challenge" class="btn btn-secondary me-1">Batal</a>

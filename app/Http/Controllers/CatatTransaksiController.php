@@ -509,7 +509,9 @@ class CatatTransaksiController extends Controller
 
       $listVoucher = OwnedVoucher::where('member_id', $memberId)->where('is_used', false)
         ->whereHas('voucher', function ($query) {
-          $query->where('is_active', true);
+          $query->where('is_active', true)
+            ->where('from_date', '<=', Carbon::now())
+            ->where('to_date', '>=', Carbon::now());
         })->get();
       Log::info('Owned Voucher:', ['Voucher' => $listVoucher]);
 
@@ -557,7 +559,9 @@ class CatatTransaksiController extends Controller
 
       $listChallenge = ChallengeProgress::where('member_id', $memberId)->where('is_completed', true)->where('is_used', false)
         ->whereHas('challenge', function ($query) {
-          $query->where('is_active', true);
+          $query->where('is_active', true)
+            ->where('from_date', '<=', Carbon::now())
+            ->where('to_date', '>=', Carbon::now());
         })->get();
       Log::info('Owned Challenge:', ['Challenge' => $listChallenge]);
 

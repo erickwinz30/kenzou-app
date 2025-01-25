@@ -18,6 +18,7 @@ class Challenge extends Model
     'description',
     'from_date',
     'to_date',
+    'is_repeatable',
     'target',
     'unit',
     'layanan_id',

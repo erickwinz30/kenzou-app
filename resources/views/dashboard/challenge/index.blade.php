@@ -39,6 +39,7 @@
                   <tr>
                     <th>No</th>
                     <th>Deskripsi</th>
+                    <th>Kadarluarsa</th>
                     <th>Dari</th>
                     <th>Sampai</th>
                     <th>Target</th>
@@ -54,6 +55,19 @@
                     <tr>
                       <td>{{ $loop->iteration }}</td>
                       <td>{{ $challenge->description }}</td>
+                      <td class="text-center align-middle" style="padding: 0;">
+                        @if (now()->between(\Carbon\Carbon::parse($challenge->from_date), \Carbon\Carbon::parse($challenge->to_date)))
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+                            Belum
+                          </span>
+                        @else
+                          <span
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
+                            Kadarluarsa
+                          </span>
+                        @endif
+                      </td>
                       <td class="text-center align-middle" style="padding: 0;">
                         <span
                           style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
@@ -189,9 +203,21 @@
           let iteration = 1;
           data.forEach(challenge => {
             let row = document.createElement("tr");
+
+            let statusText = challenge.is_expired ? 'Kadarluarsa' : 'Berlaku';
+            console.log('Status:', statusText);
+            let statusColor = statusText === 'Berlaku' ? '#219653' : '#FFB22C';
+            let statusBackgroundColor = statusText === 'Berlaku' ? '#e8f4ed' : '#F3FEB8';
+
             row.innerHTML = `
           <td>${iteration}</td>
           <td>${challenge.description}</td>
+          <td class="text-center align-middle" style="padding: 0;">
+            <span
+              style="color:${statusColor}; background-color: ${statusBackgroundColor}; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+              ${statusText}
+            </span>
+          </td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
               style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">
@@ -266,9 +292,21 @@
           let iteration = 1;
           data.forEach(challenge => {
             let row = document.createElement("tr");
+
+            let statusText = challenge.is_expired ? 'Kadarluarsa' : 'Berlaku';
+            console.log('Status:', statusText);
+            let statusColor = statusText === 'Berlaku' ? '#219653' : '#FFB22C';
+            let statusBackgroundColor = statusText === 'Berlaku' ? '#e8f4ed' : '#F3FEB8';
+
             row.innerHTML = `
           <td>${iteration}</td>
           <td>${challenge.description}</td>
+          <td class="text-center align-middle" style="padding: 0;">
+            <span
+              style="color:${statusColor}; background-color: ${statusBackgroundColor}; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+              ${statusText}
+            </span>
+          </td>
           <td class="text-center align-middle" style="padding: 0;">
             <span
               style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 3px 5px; display: inline-block;">

@@ -49,7 +49,7 @@ class ChallengeController extends Controller
         'target' => 'required|numeric',
         'unit' => 'required',
         'layanan_id' => 'required',
-        'reward_value' => 'nullable|numeric',
+        'is_repeatable' => 'required|boolean',
       ]);
 
       $newChallenge = Challenge::create($validatedData);
@@ -57,7 +57,6 @@ class ChallengeController extends Controller
       Log::info('New Challenge ID', ['challengeId' => $newChallenge->id]);
 
       $allMember = Member::all();
-
       if ($allMember) {
         foreach ($allMember as $member) {
           $newChallengeProgress = ChallengeProgress::create([
@@ -74,6 +73,7 @@ class ChallengeController extends Controller
       $errorMessage = $e->getMessage();
       $errorTrace = $e->getTraceAsString();
       Log::error("Error in ChallengeController@store", ['error' => $errorMessage, 'trace' => $errorTrace]);
+      return back()->with('error', 'Terjadi kesalahan saat menambahkan challenge!!!');
     }
   }
 
@@ -152,6 +152,7 @@ class ChallengeController extends Controller
       $dataActive[] = [
         'id' => $challenge->id,
         'description' => $challenge->description,
+        'is_expired' => Carbon::now()->gt(Carbon::parse($challenge->to_date)),
         'from_date' => Carbon::parse($challenge->from_date)->format('d-m-Y H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,
@@ -182,6 +183,7 @@ class ChallengeController extends Controller
       $dataNonActive[] = [
         'id' => $challenge->id,
         'description' => $challenge->description,
+        'is_expired' => Carbon::now()->gt(Carbon::parse($challenge->to_date)),
         'from_date' => Carbon::parse($challenge->from_date)->format('d-m-Y H:i:s'),
         'to_date' => Carbon::parse($challenge->to_date)->format('d-m-Y H:i:s'),
         'target' => $challenge->target,

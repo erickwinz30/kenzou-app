@@ -192,8 +192,8 @@ class DatabaseSeeder extends Seeder
         'point_needed' => 50,
         'discount' => 0.05,
         'minimum_transaction' => 50000,
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
-        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
         'is_active' => 1,
       ],
       [
@@ -202,8 +202,8 @@ class DatabaseSeeder extends Seeder
         'point_needed' => 100,
         'discount' => 0.1,
         'minimum_transaction' => 100000,
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
-        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
         'is_active' => 1,
       ],
       [
@@ -212,8 +212,8 @@ class DatabaseSeeder extends Seeder
         'point_needed' => 150,
         'discount' => 0.2,
         'minimum_transaction' => 140000,
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
-        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59),
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
         'is_active' => 1,
       ],
     ];
@@ -281,8 +281,8 @@ class DatabaseSeeder extends Seeder
     $challenges = [
       [
         'description' => "Melakukan pencucian sebanyak 8 kali",
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
-        'to_date' => Carbon::create(2024, 12, 31, 23, 59, 0),
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
         'target' => 8,
         'unit' => 'Transaksi',
         'layanan_id' => 4,
@@ -291,8 +291,8 @@ class DatabaseSeeder extends Seeder
       ],
       [
         'description' => "Melakukan akumulasi transaksi sebesar Rp. 800000",
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0),
-        'to_date' => Carbon::create(2024, 12, 31, 23, 59, 0),
+        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
         'target' => 800000,
         'unit' => 'Total Pengeluaran Member',
         'layanan_id' => 1,

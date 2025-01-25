@@ -24,13 +24,18 @@ class MemberController extends Controller
   {
     $listChallengeFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', true)
       ->where('is_used', false)->whereHas('challenge', function ($query) {
-        $query->where('is_active', true);
+        $query->where('is_active', true)
+          ->where('from_date', '<=', Carbon::now())
+          ->where('to_date', '>=', Carbon::now());
       })
       ->get();
 
-    $listChallengeNotFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', false)
+    $listChallengeNotFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)
+      ->where('is_completed', false)
       ->whereHas('challenge', function ($query) {
-        $query->where('is_active', true);
+        $query->where('is_active', true)
+          ->where('from_date', '<=', Carbon::now())
+          ->where('to_date', '>=', Carbon::now());
       })
       ->get();
 
@@ -139,10 +144,13 @@ class MemberController extends Controller
   public function viewOwnedVoucher()
   {
     // $member = Auth::guard('member')->user();
-    $vouchers = Voucher::where('is_active', true)->get();
+    $vouchers = Voucher::where('is_active', true)->where('from_date', '<=', Carbon::now())
+      ->where('to_date', '>=', Carbon::now())->get();
     $ownedVouchers = OwnedVoucher::where('member_id', Auth::guard('member')->user()->id)->where('is_used', false)
       ->whereHas('voucher', function ($query) {
-        $query->where('is_active', true);
+        $query->where('is_active', true)
+          ->where('from_date', '<=', Carbon::now())
+          ->where('to_date', '>=', Carbon::now());
       })->get();
 
     return view('member.voucher.index', compact('vouchers', 'ownedVouchers'));

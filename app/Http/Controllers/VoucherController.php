@@ -156,6 +156,7 @@ class VoucherController extends Controller
         'minimum_transaction' => round($voucher->minimum_transaction),
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
+        'is_expired' => Carbon::now()->gt(Carbon::parse($voucher->to_date)),
         'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
         'to_date' => Carbon::parse($voucher->to_date)->format('d-m-Y H:i:s'),
       ];
@@ -186,6 +187,7 @@ class VoucherController extends Controller
         'minimum_transaction' => round($voucher->minimum_transaction, 2),
         'point_needed' => $voucher->point_needed,
         'is_active' => $voucher->is_active,
+        'is_expired' => Carbon::now()->gt(Carbon::parse($voucher->to_date)),
         'from_date' => Carbon::parse($voucher->from_date)->format('d-m-Y H:i:s'),
         'to_date' => Carbon::parse($voucher->to_date)->format('d-m-Y H:i:s'),
       ];

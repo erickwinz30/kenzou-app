@@ -53,8 +53,9 @@
                     <th>Diskon</th>
                     <th>Minimum Transaksi</th>
                     <th>Status</th>
-                    <th>Tanggal Awal</th>
-                    <th>Tanggal Akhir</th>
+                    <th>Kadarluarsa</th>
+                    <th>Mulai Berlaku</th>
+                    <th>Berlaku Sampai</th>
                     <th>Aksi</th>
                   </tr>
                 </thead>
@@ -77,6 +78,19 @@
                           <span
                             style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                             Tidak Aktif
+                          </span>
+                        @endif
+                      </td>
+                      <td class="text-center align-middle" style="padding: 0;">
+                        @if (now()->between(\Carbon\Carbon::parse($voucher->from_date), \Carbon\Carbon::parse($voucher->to_date)))
+                          <span
+                            style="color:#219653; background-color: #e8f4ed; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+                            Belum
+                          </span>
+                        @else
+                          <span
+                            style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 3px 5px; display: inline-block; box-sizing: border-box">
+                            Kadarluarsa
                           </span>
                         @endif
                       </td>
@@ -141,6 +155,14 @@
               let row = document.createElement("tr");
               let description = voucher.description.length > 50 ? voucher.description.substring(0, 50) +
                 '...' : voucher.description;
+
+              //perbaiki date nya lagi pada nonActiveFetch
+
+              let statusText = voucher.is_expired ? 'Kadarluarsa' : 'Berlaku';
+              console.log('Status:', statusText);
+              let statusColor = statusText === 'Berlaku' ? '#219653' : '#FFB22C';
+              let statusBackgroundColor = statusText === 'Berlaku' ? '#e8f4ed' : '#F3FEB8';
+
               row.innerHTML = `
                 <td>${iteration}</td>
                 <td>${voucher.nama}</td>
@@ -152,6 +174,12 @@
                   <span
                     style="color:#FFB22C; background-color: #F3FEB8; border-radius: 5px; padding: 5px 10px; display: inline-block;">
                     Tidak Aktif
+                  </span>
+                </td>
+                <td class="text-center align-middle" style="padding: 0;">
+                  <span
+                    style="color:${statusColor}; background-color: ${statusBackgroundColor}; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+                    ${statusText}
                   </span>
                 </td>
                 <td class="text-center align-middle" style="padding: 0;">
@@ -208,6 +236,14 @@
               let description = voucher.description.length > 50 ? voucher.description.substring(0, 50) +
                 '...' :
                 voucher.description;
+
+              let statusText = voucher.is_expired ? 'Kadarluarsa' : 'Berlaku';
+              console.log('Status:', statusText);
+              let statusColor = statusText === 'Berlaku' ? '#219653' : '#FFB22C';
+              let statusBackgroundColor = statusText === 'Berlaku' ? '#e8f4ed' : '#F3FEB8';
+
+              console.log('Status:', statusText);
+
               row.innerHTML = `
                 <td>${iteration}</td>
                 <td>${voucher.nama}</td>
@@ -221,6 +257,12 @@
                       color: ${voucher.is_active === 1 ? '#219653' : '#FFB22C'};
                       background-color: ${voucher.is_active === 1 ? '#e8f4ed' : '#F3FEB8'};">
                     ${voucher.is_active === 1 ? 'Aktif' : 'Tidak Aktif'}
+                  </span>
+                </td>
+                <td class="text-center align-middle" style="padding: 0;">
+                  <span
+                    style="color:${statusColor}; background-color: ${statusBackgroundColor}; border-radius: 5px; padding: 5px 10px; display: inline-block;">
+                    ${voucher.is_expired ? 'Kadarluarsa' : 'Belum'}
                   </span>
                 </td>
                 <td class="text-center align-middle" style="padding: 0;">
