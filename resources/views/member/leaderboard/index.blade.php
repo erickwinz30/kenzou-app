@@ -5,7 +5,7 @@
     <h1 class="fs-2 fw-bold">LEADERBOARD</h1>
   </div><!-- End Page Title -->
 
-  <section class="section d-flex justify-content-center">
+  <section class="section d-flex justify-content-center mb-5">
     <div class="col col-lg-10">
       @foreach ($members as $member)
         <div class="card {{ $member->id === Auth::guard('member')->user()->id ? 'border border-primary' : '' }} shadow">

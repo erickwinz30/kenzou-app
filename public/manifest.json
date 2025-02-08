@@ -1,114 +1,26 @@
 {
-    "theme_color": "#ffffff",
-    "background_color": "#000000",
-    "icons": [
-        {
-            "purpose": "maskable",
-            "sizes": "512x512",
-            "src": "/img/icons/icon-512.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "384x384",
-            "src": "/img/icons/icon-384.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "192x192",
-            "src": "/img/icons/icon-192.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "152x152",
-            "src": "/img/icons/icon-152.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "128x128",
-            "src": "/img/icons/icon-128.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "96x96",
-            "src": "/img/icons/icon-96.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "maskable",
-            "sizes": "72x72",
-            "src": "/img/icons/icon-72.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "512x512",
-            "src": "/img/icons/icon-512.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "384x384",
-            "src": "/img/icons/icon-384.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "192x192",
-            "src": "/img/icons/icon-192.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "152x152",
-            "src": "/img/icons/icon-152.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "128x128",
-            "src": "/img/icons/icon-128.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "96x96",
-            "src": "/img/icons/icon-96.png",
-            "type": "image/png"
-        },
-        {
-            "purpose": "any",
-            "sizes": "72x72",
-            "src": "/img/icons/icon-72.png",
-            "type": "image/png"
-        }
-    ],
-    "orientation": "any",
-    "display": "standalone",
-    "dir": "auto",
-    "lang": "en-US",
-    "name": "Kenzou Drive Thru Car Wash",
-    "short_name": "Kenzou",
-    "start_url": "./",
-    "description": "Memberikan pengalaman bagaikan aplikasi mobile hanya dengan menginstall website ini ke smartphone kalian",
-    "screenshots": [
-        {
-            "src": "/img/screenshoot/desktop-page.png",
-            "sizes": "1920x1080",
-            "type": "image/png",
-            "form_factor": "wide",
-            "label": "Desktop Page Orientation"
-        },
-        {
-            "src": "/img/screenshoot/mobile-page.png",
-            "sizes": "404x875",
-            "type": "image/png",
-            "form_factor": "narrow",
-            "label": "Mobile Page Orientation"
-        }
-    ]
+  "name": "Kenzou Drive Thru Car Wash App",
+  "short_name": "Kenzou",
+  "description": "Aplikasi untuk pencucian mobil pada Kenzou Drive Thru Car Wash",
+  "start_url": "/",
+  "theme_color": "#000000",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "icons": [
+    { "src": "/img/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    {
+      "src": "/img/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshoot/desktop-page.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Desktop Page Orientation"
+    }
+  ]
 }
