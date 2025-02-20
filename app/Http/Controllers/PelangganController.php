@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Member;
 use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -18,11 +19,43 @@ class PelangganController extends Controller
    */
   public function index()
   {
-    $pelanggans = Pelanggan::with('member')->get();
+    try {
+      // $pelanggans = Pelanggan::with('member')->get();
 
-    return view('dashboard.pelanggan.index', [
-      'pelanggans' => $pelanggans,
-    ]);
+      // return view('dashboard.pelanggan.index', [
+      //   'pelanggans' => $pelanggans,
+      // ]);
+
+      $pelanggans = Pelanggan::with('member')->get();
+
+      // Ambil data preferensi layanan untuk setiap pelanggan
+      foreach ($pelanggans as $pelanggan) {
+        $layananTeratas = DB::table('detail_layanans')
+          ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
+          ->join(
+            'layanans',
+            'detail_layanans.layanan_id',
+            '=',
+            'layanans.id'
+          )
+          ->where('transaksis.pelanggan_id', $pelanggan->id)
+          ->select('layanans.nama_layanan', DB::raw('count(detail_layanans.layanan_id) as jumlah_penggunaan'))
+          ->groupBy('layanans.nama_layanan')
+          ->orderBy('jumlah_penggunaan', 'desc')
+          ->limit(2)
+          ->get();
+
+        // Tambahkan data preferensi ke objek pelanggan
+        $pelanggan->preferences = $layananTeratas;
+      }
+
+      return view('dashboard.pelanggan.index', [
+        'pelanggans' => $pelanggans,
+      ]);
+    } catch (\Exception $e) {
+      Log::error("Error fetching pelanggan data: " . $e->getMessage());
+      return redirect('/dashboard/pelanggan')->with('error', 'Terjadi kesalahan saat mengambil data pelanggan.');
+    }
   }
 
   /**
@@ -136,11 +169,28 @@ class PelangganController extends Controller
 
     foreach ($pelanggans as $pelanggan) {
       $umur = Carbon::parse($pelanggan->member->tanggal_lahir)->age;
+
+      $layananTeratas = DB::table('detail_layanans')
+        ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
+        ->join(
+          'layanans',
+          'detail_layanans.layanan_id',
+          '=',
+          'layanans.id'
+        )
+        ->where('transaksis.pelanggan_id', $pelanggan->id)
+        ->select('layanans.nama_layanan', DB::raw('count(detail_layanans.layanan_id) as jumlah_penggunaan'))
+        ->groupBy('layanans.nama_layanan')
+        ->orderBy('jumlah_penggunaan', 'desc')
+        ->limit(2)
+        ->get();
+
       $dataPelanggan[] = [
         'id' => $pelanggan->id,
         'nomor_telepon' => $pelanggan->nomor_telepon,
         'nama' => $pelanggan->member->nama,
         'email' => $pelanggan->member->email,
+        'preferences' => $layananTeratas,
         'tanggal_lahir' => Carbon::parse($pelanggan->member->tanggal_lahir)->format('Y-m-d'),
         'umur' => $umur,
         'experience_point' => $pelanggan->member->experience_point,
@@ -167,11 +217,27 @@ class PelangganController extends Controller
     $pelanggans = Pelanggan::with('member')->whereNull('member_id')->get();
 
     foreach ($pelanggans as $pelanggan) {
+      $layananTeratas = DB::table('detail_layanans')
+        ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
+        ->join(
+          'layanans',
+          'detail_layanans.layanan_id',
+          '=',
+          'layanans.id'
+        )
+        ->where('transaksis.pelanggan_id', $pelanggan->id)
+        ->select('layanans.nama_layanan', DB::raw('count(detail_layanans.layanan_id) as jumlah_penggunaan'))
+        ->groupBy('layanans.nama_layanan')
+        ->orderBy('jumlah_penggunaan', 'desc')
+        ->limit(2)
+        ->get();
+
       $dataPelanggan[] = [
         'id' => $pelanggan->id,
         'nomor_telepon' => $pelanggan->nomor_telepon,
         'nama' => "-",
         'email' => "-",
+        'preferences' => $layananTeratas,
         'tanggal_lahir' => "-",
         'umur' => "-",
         'experience_point' => "-",
@@ -190,5 +256,72 @@ class PelangganController extends Controller
     }
 
     return $dataPelanggan;
+  }
+
+  public function memberPreference()
+  {
+    try {
+      $customers = Pelanggan::all();
+
+      $preferences = [];
+
+      foreach ($customers as $customer) {
+        // Query untuk menghitung jumlah penggunaan setiap layanan oleh member
+        $layananTeratas = DB::table('detail_layanans')
+          ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
+          ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
+          ->where('transaksis.pelanggan_id', $customer->id)
+          ->select('layanans.nama_layanan', DB::raw('count(detail_layanans.layanan_id) as jumlah_penggunaan'))
+          ->groupBy('layanans.nama_layanan')
+          ->orderBy('jumlah_penggunaan', 'desc')
+          ->limit(2)
+          ->get();
+
+        $preferences[] = [
+          'customer_id' => $customer->id,
+          'customer_name' => $customer->member ? $customer->member->nama : $customer->nomor_telepon,
+          'preferences' => $layananTeratas
+        ];
+      }
+
+      // Return data dalam format JSON
+      return response()->json($preferences, 200);
+    } catch (\Exception $e) {
+      Log::error("Error fetching member preference: " . $e->getMessage());
+      return response()->json(['error' => 'Terjadi kesalahan saat mengambil data preferensi layanan.'], 500);
+    }
+  }
+
+  public function allLayananCount(Request $request)
+  {
+    // Query for total sales per month
+    $results = DB::table('detail_layanans')
+      ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
+      ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
+      ->select(
+        'layanans.nama_layanan',
+        DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan'),
+      )
+      ->groupBy('layanans.nama_layanan')
+      ->orderBy('jumlah_penggunaan', 'desc')
+      ->get();
+
+
+    $data = [];
+
+    foreach ($results as $result) {
+      $data[] = [
+        'nama_layanan' => $result->nama_layanan,
+        'jumlah_penggunaan' => $result->jumlah_penggunaan
+      ];
+    }
+
+    Log::info('Data Layanan: ', ['data' => $data]);
+
+    if ($request->wantsJson()) {
+      return response()->json($data);
+    }
+
+    return $data;
   }
 }

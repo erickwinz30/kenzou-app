@@ -38,15 +38,22 @@
                 <div class="row">
                   <div class="col-12 col-md-8 mt-3">
                     <div class="d-flex flex-wrap align-items-center gap-2">
-                      <i class="bi bi-calendar3 fs-5"></i>
-                      <input type="text" class="form-control" name="min" id="min" placeholder="Dari"
-                        style="max-width: 150px;">
-                      <span class="text-muted">S/D</span>
-                      <input type="text" class="form-control" name="max" id="max" placeholder="Sampai"
-                        style="max-width: 150px;">
-                      <button type="button" id="tombolReset" class="btn btn-outline-secondary">
+                      <form action="/dashboard/transaksi/searchFromDate" method="POST" id="searchFromDateForm"
+                        class="d-flex align-items-center gap-2">
+                        @csrf
+                        <i class="bi bi-calendar3 fs-5"></i>
+                        <input type="date" class="form-control" name="min_date" id="min_date" placeholder="Dari"
+                          style="max-width: 150px;" required>
+                        <span class="text-muted">S/D</span>
+                        <input type="date" class="form-control" name="max_date" id="max_date" placeholder="Sampai"
+                          style="max-width: 150px;" required>
+                        <button type="submit" id="submitButton" class="btn btn-primary">
+                          <i class="bi bi-search"></i>
+                        </button>
+                      </form>
+                      <a href="/dashboard/transaksi" type="button" id="tombolReset" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-clockwise"></i>
-                      </button>
+                      </a>
                     </div>
                   </div>
                   <div class="col-12 col-md-4 mt-3">
@@ -166,109 +173,97 @@
   <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.html5.min.js"></script>
   <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.print.min.js"></script>
   <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.colVis.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+
   <script>
-    // Initialize minDate and maxDate variables
-    $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-      var min = minDate.val();
-      var max = maxDate.val();
-      var dateStr = data[5]; // Ensure this index is correct
-
-      // console.log('Date string from table:', dateStr); // Debug
-
-      // Remove HTML tags and trim extra spaces
-      dateStr = dateStr.replace(/<[^>]*>/g, '').trim();
-
-      var date;
-
-      // Adjust date parsing based on the expected format
-      if (dateStr) {
-        var dateParts = dateStr.split(' '); // Split by space for `YYYY-MM-DD HH:MM:SS` format
-        var dateOnly = dateParts[0]; // Get the date part
-
-        var dateParts = dateOnly.split('-'); // Split by '-'
-        if (dateParts.length === 3) {
-          var year = parseInt(dateParts[0], 10);
-          var month = parseInt(dateParts[1], 10) - 1; // Months are 0-based
-          var day = parseInt(dateParts[2], 10);
-          date = new Date(year, month, day);
-        } else {
-          console.error('Unexpected date format:', dateStr);
-        }
-      }
-
-      // Convert min and max to Date objects
-      var minDateObj = min ? new Date(min) : null;
-      var maxDateObj = max ? new Date(max) : null;
-
-      if (
-        (minDateObj === null && maxDateObj === null) ||
-        (minDateObj === null && date <= maxDateObj) ||
-        (minDateObj <= date && maxDateObj === null) ||
-        (minDateObj <= date && date <= maxDateObj)
-      ) {
-        return true;
-      }
-      return false;
-    });
-
-    // Create date inputs
-    minDate = new DateTime($('#min'), {
-      format: 'YYYY-MM-DD'
-    });
-    maxDate = new DateTime($('#max'), {
-      format: 'YYYY-MM-DD'
-    });
-
-    // DataTables initialization
     $(document).ready(function() {
       var table = $('#tabelTransaksi').DataTable({
         scrollX: true,
         columns: [{
-            data: 'no', // can be null or undefined
+            data: 'no',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'id', // can be null or undefined
+            data: 'id',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'pelanggan', // can be null or undefined
+            data: 'pelanggan',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'nama_layanan', // can be null or undefined
+            data: 'nama_layanan',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'kasir', // can be null or undefined
+            data: 'kasir',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'tanggal_transaksi', // can be null or undefined
+            data: 'tanggal_transaksi',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'metode_pembayaran', // can be null or undefined
+            data: 'metode_pembayaran',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'keterangan', // can be null or undefined
+            data: 'keterangan',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'subtotal', // can be null or undefined
+            data: 'subtotal',
             defaultContent: '<i>Not set</i>'
           },
           {
-            data: 'action', // can be null or undefined
+            data: 'action',
             defaultContent: '<i>Not set</i>'
           },
         ],
-        layout: {
-          topStart: {
-            buttons: ['csv', 'excel', 'print', 'colvis']
-          }
-        },
+        dom: 'Bfrtip', // Menambahkan tombol ekspor ke DOM
+        buttons: [{
+            extend: 'csv',
+            text: 'CSV',
+            exportOptions: {
+              modifier: {
+                search: 'none',
+                page: 'all'
+              }
+            }
+          },
+          {
+            extend: 'excel',
+            text: 'Excel',
+            exportOptions: {
+              modifier: {
+                search: 'none',
+                page: 'all'
+              }
+            }
+          },
+          {
+            extend: 'pdf',
+            text: 'PDF',
+            exportOptions: {
+              modifier: {
+                search: 'none',
+                page: 'all'
+              }
+            }
+          },
+          {
+            extend: 'print',
+            text: 'Print',
+            exportOptions: {
+              modifier: {
+                search: 'none',
+                page: 'all'
+              }
+            }
+          },
+          'colvis'
+        ],
         fixedHeader: true,
         "footerCallback": function(row, data, start, end, display) {
           var api = this.api();
@@ -282,18 +277,8 @@
           };
 
           // Total over all pages
-          total = api
+          var total = api
             .column(8)
-            .data()
-            .reduce(function(a, b) {
-              return intVal(a) + intVal(b);
-            }, 0);
-
-          // Total over this page
-          pageTotal = api
-            .column(8, {
-              page: 'current'
-            })
             .data()
             .reduce(function(a, b) {
               return intVal(a) + intVal(b);
@@ -301,22 +286,22 @@
 
           // Update footer
           $(api.column(8).footer()).html(
-            'Rp ' + new Intl.NumberFormat('id-ID').format(pageTotal)
+            'Rp ' + new Intl.NumberFormat('id-ID').format(total)
           );
         },
+        // Tambahkan ini untuk memastikan semua data dimuat
+        "deferRender": false,
+        "processing": true,
+        "serverSide": false,
+        "lengthMenu": [
+          [10, 25, 50, -1],
+          [10, 25, 50, "All"]
+        ]
       });
 
-      $('#min, #max').on('change', function() {
-        table.draw();
-      });
-
-      // Reset button functionality
+      // Reset button functionality (updated)
       $('#tombolReset').on('click', function() {
-        $('#min').val('');
-        $('#max').val('');
-        minDate.val('');
-        maxDate.val('');
-        table.draw();
+        table.search('').columns().search('').draw();
       });
     });
   </script>

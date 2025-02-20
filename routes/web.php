@@ -51,6 +51,7 @@ Route::middleware('isAdmin')->group(function () {
   Route::post('/dashboard/transaksi/active-switch', [TransaksiController::class, 'activeSwitch']);
 
   //dateRange
+  Route::post('/dashboard/transaksi/searchFromDate', [TransaksiController::class, 'searchFromDate'])->name('searchFromDate');
   Route::get('/dashboard/transaksiThisWeek', [TransaksiController::class, 'thisWeek'])->name('transaksi.thisWeek');
   Route::get('/dashboard/transaksiThisMonth', [TransaksiController::class, 'thisMonth'])->name('transaksi.thisMonth');
   Route::get('/dashboard/transaksiThisYear', [TransaksiController::class, 'thisYear'])->name('transaksi.thisYear');
@@ -72,6 +73,7 @@ Route::middleware('isAdmin')->group(function () {
   Route::resource('/dashboard/pelanggan', PelangganController::class);
   Route::get('/dashboard/memberFetch', [PelangganController::class, 'memberFetch'])->name('member.fetch');
   Route::get('/dashboard/pelangganFetch', [PelangganController::class, 'pelangganFetch'])->name('pelanggan.fetch');
+  Route::get('/dashboard/fetch-all-layanan-count', [PelangganController::class, 'allLayananCount']);
 
   //badge
   Route::resource('/dashboard/badge', BadgeController::class);

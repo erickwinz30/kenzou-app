@@ -386,44 +386,61 @@ class TransaksiController extends Controller
     }
   }
 
-  // activeSwitch for edit transaksi when changing between displaying all layanan or only active layanan
-  public function activeSwitch(Request $request)
+  public function searchFromDate(Request $request)
   {
-    try {
-      $isActive = $request->input('isActive');
+    $validatedDate = $request->validate([
+      'min_date' => 'date',
+      'max_date' => 'date'
+    ]);
 
-      if ($isActive) {
-        Log::info('Active Switch: ', ['message' => 'All Layanan']);
-        $layanans = Layanan::all();
-      } else {
-        Log::info('Active Switch: ', ['message' => 'Active Layanan']);
-        $layanans = Layanan::where('is_active', true)->get();
-      }
-      Log::info('Layanan', ['layanan' => $layanans]);
+    $min = $validatedDate['min_date'];
+    $max = $validatedDate['max_date'];
 
-      $data = [];
+    $filteredData = Transaksi::whereBetween('date', [$min, $max])->orderBy('date', 'desc')->get();
 
-      foreach ($layanans as $layanan) {
-        $data[] = [
-          'id' => $layanan->id,
-          'nama_layanan' => $layanan->nama_layanan,
-          'harga' => $layanan->harga,
-        ];
-      }
-      Log::info('Data Layanan', ['data' => $data]);
-
-      if ($request->expectsJson()) {
-        if ($layanans->isEmpty()) {
-          return response()->json([]);
-        } else {
-          return response()->json($data, 200);
-        }
-      }
-
-      return $data;
-    } catch (\Exception $e) {
-      Log::error('Active Switch Error:', ['message' => $e->getMessage()]);
-      return back()->with('error', 'Terjadi kesalahan saat mengubah status layanan');
-    }
+    return view('dashboard.transaksi.index', [
+      'transaksis' => $filteredData,
+    ]);
   }
+
+  // activeSwitch for edit transaksi when changing between displaying all layanan or only active layanan
+  // public function activeSwitch(Request $request)
+  // {
+  //   try {
+  //     $isActive = $request->input('isActive');
+
+  //     if ($isActive) {
+  //       Log::info('Active Switch: ', ['message' => 'All Layanan']);
+  //       $layanans = Layanan::all();
+  //     } else {
+  //       Log::info('Active Switch: ', ['message' => 'Active Layanan']);
+  //       $layanans = Layanan::where('is_active', true)->get();
+  //     }
+  //     Log::info('Layanan', ['layanan' => $layanans]);
+
+  //     $data = [];
+
+  //     foreach ($layanans as $layanan) {
+  //       $data[] = [
+  //         'id' => $layanan->id,
+  //         'nama_layanan' => $layanan->nama_layanan,
+  //         'harga' => $layanan->harga,
+  //       ];
+  //     }
+  //     Log::info('Data Layanan', ['data' => $data]);
+
+  //     if ($request->expectsJson()) {
+  //       if ($layanans->isEmpty()) {
+  //         return response()->json([]);
+  //       } else {
+  //         return response()->json($data, 200);
+  //       }
+  //     }
+
+  //     return $data;
+  //   } catch (\Exception $e) {
+  //     Log::error('Active Switch Error:', ['message' => $e->getMessage()]);
+  //     return back()->with('error', 'Terjadi kesalahan saat mengubah status layanan');
+  //   }
+  // }
 }

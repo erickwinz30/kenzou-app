@@ -10,10 +10,10 @@
     <meta content="" name="keywords"> --}}
 
     <!-- Favicons -->
-    <link rel="icon" type="image/png" href="/img/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="/img/favicon.svg" />
-    <link rel="shortcut icon" href="/img/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/img/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="{{ asset('favicon-96x96.png') }}" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" />
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('apple-touch-icon.png') }}" />
     <meta name="apple-mobile-web-app-title" content="Kenzou" />
     <link rel="manifest" href="/manifest.json">
 
@@ -76,7 +76,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     {{-- sw --}}
-    <script>
+    {{-- <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function() {
           navigator.serviceWorker.register('/sw.js').then(function(registration) {
@@ -86,7 +86,7 @@
           });
         });
       }
-    </script>
+    </script> --}}
 
     <!-- Template Main JS File -->
     <script src="{{ asset('js/main.js') }}"></script>

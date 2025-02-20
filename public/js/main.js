@@ -335,6 +335,7 @@
   }
 
   // let deferredPrompt;
+
   // window.addEventListener("beforeinstallprompt", (e) => {
   //   e.preventDefault();
   //   deferredPrompt = e;
@@ -342,53 +343,22 @@
   // });
 
   // function showInstallPromotion() {
-  //   // Tampilkan elemen UI untuk menavigasi install
+  //   // Tampilkan elemen UI untuk memulai prompt instalasi
   //   const installButton = document.getElementById("installButton");
   //   installButton.style.display = "block";
   // }
 
   // document.getElementById("installButton").addEventListener("click", async () => {
-  //   deferredPrompt.prompt();
-  //   const { outcome } = await deferredPrompt.userChoice;
-  //   deferredPrompt = null;
-  //   console.log(`User response to the install prompt: ${outcome}`);
+  //   if (deferredPrompt) {
+  //     deferredPrompt.prompt();
+  //     const { outcome } = await deferredPrompt.userChoice;
+  //     deferredPrompt = null;
+  //     console.log(`User response to the install prompt: ${outcome}`);
+  //     installButton.style.display = "none";
+  //   }
   // });
 
   // window.addEventListener("appinstalled", () => {
-  //   hideInstallPromotion();
   //   console.log("PWA was installed");
   // });
-
-  // function hideInstallPromotion() {
-  //   const installButton = document.getElementById("installButton");
-  //   installButton.style.display = "none";
-  // }
-
-  let deferredPrompt;
-
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    showInstallPromotion(); // Fungsi untuk menampilkan UI install
-  });
-
-  function showInstallPromotion() {
-    // Tampilkan elemen UI untuk memulai prompt instalasi
-    const installButton = document.getElementById("installButton");
-    installButton.style.display = "block";
-  }
-
-  document.getElementById("installButton").addEventListener("click", async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      console.log(`User response to the install prompt: ${outcome}`);
-      installButton.style.display = "none";
-    }
-  });
-
-  window.addEventListener("appinstalled", () => {
-    console.log("PWA was installed");
-  });
 })();

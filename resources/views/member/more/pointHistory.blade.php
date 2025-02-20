@@ -7,7 +7,7 @@
       style="background-color: #012970; border-color:#012970">Kembali</a>
   </div><!-- End Page Title -->
 
-  <section class="section mt-4">
+  <section class="section my-4">
     <div class="col-12">
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
         @foreach ($informations as $information)

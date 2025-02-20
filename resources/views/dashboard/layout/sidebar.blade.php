@@ -5,9 +5,9 @@
       <h2 class="accordion-header" id="headingOne">
         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
           aria-expanded="false" aria-controls="collapseOne">
-          <strong>{{ Auth::user()->nama }}</strong>
+          <strong>{{ auth()->user()->nama }}</strong>
           <span class="fs-6 ms-1">(
-            @if (Auth::user()->is_admin == 1)
+            @if (Auth::check() && Auth::user()->is_admin)
               Admin
             @else
               Kasir

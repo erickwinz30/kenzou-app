@@ -266,7 +266,7 @@ class CatatTransaksiController extends Controller
       'member_id' => $memberId,
       'point' => $totalPoint,
       'transaksi_id' => $transaction->id,
-      'status' => $challengePoint ? 'Transaksi dan menyelesaikan challenge' : 'Transaksi',
+      'status' => $challengePoint ? 'Transaksi dan menggunakan challenge' : 'Transaksi',
       'date' => Carbon::now('Asia/Jakarta'),
       'is_increase' => true,
     ]);
