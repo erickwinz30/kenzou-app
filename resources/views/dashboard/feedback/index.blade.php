@@ -40,7 +40,7 @@
                   @foreach ($feedbacks as $feedback)
                     <tr>
                       <td>{{ $loop->iteration }}</td>
-                      <td>{{ $feedback->nama }}</td>
+                      <td>{{ $feedback->member->nama }}</td>
                       <td>{{ $feedback->subject }}</td>
                       <td>{{ $feedback->description }}</td>
                       <td class="text-center align-middle" style="padding: 0;">

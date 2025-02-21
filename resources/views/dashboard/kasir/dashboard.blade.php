@@ -292,14 +292,12 @@
                               {{ \Carbon\Carbon::parse($transaksi->date)->locale('id')->diffForHumans() }}
                             </span>
                           </td>
-                          <td>Rp {{ number_format($transaksi->total_harga, 0, ',', '.') }}</td>
+                          <td>Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
                         </tr>
                       @endforeach
                     </tbody>
                   </table>
-
                 </div>
-
               </div>
             </div><!-- End Recent Sale -->
           </div><!-- End Reports -->
