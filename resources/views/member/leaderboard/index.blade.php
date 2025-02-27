@@ -19,7 +19,7 @@
                 @elseif($loop->iteration == 3)
                   <img src="{{ asset('storage/' . $rankThird) }}" alt="Badge Rank Third" style="max-width: 75px">
                 @else
-                  {{ $loop->iteration }}
+                  <p class="card-title ms-3">{{ $loop->iteration }}</p>
                 @endif
                 <p class="card-title ms-3">{{ $member->nama }}</p>
               </div>
@@ -36,11 +36,11 @@
           <i class="bi bi-three-dots"></i>
         </div>
         <div class="card border border-primary shadow">
-          <div class="card-body">
+          <div class="card-body d-flex justify-content-between align-items-center">
             <div class="d-flex justify-content-between align-items-center">
               <div class="d-flex align-items-center">
                 <p class="card-title ms-3">{{ $ownRank }}</p>
-                <p class="card-title">{{ Auth::guard('member')->user()->nama }}</p>
+                <p class="card-title ms-3">{{ Auth::guard('member')->user()->nama }}</p>
               </div>
             </div>
             <div class="d-flex justify-content-end">

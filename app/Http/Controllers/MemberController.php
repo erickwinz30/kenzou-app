@@ -32,6 +32,7 @@ class MemberController extends Controller
 
     $listChallengeNotFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)
       ->where('is_completed', false)
+      ->where('is_used', false) // Tambahkan kondisi ini
       ->whereHas('challenge', function ($query) {
         $query->where('is_active', true)
           ->where('from_date', '<=', Carbon::now())
@@ -207,19 +208,32 @@ class MemberController extends Controller
 
   public function viewLeaderboard()
   {
-    $members = Member::orderBy('experience_point', 'desc')->limit(10)->get();
+    $allMembers = Member::orderBy('experience_point', 'desc')->get();
+    $topMembers = $allMembers->take(10); // Ambil 10 anggota teratas untuk ditampilkan
+
     $rankFirst = BadgeLeaderboard::where('rank', 1)->first()->image;
     $rankSecond = BadgeLeaderboard::where('rank', 2)->first()->image;
     $rankThird = BadgeLeaderboard::where('rank', 3)->first()->image;
 
     $loggedInMember = Auth::guard('member')->user();
-    $loggedInMemberExperience = $loggedInMember->experience_point;
+
+    // Hitung peringkat untuk semua anggota
+    $rankedMembers = $allMembers->map(function ($member, $index) {
+      $member->rank = $index + 1;
+      return $member;
+    });
+
+    // Cari peringkat anggota yang login
+    $ownRank = $rankedMembers->firstWhere('id', $loggedInMember->id)->rank;
+
+    Log::info('Own Rank: ', ['Own Rank' => $ownRank]);
 
     return view('member.leaderboard.index', [
-      'members' => $members,
+      'members' => $topMembers,
       'rankFirst' => $rankFirst,
       'rankSecond' => $rankSecond,
       'rankThird' => $rankThird,
+      'ownRank' => $ownRank,
     ]);
   }
 

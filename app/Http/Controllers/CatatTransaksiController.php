@@ -214,7 +214,7 @@ class CatatTransaksiController extends Controller
             ];
           }
 
-          // $this->sendMessage($transactionData, $transactionLayananData);
+          $this->sendMessage($transactionData, $transactionLayananData);
         }
       }
 
