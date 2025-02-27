@@ -26,7 +26,7 @@ class PelangganController extends Controller
       //   'pelanggans' => $pelanggans,
       // ]);
 
-      $pelanggans = Pelanggan::with('member')->get();
+      $pelanggans = Pelanggan::with('member')->orderBy('created_at', 'desc')->get();
 
       // Ambil data preferensi layanan untuk setiap pelanggan
       foreach ($pelanggans as $pelanggan) {

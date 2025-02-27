@@ -36,12 +36,12 @@
     @can('notAdmin')
       <li class="nav-heading">Kasir</li>
 
-      <li class="nav-item">
+      {{-- <li class="nav-item">
         <a class="nav-link {{ Request::is('dashboard') ? '' : 'collapsed' }}" href="/dashboard">
           <i class="bi bi-grid"></i>
           <span>Dashboard Kasir</span>
         </a>
-      </li><!-- End Dashboard Kasir Nav -->
+      </li><!-- End Dashboard Kasir Nav --> --}}
 
       <li class="nav-item">
         <a class="nav-link {{ Request::is('dashboard/transaksiBaru') ? '' : 'collapsed' }}"
