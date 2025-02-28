@@ -15,7 +15,7 @@ return new class extends Migration
       $table->uuid('id')->primary();
       $table->string('nama');
       $table->string('email')->unique();
-      $table->string('nomor_telepon')->unique()->nullable();
+      $table->string('nomor_telepon')->unique();
       $table->datetime('tanggal_lahir')->nullable();
       $table->integer('experience_point')->nullable()->default(0);
       $table->integer('redeemable_point')->nullable()->default(0);

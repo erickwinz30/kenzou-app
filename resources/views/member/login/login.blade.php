@@ -54,12 +54,13 @@
                 <form action='/login' method="POST" class="row g-3 needs-validation" novalidate>
                   @csrf
                   <div class="col-12">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="nomor_telepon" class="form-label">No. Telp</label>
                     <div class="input-group has-validation">
-                      <input type="email" name="email" class="form-control" id="email"
-                        placeholder="Masukkan email..." @error('email') is-invalid @enderror required>
-                      {{-- <div class="invalid-feedback">Please enter your email.</div> --}}
-                      @error('email')
+                      <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
+                        id="nomor_telepon" placeholder="Masukkan no telepon..."
+                        @error('nomor_telepon') is-invalid @enderror required>
+                      {{-- <div class="invalid-feedback">Please enter your nomor telepon.</div> --}}
+                      @error('nomor_telepon')
                         <div class="invalid-feedback">
                           {{ $message }}
                         </div>
@@ -95,8 +96,12 @@
           </div>
         </div>
       </div>
-
     </section>
-
   </div>
+
+  <script>
+    document.getElementById('nomor_telepon').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
+  </script>
 @endsection

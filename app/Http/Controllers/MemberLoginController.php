@@ -17,8 +17,9 @@ class MemberLoginController extends Controller
   public function authenticate(Request $request)
   {
     try {
+      // dd($request->all());
       $credentials = $request->validate([
-        'email' => 'required|min:5|max:255',
+        'nomor_telepon' => 'required|min:10|max:15',
         'password' => 'required',
       ]);
 
