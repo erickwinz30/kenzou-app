@@ -22,6 +22,26 @@ class MemberController extends Controller
 {
   public function index()
   {
+    $member = Auth::guard('member')->user();
+    $badge = DB::table('badges')
+      ->where('min_point', '<=', $member->experience_point)
+      ->where('max_point', '>=', $member->experience_point)
+      ->first();
+
+    $nextBadge = DB::table('badges')
+      ->where('min_point', '>', $member->experience_point)
+      ->orderBy('min_point', 'asc')
+      ->first();
+
+    return view('member.index', [
+      'member' => $member,
+      'badge' => $badge,
+      'nextBadge' => $nextBadge ? $nextBadge : null,
+    ]);
+  }
+
+  public function challenge()
+  {
     $listChallengeFinish = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', true)
       ->where('is_used', false)->whereHas('challenge', function ($query) {
         $query->where('is_active', true)
@@ -40,7 +60,7 @@ class MemberController extends Controller
       })
       ->get();
 
-    return view('member.index', [
+    return view('member.challenge.index', [
       'finishChallengeProgress' => $listChallengeFinish,
       'unfinishChallengeProgress' => $listChallengeNotFinish,
     ]);

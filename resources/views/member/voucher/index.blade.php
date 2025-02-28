@@ -1,8 +1,9 @@
 @extends('member.layout.main')
 
 @section('container')
-  <div class="pagetitle">
+  <div class="pagetitle d-flex justify-content-between align-items-center">
     <h1>Voucher</h1>
+    <h5 class="card-text fw-bold">{{ auth()->guard('member')->user()->redeemable_point }} RP</h5>
   </div><!-- End Page Title -->
 
   <section class="section mt-4">

@@ -10,6 +10,14 @@
     </li><!-- End Dashboard Nav -->
 
     <li class="nav-item">
+      <a class="nav-link {{ Request::is('challenge-progress') || Request::is('challenge-progress/*') ? '' : 'collapsed' }}"
+        href="{{ route('challenge-index') }}">
+        <i class="bi bi-graph-up me-0"></i>
+        <span class="d-none d-lg-block ms-2">Challenge</span>
+      </a>
+    </li><!-- End Dashboard Nav -->
+
+    <li class="nav-item">
       <a class="nav-link {{ Request::is('voucher') || Request::is('voucher/*') ? '' : 'collapsed' }}"
         href="{{ route('voucher-index') }}">
         <i class="bi bi-gift me-0"></i>
@@ -20,7 +28,7 @@
     <li class="nav-item">
       <a class="nav-link {{ Request::is('leaderboard') || Request::is('leaderboard/*') ? '' : 'collapsed' }}"
         href="{{ route('leaderboard') }}">
-        <i class="bi bi-bar-chart me-0"></i>
+        <i class="bi bi-list-ol me-0"></i>
         <span class="d-none d-lg-block ms-2">Leaderboard</span>
       </a>
     </li><!-- End Dashboard Nav -->

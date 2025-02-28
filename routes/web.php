@@ -148,7 +148,8 @@ Route::middleware('auth:member')->group(function () {
   Route::post('/register/next', [GoogleController::class, 'nextRegisterStore']);
 
   //challenge progress
-  Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress'])->name('challenge-index');
+  Route::get('/challenge-progress', [MemberController::class, 'challenge'])->name('challenge-index');
+  Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress']);
 
   //leaderboard
   Route::get('/leaderboard', [MemberController::class, 'viewLeaderboard'])->name('leaderboard');
