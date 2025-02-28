@@ -57,12 +57,13 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="email" class="form-label">Email</label>
+                    <label for="nomor_telepon" class="form-label">No.
+                      Telepon</label>
                     <div class="input-group has-validation">
-                      <input type="email" name="email" class="form-control" id="email"
-                        placeholder="Masukkan email..." @error('email') is-invalid @enderror required
-                        value="{{ old('email') }}">
-                      @error('email')
+                      <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
+                        id="nomor_telepon" placeholder="Masukkan no. telepon..."
+                        @error('nomor_telepon') is-invalid @enderror required value="{{ old('nomor_telepon') }}">
+                      @error('nomor_telepon')
                         <div class="invalid-feedback">
                           {{ $message }}
                         </div>
@@ -71,13 +72,12 @@
                   </div>
 
                   <div class="col-12">
-                    <label for="nomor_telepon" class="form-label">No.
-                      Telepon</label>
+                    <label for="email" class="form-label">Email</label>
                     <div class="input-group has-validation">
-                      <input type="text" inputmode="numeric" name="nomor_telepon" class="form-control"
-                        id="nomor_telepon" placeholder="Masukkan no. telepon..."
-                        @error('nomor_telepon') is-invalid @enderror required value="{{ old('nomor_telepon') }}">
-                      @error('nomor_telepon')
+                      <input type="email" name="email" class="form-control" id="email"
+                        placeholder="Masukkan email..." @error('email') is-invalid @enderror required
+                        value="{{ old('email') }}">
+                      @error('email')
                         <div class="invalid-feedback">
                           {{ $message }}
                         </div>
