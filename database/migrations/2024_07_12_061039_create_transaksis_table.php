@@ -20,6 +20,7 @@ return new class extends Migration
       $table->foreignId('badge_id')->nullable()->constrained('badges');
       $table->foreignId('leaderboard_id')->nullable()->constrained('badge_leaderboards');
       $table->datetime('date');
+      $table->string('nomor_polisi');
       $table->decimal('total');
       $table->decimal('subtotal');
       $table->string('metode_pembayaran');

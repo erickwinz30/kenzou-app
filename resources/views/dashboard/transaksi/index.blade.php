@@ -87,6 +87,7 @@
                     <th>Kasir</th>
                     <th data-type="datetime" data-format="YYYY/DD/MM">Tanggal Transaksi</th>
                     <th>Metode Pembayaran</th>
+                    <th>Nomor Polisi</th>
                     <th>Keterangan</th>
                     <th>Subtotal</th>
                     <th>Aksi</th>
@@ -119,6 +120,7 @@
                           </span>
                         </td>
                         <td>{{ $transaksi->metode_pembayaran }}</td>
+                        <td>{{ $transaksi->nomor_polisi }}</td>
                         <td>{{ Str::limit($transaksi->keterangan, 20) }}</td>
                         <td>Rp {{ number_format($transaksi->subtotal, 0, ',', '.') }}</td>
                         <td>
@@ -146,7 +148,7 @@
                 </tbody>
                 <tfoot>
                   <tr>
-                    <th colspan="8" class="text-right">Total Penjualan:</th>
+                    <th colspan="9" class="text-right">Total Penjualan:</th>
                     <th id="totalHarga">Rp 0</th>
                     <th colspan="1"></th>
                   </tr>
@@ -206,6 +208,10 @@
           },
           {
             data: 'metode_pembayaran',
+            defaultContent: '<i>Not set</i>'
+          },
+          {
+            data: 'nomor_polisi',
             defaultContent: '<i>Not set</i>'
           },
           {
@@ -278,14 +284,14 @@
 
           // Total over all pages
           var total = api
-            .column(8)
+            .column(9)
             .data()
             .reduce(function(a, b) {
               return intVal(a) + intVal(b);
             }, 0);
 
           // Update footer
-          $(api.column(8).footer()).html(
+          $(api.column(9).footer()).html(
             'Rp ' + new Intl.NumberFormat('id-ID').format(total)
           );
         },

@@ -38,8 +38,7 @@ use App\Http\Controllers\BadgeLeaderboardController;
 
 Route::middleware('isAdmin')->group(function () {
   //dashboard
-  // Route::get('/dashboard/admin', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-  Route::get('/dashboard/admin', [DashboardController::class, 'index'])->name('dashboard');
+  Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
   Route::get('/dashboard/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
   Route::get('/dashboard/fetch-sales-this-month', [DashboardController::class, 'perDaySales'])->name('fetch-sales-this-month');
   Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-sales-this-month');
@@ -107,7 +106,7 @@ Route::middleware('notAdmin')->group(function () {
   // Route::get('/dashboard/fetch-sales-cashier', [CatatTransaksiController::class, 'perHourSales'])->name('fetch-sales-cashier');
 
   //catat transaksi
-  Route::get('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'index']);
+  Route::get('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'index'])->name('transactionPage');
 
   Route::post('/dashboard/transaksiBaru', [CatatTransaksiController::class, 'catat']);
   Route::post('/dashboard/transaksiBaru/nomor_telepon', [CatatTransaksiController::class, 'searchPhoneNumber']);

@@ -30,7 +30,7 @@ class LoginController extends Controller
       $request->session()->regenerate();
 
       if (Auth::user()->is_admin == 0) {
-        return redirect()->route('dashboard-kasir');
+        return redirect()->route('transactionPage');
       } else if (Auth::user()->is_admin == 1) {
         return redirect()->route('dashboard');
       }

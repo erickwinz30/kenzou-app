@@ -94,14 +94,27 @@
                   </div>
                 </div>
               </div>
-              <div class="mb-3">
-                <label for="keterangan" class="form-label @error('keterangan') is-invalid @enderror">Keterangan</label>
-                <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini..">{{ old('keterangan', $transaksi->keterangan) }}</textarea>
-                @error('keterangan')
-                  <div class="invalid-feedback">
-                    {{ $message }}
-                  </div>
-                @enderror
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                <div class="mb-3">
+                  <label for="nomor_polisi" class="form-label @error('nomor_polisi') is-invalid @enderror">No. Polisi
+                    Mobil</label>
+                  <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" required autofocus
+                    value="{{ old('nomor_polisi', $transaksi->nomor_polisi) }}">
+                  @error('nomor_polisi')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
+                </div>
+                <div class="mb-3">
+                  <label for="keterangan" class="form-label @error('keterangan') is-invalid @enderror">Keterangan</label>
+                  <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini..">{{ old('keterangan', $transaksi->keterangan) }}</textarea>
+                  @error('keterangan')
+                    <div class="invalid-feedback">
+                      {{ $message }}
+                    </div>
+                  @enderror
+                </div>
               </div>
               <div>
                 <div class="d-flex justify-content-between align-items-center mb-2">

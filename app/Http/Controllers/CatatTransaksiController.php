@@ -49,6 +49,7 @@ class CatatTransaksiController extends Controller
 
       $validatedData = $request->validate([
         'keterangan' => 'max:255',
+        'nomor_polisi' => 'max:12',
         'total' => 'required',
         'subtotal' => 'required',
         'metode_pembayaran' => 'required',
@@ -338,20 +339,20 @@ class CatatTransaksiController extends Controller
     }
   }
 
-  public function dashboardKasir()
-  {
-    $todayTransaksi = $this->countMobil();
-    $todaySales = $this->todaySales();
-    $recentTransaction = $this->recentTransaction();
-    // $dataPenjualanDashboard = $this->perHourSales($request);
+  // public function dashboardKasir()
+  // {
+  //   $todayTransaksi = $this->countMobil();
+  //   $todaySales = $this->todaySales();
+  //   $recentTransaction = $this->recentTransaction();
+  //   // $dataPenjualanDashboard = $this->perHourSales($request);
 
-    return view('dashboard.kasir.dashboard', [
-      'todayTransaksi' => $todayTransaksi,
-      'todaySales' => $todaySales,
-      'recentTransactions' => $recentTransaction,
-      // 'salesData' => $dataPenjualanDashboard,
-    ]);
-  }
+  //   return view('dashboard.kasir.dashboard', [
+  //     'todayTransaksi' => $todayTransaksi,
+  //     'todaySales' => $todaySales,
+  //     'recentTransactions' => $recentTransaction,
+  //     // 'salesData' => $dataPenjualanDashboard,
+  //   ]);
+  // }
 
   public function countMobil()
   {

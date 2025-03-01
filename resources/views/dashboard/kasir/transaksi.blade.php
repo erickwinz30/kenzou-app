@@ -127,8 +127,13 @@
               <div class="mb-3" id="voucher-description-container"></div>
               <div class="mb-3" id="challenge-description-container"></div>
               <div class="mb-3">
-                <h6 class="card-text fw-semibold mb-3" id="card_item">Keterangan</h6>
-                <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini.."></textarea>
+                <h6 class="card-text fw-semibold" id="card_item">Nomor Polisi</h6>
+                <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" rows="3"
+                  placeholder="Isi nomor polisi mobil ..."></input>
+              </div>
+              <div class="mb-3">
+                <h6 class="card-text fw-semibold" id="card_item">Keterangan</h6>
+                <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Isi keterangannya ..."></textarea>
               </div>
               {{-- Container Subtotal & Metode Pembayaran --}}
               <div class="card shadow">
@@ -1058,6 +1063,8 @@
       inputNomorTelepon.addEventListener("input", function(event) {
         event.preventDefault();
         clearTimeout(timeoutId); // Hentikan timeout sebelumnya, jika ada
+
+        this.value = this.value.replace(/[^0-9]/g, '');
 
         timeoutId = setTimeout(() => {
           let noHp = document.getElementById("nomor_telepon").value;
