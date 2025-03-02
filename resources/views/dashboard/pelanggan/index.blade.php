@@ -47,7 +47,7 @@
                   <th>Email</th>
                   <th>Preferensi Layanan</th>
                   <th data-type="datetime" data-format="YYYY/DD/MM">Tgl Lahir / Umur</th>
-                  <th>Exp Point</th>
+                  <th>Exp Point (Rank)</th>
                   <th>Redeem Point</th>
                   <th>Referral Code</th>
                   <th>Aksi</th>
