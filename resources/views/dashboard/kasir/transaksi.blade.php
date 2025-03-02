@@ -1,179 +1,180 @@
 @extends('dashboard.layout.main')
 
 @section('container')
-  <style>
-    #pelanggan-container {
-      position: absolute;
-      max-height: 150px;
-      overflow-y: auto;
-      background-color: white;
-      padding: 10px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      left: 0;
-      /* right: 20px; */
-      width: 100%;
-      margin-top: 10px;
-      box-sizing: border-box;
-      z-index: 999;
-    }
-  </style>
+<style>
+  #pelanggan-container {
+    position: absolute;
+    max-height: 150px;
+    overflow-y: auto;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    left: 0;
+    /* right: 20px; */
+    width: 100%;
+    margin-top: 10px;
+    box-sizing: border-box;
+    z-index: 999;
+  }
+</style>
 
-  <div class="pagetitle">
-    <h1>Transaksi Baru</h1>
-  </div>
-  <!-- End Page Title -->
+<div class="pagetitle">
+  <h1>Transaksi Baru</h1>
+</div>
+<!-- End Page Title -->
 
-  @if (session()->has('success'))
-    <x-alert-success :message="session('success')" />
-  @endif
+@if (session()->has('success'))
+<x-alert-success :message="session('success')" />
+@endif
 
-  @if (session()->has('error'))
-    <x-alert-error :message="session('error')" />
-  @endif
+@if (session()->has('error'))
+<x-alert-error :message="session('error')" />
+@endif
 
-  <section class="section dashboard">
-    <div class="row">
-      <!-- Left side columns -->
-      <div class="col-lg-8">
-        <div class="row left-container">
-          <!-- Layanan Select -->
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body">
-                <div class="layanan-header">
-                  <h5 class="card-title">Pilih Layanan</h5>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3">
-                    @foreach ($layanans as $layanan)
-                      @if ($layanan->is_active == 1)
-                        <div class="col">
-                          <div class="card shadow h-85" style="border-radius: 15px">
-                            <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                              <div>
-                                <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
-                                <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
-                              </div>
-                              <div>
-                                <button href="#" class="btn btn-primary add-item" data-id="{{ $layanan->id }}"
-                                  data-name="{{ $layanan->nama_layanan }}" data-price="{{ $layanan->harga }}">
-                                  <i class="bi bi-plus-circle"></i>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
+<section class="section dashboard">
+  <div class="row">
+    <!-- Left side columns -->
+    <div class="col-lg-8">
+      <div class="row left-container">
+        <!-- Layanan Select -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="layanan-header">
+                <h5 class="card-title">Pilih Layanan</h5>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 gx-3">
+                  @foreach ($layanans as $layanan)
+                  @if ($layanan->is_active == 1)
+                  <div class="col">
+                    <div class="card shadow h-85" style="border-radius: 15px">
+                      <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                          <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
+                          <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
                         </div>
-                      @endif
-                    @endforeach
-                    <!-- Add more cards here -->
+                        <div>
+                          <button href="#" class="btn btn-primary add-item" data-id="{{ $layanan->id }}"
+                            data-name="{{ $layanan->nama_layanan }}" data-price="{{ $layanan->harga }}">
+                            <i class="bi bi-plus-circle"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <!-- Additional content here -->
-              </div>
-            </div>
-          </div>
-          <!-- End Layanan Select -->
-
-          <!-- Pelanggan Select -->
-          <div class="col-12">
-            <div class="card">
-              <div class="card-body" style="box-sizing: border-box" id="container-informasi-pelanggan">
-                <div class="layanan-header">
-                  <h5 class="card-title">Informasi Pelanggan</h5>
-                </div>
-                <div class="item">
-                  <div class="input-group flex-nowrap">
-                    <span class="input-group-text" id="addon-wrapping">+62</span>
-                    <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon"
-                      placeholder="No. telepon" aria-label="Username" aria-describedby="addon-wrapping" maxlength="15" />
-                    <button class="btn btn-primary" id="tambahNoPelanggan">Tambah</button>
-                  </div>
+                  @endif
+                  @endforeach
+                  <!-- Add more cards here -->
                 </div>
               </div>
+              <!-- Additional content here -->
             </div>
           </div>
-          <!-- End Pelanggan Select -->
         </div>
-      </div>
-      <!-- End Left side columns -->
+        <!-- End Layanan Select -->
 
-      <!-- Right side columns -->
-      <div class="col-lg-4">
-        <!-- Detail Transaksi -->
-        <div class="card">
-          <div class="card-body">
-            <form action="/dashboard/transaksiBaru" method="POST">
-              @csrf
-              <h5 class="card-title">Detail Transaksi</h5>
-              {{-- Container detail layanan pada transaksi --}}
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <h6 class="card-text fw-semibold my-auto">Tgl Transaksi</h6>
-                <p class="card-text">{{ $tanggal_transaksi }}</p>
+        <!-- Pelanggan Select -->
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body" style="box-sizing: border-box" id="container-informasi-pelanggan">
+              <div class="layanan-header">
+                <h5 class="card-title">Informasi Pelanggan</h5>
               </div>
-              <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
-                <h6 class="card-text fw-semibold my-auto">Informasi Pelanggan</h6>
+              <div class="item">
+                <div class="input-group flex-nowrap">
+                  <span class="input-group-text" id="addon-wrapping">+62</span>
+                  <input type="text" inputmode="numeric" class="form-control" id="nomor_telepon"
+                    placeholder="No. telepon" aria-label="Username" aria-describedby="addon-wrapping" maxlength="15" />
+                  <button class="btn btn-primary" id="tambahNoPelanggan">Tambah</button>
+                </div>
               </div>
-              <h6 class="card-text fw-semibold m-0" id="card_item">Item</h6>
-              <div class="item_transaksi" id="item_transaksi">
-                <!-- Items will be added here dynamically -->
-              </div>
-              <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
-                <input type="hidden" name="total" value="0" id="input-total">
-                <h6 class="card-text fw-semibold m-0">Total: </h6>
-                <p class="card-text" id="total-display">Rp. 0</p>
-              </div>
-              <div class="mb-3" id="badge-description-container"></div>
-              <div class="mb-3" id="rank-description-container"></div>
-              <div class="mb-3" id="voucher-description-container"></div>
-              <div class="mb-3" id="challenge-description-container"></div>
-              <div class="mb-3">
-                <h6 class="card-text fw-semibold" id="card_item">Nomor Polisi</h6>
-                <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" rows="3"
-                  placeholder="Isi nomor polisi mobil ..."></input>
-              </div>
-              <div class="mb-3">
-                <h6 class="card-text fw-semibold" id="card_item">Keterangan</h6>
-                <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Isi keterangannya ..."></textarea>
-              </div>
-              {{-- Container Subtotal & Metode Pembayaran --}}
-              <div class="card shadow">
-                <div class="card-body" style="background-color: #eeeeee; border-radius: 5px">
-                  <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="card-text fw-semibold mt-4">Subtotal:</h6>
-                    <input type="hidden" name="subtotal" value="0" id="input-subtotal" />
-                    <p class="card-text" id="subtotal_value">Rp. 0</p>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="card-text fw-semibold mt-3">Metode Pembayaran:</h6>
-                    <div class="d-flex justify-content-end align-items-center">
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
-                          value="qris" checked />
-                        <label class="form-check-label" for="exampleRadios2"> QRIS </label>
-                      </div>
-                      <div class="form-check ms-3">
-                        <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
-                          value="tunai" />
-                        <label class="form-check-label" for="exampleRadios1"> Tunai </label>
-                      </div>
+            </div>
+          </div>
+        </div>
+        <!-- End Pelanggan Select -->
+      </div>
+    </div>
+    <!-- End Left side columns -->
+
+    <!-- Right side columns -->
+    <div class="col-lg-4">
+      <!-- Detail Transaksi -->
+      <div class="card">
+        <div class="card-body">
+          <form action="/dashboard/transaksiBaru" method="POST">
+            @csrf
+            <h5 class="card-title">Detail Transaksi</h5>
+            {{-- Container detail layanan pada transaksi --}}
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h6 class="card-text fw-semibold my-auto">Tgl Transaksi</h6>
+              <p class="card-text">{{ $tanggal_transaksi }}</p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-2" id="containerNoPelanggan">
+              <h6 class="card-text fw-semibold my-auto">Informasi Pelanggan</h6>
+            </div>
+            <h6 class="card-text fw-semibold m-0" id="card_item">Item</h6>
+            <div class="item_transaksi" id="item_transaksi">
+              <!-- Items will be added here dynamically -->
+            </div>
+            <div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+              <input type="hidden" name="total" value="0" id="input-total">
+              <h6 class="card-text fw-semibold m-0">Total: </h6>
+              <p class="card-text" id="total-display">Rp. 0</p>
+            </div>
+            <div class="mb-3" id="badge-description-container"></div>
+            <div class="mb-3" id="rank-description-container"></div>
+            <div class="mb-3" id="voucher-description-container"></div>
+            <div class="mb-3" id="challenge-description-container"></div>
+            <div class="mb-3">
+              <h6 class="card-text fw-semibold" id="card_item">Nomor Polisi</h6>
+              <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" rows="3"
+                placeholder="Isi nomor polisi mobil ..."></input>
+            </div>
+            <div class="mb-3">
+              <h6 class="card-text fw-semibold" id="card_item">Keterangan</h6>
+              <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
+                placeholder="Isi keterangannya ..."></textarea>
+            </div>
+            {{-- Container Subtotal & Metode Pembayaran --}}
+            <div class="card shadow">
+              <div class="card-body" style="background-color: #eeeeee; border-radius: 5px">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="card-text fw-semibold mt-4">Subtotal:</h6>
+                  <input type="hidden" name="subtotal" value="0" id="input-subtotal" />
+                  <p class="card-text" id="subtotal_value">Rp. 0</p>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="card-text fw-semibold mt-3">Metode Pembayaran:</h6>
+                  <div class="d-flex justify-content-end align-items-center">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
+                        value="qris" checked />
+                      <label class="form-check-label" for="exampleRadios2"> QRIS </label>
+                    </div>
+                    <div class="form-check ms-3">
+                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
+                        value="tunai" />
+                      <label class="form-check-label" for="exampleRadios1"> Tunai </label>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="mt-3 text-end">
-                <button type="submit" class="btn btn-primary">Simpan</button>
-              </div>
-            </form>
-          </div>
+            </div>
+            <div class="mt-3 text-end">
+              <button type="submit" class="btn btn-primary">Simpan</button>
+            </div>
+          </form>
         </div>
-        <!-- End Detail Transaksi -->
       </div>
-      <!-- End Right side columns -->
+      <!-- End Detail Transaksi -->
     </div>
-  </section>
+    <!-- End Right side columns -->
+  </div>
+</section>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
       const addItemButtons = document.querySelectorAll(".add-item");
       const addNoPelanggan = document.getElementById("tambahNoPelanggan");
       const containerItem = document.getElementById("item_transaksi");
@@ -286,7 +287,7 @@
         removePelanggan(infoPelanggan, addNoPelanggan, null);
       }
 
-      function memberInformationClickElement(memberName, phoneNumber, badgeName, badgeDiscount, rank, rankDiscount,
+      function memberInformationClickElement(memberName, phoneNumber, badgeId, badgeName, badgeDiscount, rankId, rank, rankDiscount,
         pelangganContainer) {
         let infoPelanggan = document.createElement("div");
         infoPelanggan.classList.add("d-flex", "justify-content-end", "align-items-center");
@@ -295,7 +296,7 @@
 
         //membuat badge description container
         let badgeDiscountedResult = total * badgeDiscount;
-        createBadgeElement(badgeName, badgeDiscountPercentage, badgeDiscountedResult);
+        createBadgeElement(badgeId, badgeName, badgeDiscountPercentage, badgeDiscountedResult);
 
         // Periksa apakah rank ada dan bukan string kosong
         console.log("Rank value:", rank, "Type:", typeof rank);
@@ -1043,10 +1044,9 @@
               // Tambahkan data ke pelangganContainer
               data.forEach((item) => {
                 // const containerDataPelanggan = document.createElement("div");
-                console.log(item.nama);
+                console.log("Nama " + item.nama + 'Dengan Rank Id ' + item.rankId + " dan rank discount " + item.rankDiscount);
 
-                memberInformationClickElement(item.nama, item.nomor_telepon, item
-                  .badgeName, item.badgeDiscount, item.rank, item.rankDiscount, pelangganContainer);
+                memberInformationClickElement(item.nama, item.nomor_telepon, item.badgeId, item.badgeName, item.badgeDiscount, item.rankId, item.rank, item.rankDiscount, pelangganContainer);
               });
             } else {
               customerInformationElement();
@@ -1143,5 +1143,5 @@
         }
       });
     });
-  </script>
+</script>
 @endsection

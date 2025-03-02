@@ -314,7 +314,7 @@ class CatatTransaksiController extends Controller
           'badgeId' => $badge->id,
           'badgeName' => $badge->nama,
           'badgeDiscount' => $badge->discount,
-          'rankId' => $memberRankCheck['id'] ?? null,
+          'rankId' => $memberRankCheck['id'] * 100 ?? null,
           'rank' => $memberRankCheck['rank'] ?? null,
           'rankDiscount' => $memberRankCheck['discount'] ?? 0,
         ];
@@ -338,21 +338,6 @@ class CatatTransaksiController extends Controller
       return redirect('/dashboard/transaksiBaru')->with('error', $errorMessage);
     }
   }
-
-  // public function dashboardKasir()
-  // {
-  //   $todayTransaksi = $this->countMobil();
-  //   $todaySales = $this->todaySales();
-  //   $recentTransaction = $this->recentTransaction();
-  //   // $dataPenjualanDashboard = $this->perHourSales($request);
-
-  //   return view('dashboard.kasir.dashboard', [
-  //     'todayTransaksi' => $todayTransaksi,
-  //     'todaySales' => $todaySales,
-  //     'recentTransactions' => $recentTransaction,
-  //     // 'salesData' => $dataPenjualanDashboard,
-  //   ]);
-  // }
 
   public function countMobil()
   {
