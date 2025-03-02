@@ -33,10 +33,28 @@ class MemberController extends Controller
       ->orderBy('min_point', 'asc')
       ->first();
 
+    $countedFinishedChallenge = ChallengeProgress::where('member_id', Auth::guard('member')->user()->id)->where('is_completed', true)
+      ->where('is_used', false)->whereHas('challenge', function ($query) {
+        $query->where('is_active', true)
+          ->where('from_date', '<=', Carbon::now())
+          ->where('to_date', '>=', Carbon::now());
+      })
+      ->count();
+
+    $countedFinishedVoucher = OwnedVoucher::where('member_id', Auth::guard('member')->user()->id)->where('is_used', false)
+      ->whereHas('voucher', function ($query) {
+        $query->where('is_active', true)
+          ->where('from_date', '<=', Carbon::now())
+          ->where('to_date', '>=', Carbon::now());
+      })
+      ->count();
+
     return view('member.index', [
       'member' => $member,
       'badge' => $badge,
       'nextBadge' => $nextBadge ? $nextBadge : null,
+      'countedFinishedChallenge' => $countedFinishedChallenge,
+      'countedFinishedVoucher' => $countedFinishedVoucher,
     ]);
   }
 
