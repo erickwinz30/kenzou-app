@@ -101,7 +101,7 @@ class MemberController extends Controller
   public function viewAccountEdit()
   {
     if (!Auth::guard('member')->user()->id) {
-      return view('error-404');
+      return view('errors.404');
     }
     return view('member.more.edit-profile', [
       'member' => Auth::guard('member')->user(),
@@ -166,9 +166,19 @@ class MemberController extends Controller
 
   public function viewTransactionHistory(Transaksi $transaksi)
   {
-    return view('member.more.viewTransactionHistory', [
-      'transaction' => $transaksi,
-    ]);
+    try {
+      // $pointLogs = PointLog::where('transaksi_id', $transaksi->id)->get();
+      // $transactionPoints = $transaksi->pointLogs;
+      // return response()->json($transactionPoints);
+
+      return view('member.more.viewTransactionHistory', [
+        'transaction' => $transaksi,
+      ]);
+    } catch (\Exception $e) {
+      Log::error('Error when viewing transaction history: ', ['error' => $e->getMessage()]);
+      Log::error('Error when viewing transaction history: ', ['error' => $e->getTraceAsString()]);
+      return redirect()->back()->with('error', 'Terjadi kesalahan saat melihat riwayat transaksi!' . $e->getMessage());
+    }
   }
 
   public function pointHistory()

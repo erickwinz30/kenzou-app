@@ -12,6 +12,7 @@ class PointLog extends Model
 
   protected $keyType = 'string';
   protected $guarded = ['id'];
+  public $incrementing = false;
 
   protected $fillable = [
     'transaksi_id',
@@ -34,7 +35,7 @@ class PointLog extends Model
 
   public function transaksi()
   {
-    return $this->hasOne(Transaksi::class, 'transaksi_id', 'id');
+    return $this->belongsTo(Transaksi::class, 'transaksi_id');
   }
 
   public function member()

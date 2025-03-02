@@ -12,7 +12,7 @@ class Transaksi extends Model
 
   protected $keyType = 'string';
   protected $guarded = ['id'];
-  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs', 'voucher', 'challenge', 'badge', 'leaderboard'];
+  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs', 'voucher', 'challenge', 'badge', 'leaderboard', 'pointLogs'];
 
   public $incrementing = false;
 
@@ -47,7 +47,7 @@ class Transaksi extends Model
 
   public function pointLogs()
   {
-    return $this->belongsTo(PointLog::class, 'transaksi_id', 'id');
+    return $this->hasOne(PointLog::class, 'transaksi_id');
   }
 
   public function voucher()

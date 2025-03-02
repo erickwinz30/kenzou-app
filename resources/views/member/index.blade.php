@@ -53,6 +53,7 @@
       </div>
     </section>
 
+    @if($countedFinishedChallenge > 0 || $countedFinishedVoucher > 0)
     <section class="section">
       <div class="card shadow h-85" style="border-radius: 15px">
         <div class="card-body p-3">
@@ -69,6 +70,7 @@
         </div>
       </div>
     </section>
+    @endif
 
     <section class="section">
       <div class="card shadow h-85" style="border-radius: 15px">
