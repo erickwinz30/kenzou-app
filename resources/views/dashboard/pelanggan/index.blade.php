@@ -1,157 +1,156 @@
 @extends('dashboard.layout.main')
 
 @section('container')
-  <div class="pagetitle">
-    <h1>Pelanggan</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item active">Pelanggan</li>
-      </ol>
-    </nav>
-  </div><!-- End Page Title -->
+<div class="pagetitle">
+  <h1>Pelanggan</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Admin</li>
+      <li class="breadcrumb-item active">Pelanggan</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
 
-  @if (session()->has('success'))
-    <x-alert-success :message="session('success')" />
-  @endif
+@if (session()->has('success'))
+<x-alert-success :message="session('success')" />
+@endif
 
-  @if (session()->has('error'))
-    <x-alert-error :message="session('error')" />
-  @endif
+@if (session()->has('error'))
+<x-alert-error :message="session('error')" />
+@endif
 
-  <section class="section">
-    <div class="row justify-content-center">
-      <div class="col-lg-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between">
-              <h5 class="card-title">Data Pelanggan</h5>
-              <div class="d-flex justify-content-end">
-                <a href="/dashboard/pelanggan" class="btn btn-primary me-2"
-                  style="background-color: #4154f1; color:white">All</a>
-                <a href="/dashboard/memberFetch" class="btn btn-primary me-2"
-                  style="background-color: #4154f1; color:white" id="memberButton">Member</a>
-                <a href="/dashboard/pelangganMember" class="btn btn-primary"
-                  style="background-color: #4154f1; color:white" id="pelangganButton">Non Member</a>
-              </div>
+<section class="section">
+  <div class="row justify-content-center">
+    <div class="col-lg-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center justify-content-between">
+            <h5 class="card-title">Data Pelanggan</h5>
+            <div class="d-flex justify-content-end">
+              <a href="/dashboard/pelanggan" class="btn btn-primary me-2"
+                style="background-color: #4154f1; color:white">All</a>
+              <a href="/dashboard/memberFetch" class="btn btn-primary me-2"
+                style="background-color: #4154f1; color:white" id="memberButton">Member</a>
+              <a href="/dashboard/pelangganMember" class="btn btn-primary"
+                style="background-color: #4154f1; color:white" id="pelangganButton">Non Member</a>
             </div>
-
-            <!-- Table with stripped rows -->
-            <div class="table-responsive">
-              <table class="table datatable">
-                <thead>
-                  <tr>
-                    <th>No</th>
-                    <th>No. Hp</th>
-                    <th>Nama</th>
-                    <th>Email</th>
-                    <th>Preferensi Layanan</th>
-                    <th data-type="datetime" data-format="YYYY/DD/MM">Tgl Lahir / Umur</th>
-                    <th>Exp Point</th>
-                    <th>Redeem Point</th>
-                    <th>Referral Code</th>
-                    <th>Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @foreach ($pelanggans as $pelanggan)
-                    <tr>
-                      <td>{{ $loop->iteration }}</td>
-                      <td>{{ $pelanggan->nomor_telepon }}</td>
-                      @if ($pelanggan->member_id)
-                        <td>{{ $pelanggan->member->nama }}</td>
-                        <td>{{ $pelanggan->member->email }}</td>
-                        <td>
-                          @php
-                            $preferensiLayanan = $pelanggan->preferences->pluck('nama_layanan')->toArray();
-                            $jumlahPreferensiLayanan = $pelanggan->preferences->pluck('jumlah_penggunaan')->toArray();
-                            $preferensiLayananString = implode(
-                                ', ',
-                                array_map(
-                                    function ($nama, $jumlah) {
-                                        return "$nama ($jumlah kali)";
-                                    },
-                                    $preferensiLayanan,
-                                    $jumlahPreferensiLayanan,
-                                ),
-                            );
-                          @endphp
-                          {{ $preferensiLayananString ? $preferensiLayananString : '-' }}
-                        </td>
-                        <td>
-                          @php
-                            $tanggalLahir = $pelanggan->member->tanggal_lahir;
-                            $umur = \Carbon\Carbon::parse($tanggalLahir)->age;
-                            $tanggalLahir = \Carbon\Carbon::parse($tanggalLahir)->format('Y-m-d');
-                          @endphp
-                          <span
-                            style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
-                            {{ $tanggalLahir }} / {{ $umur }}
-                          </span>
-                        </td>
-                        <td>{{ $pelanggan->member->experience_point }}</td>
-                        <td>{{ $pelanggan->member->redeemable_point }}</td>
-                        <td>{{ $pelanggan->member->referral_code }}</td>
-                        <td>
-                          <a href="/dashboard/pelanggan/{{ $pelanggan->id }}/edit" class="btn btn-warning"
-                            id="edit-button"><i class="bi bi-pencil"></i></a>
-                          <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST" class="d-inline"
-                            id="deleteForm{{ $pelanggan->id }}">
-                            @method('DELETE')
-                            @csrf
-                            <button type="button" class="btn btn-danger"
-                              onclick="deleteConfirmation('{{ $pelanggan->id }}')">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </form>
-                        </td>
-                      @else
-                        <td>-</td>
-                        <td>-</td>
-                        <td>
-                          @php
-                            $preferensiLayanan = $pelanggan->preferences->pluck('nama_layanan')->toArray();
-                            $jumlahPreferensiLayanan = $pelanggan->preferences->pluck('jumlah_penggunaan')->toArray();
-                            $preferensiLayananString = implode(
-                                ', ',
-                                array_map(
-                                    function ($nama, $jumlah) {
-                                        return "$nama ($jumlah kali)";
-                                    },
-                                    $preferensiLayanan,
-                                    $jumlahPreferensiLayanan,
-                                ),
-                            );
-                          @endphp
-                          {{ $preferensiLayananString ? $preferensiLayananString : '-' }}
-                        </td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                        <td>-</td>
-                      @endif
-                    </tr>
-                  @endforeach
-                </tbody>
-              </table>
-            </div>
-            <!-- End Table with stripped rows -->
-
           </div>
+
+          <!-- Table with stripped rows -->
+          <div class="table-responsive">
+            <table class="table datatable">
+              <thead>
+                <tr>
+                  <th>No</th>
+                  <th>No. Hp</th>
+                  <th>Nama</th>
+                  <th>Email</th>
+                  <th>Preferensi Layanan</th>
+                  <th data-type="datetime" data-format="YYYY/DD/MM">Tgl Lahir / Umur</th>
+                  <th>Exp Point</th>
+                  <th>Redeem Point</th>
+                  <th>Referral Code</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                @foreach ($pelanggans as $pelanggan)
+                <tr>
+                  <td>{{ $loop->iteration }}</td>
+                  <td>{{ $pelanggan->nomor_telepon }}</td>
+                  @if ($pelanggan->member_id)
+                  <td>{{ $pelanggan->member->nama }}</td>
+                  <td>{{ $pelanggan->member->email }}</td>
+                  <td>
+                    @php
+                    $preferensiLayanan = $pelanggan->preferences->pluck('nama_layanan')->toArray();
+                    $jumlahPreferensiLayanan = $pelanggan->preferences->pluck('jumlah_penggunaan')->toArray();
+                    $preferensiLayananString = implode(
+                    ', ',
+                    array_map(
+                    function ($nama, $jumlah) {
+                    return "$nama ($jumlah kali)";
+                    },
+                    $preferensiLayanan,
+                    $jumlahPreferensiLayanan,
+                    ),
+                    );
+                    @endphp
+                    {{ $preferensiLayananString ? $preferensiLayananString : '-' }}
+                  </td>
+                  <td>
+                    @php
+                    $tanggalLahir = $pelanggan->member->tanggal_lahir;
+                    $umur = \Carbon\Carbon::parse($tanggalLahir)->age;
+                    $tanggalLahir = \Carbon\Carbon::parse($tanggalLahir)->format('Y-m-d');
+                    @endphp
+                    <span
+                      style="color:#219653; background-color: #e8f4ed; border-radius: 10px; padding: 5px 10px; display: inline-block;">
+                      {{ $tanggalLahir }} / {{ $umur }}
+                    </span>
+                  </td>
+                  <td>{{ $pelanggan->member->experience_point }} ({{ $pelanggan->rank }})</td>
+                  <td>{{ $pelanggan->member->redeemable_point }}</td>
+                  <td>{{ $pelanggan->member->referral_code }}</td>
+                  <td>
+                    <a href="/dashboard/pelanggan/{{ $pelanggan->id }}/edit" class="btn btn-warning" id="edit-button"><i
+                        class="bi bi-pencil"></i></a>
+                    <form action="/dashboard/pelanggan/{{ $pelanggan->id }}" method="POST" class="d-inline"
+                      id="deleteForm{{ $pelanggan->id }}">
+                      @method('DELETE')
+                      @csrf
+                      <button type="button" class="btn btn-danger" onclick="deleteConfirmation('{{ $pelanggan->id }}')">
+                        <i class="bi bi-trash"></i>
+                      </button>
+                    </form>
+                  </td>
+                  @else
+                  <td>-</td>
+                  <td>-</td>
+                  <td>
+                    @php
+                    $preferensiLayanan = $pelanggan->preferences->pluck('nama_layanan')->toArray();
+                    $jumlahPreferensiLayanan = $pelanggan->preferences->pluck('jumlah_penggunaan')->toArray();
+                    $preferensiLayananString = implode(
+                    ', ',
+                    array_map(
+                    function ($nama, $jumlah) {
+                    return "$nama ($jumlah kali)";
+                    },
+                    $preferensiLayanan,
+                    $jumlahPreferensiLayanan,
+                    ),
+                    );
+                    @endphp
+                    {{ $preferensiLayananString ? $preferensiLayananString : '-' }}
+                  </td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  <td>-</td>
+                  @endif
+                </tr>
+                @endforeach
+              </tbody>
+            </table>
+          </div>
+          <!-- End Table with stripped rows -->
+
         </div>
-        <!-- Penjualan Bulan Ini -->
+      </div>
+      <!-- Penjualan Bulan Ini -->
 
-        <div class="card">
+      <div class="card">
 
-          <div class="card-body">
-            <h5 class="card-title">Jumlah Layanan yang Dipilih</h5>
+        <div class="card-body">
+          <h5 class="card-title">Jumlah Layanan yang Dipilih</h5>
 
-            <!-- Line Chart -->
-            <div id="thisYearLayananChart"></div>
+          <!-- Line Chart -->
+          <div id="thisYearLayananChart"></div>
 
-            <script>
-              document.addEventListener("DOMContentLoaded", () => {
+          <script>
+            document.addEventListener("DOMContentLoaded", () => {
                 fetch('/dashboard/fetch-all-layanan-count', {
                     headers: {
                       'Accept': 'application/json'
@@ -246,20 +245,20 @@
                     console.error('Error fetching data:', error);
                   });
               });
-            </script>
-            <!-- End Line Chart -->
-
-          </div>
+          </script>
+          <!-- End Line Chart -->
 
         </div>
-        <!-- End Penjualan Bulan Ini -->
 
       </div>
-    </div>
-  </section>
+      <!-- End Penjualan Bulan Ini -->
 
-  <script>
-    document.getElementById('memberButton').addEventListener('click', function(event) {
+    </div>
+  </div>
+</section>
+
+<script>
+  document.getElementById('memberButton').addEventListener('click', function(event) {
       event.preventDefault();
 
       document.querySelector("tbody").innerHTML = "";
@@ -370,5 +369,5 @@
         }
       });
     };
-  </script>
+</script>
 @endsection

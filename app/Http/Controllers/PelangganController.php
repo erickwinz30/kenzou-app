@@ -49,6 +49,10 @@ class PelangganController extends Controller
         $pelanggan->preferences = $layananTeratas;
       }
 
+      $pelanggans->each(function ($pelanggan, $index) {
+        $pelanggan->rank = $index + 1;
+      });
+
       return view('dashboard.pelanggan.index', [
         'pelanggans' => $pelanggans,
       ]);
