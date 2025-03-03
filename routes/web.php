@@ -12,6 +12,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\FeedbackController;
+use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
@@ -114,6 +115,11 @@ Route::middleware('notAdmin')->group(function () {
   Route::post('/dashboard/transaksiBaru/fetch-check-voucher', [CatatTransaksiController::class, 'checkMemberVoucher']);
   Route::post('/dashboard/transaksiBaru/fetch-check-challenge', [CatatTransaksiController::class, 'checkMemberChallenge']);
   Route::post('/dashboard/transaksiBaru/fetch-check-rank', [CatatTransaksiController::class, 'checkMemberRank']);
+
+  //midtrans
+  Route::post('/midtrans/transaction', [MidtransController::class, 'createTransaction'])->name('midtrans.transaction');
+  Route::get('/midtrans/qris/{transaction}', [CatatTransaksiController::class, 'showQris'])->name('midtrans.qris');
+  Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
 
   //tampil list layanan
   Route::get('/dashboard/list-layanan', [CatatTransaksiController::class, 'layanan']);

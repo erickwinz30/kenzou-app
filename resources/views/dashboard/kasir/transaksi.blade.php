@@ -159,6 +159,8 @@
                     </div>
                   </div>
                 </div>
+                <div class="d-flex justify-content-between align-items-center" id="tunai-container">
+                </div>
               </div>
             </div>
             <div class="mt-3 text-end">
@@ -1100,7 +1102,7 @@
                   // Tambahkan data ke pelangganContainer
                   data.forEach((item) => {
                     const containerDataPelanggan = document.createElement("div");
-                    console.log(item.nama);
+                    console.log(item);
 
                     containerDataPelanggan.innerHTML = `
                       <div class="d-flex justify-content-between align-items-center my-2" data-member-name="${item.nama}" data-nomor-telepon="${item.nomor_telepon}" 
@@ -1141,6 +1143,44 @@
         if (containerDataPelanggan) {
           memberInformationListElement(containerDataPelanggan, pelangganContainer);
         }
+      });
+
+      const radioButtons = document.querySelectorAll('input[name="metode_pembayaran"]');
+      radioButtons.forEach((radio) => {
+        radio.addEventListener('change', function() {
+          if (this.value === 'tunai') {
+            const tunaiContainer = document.getElementById('tunai-container');
+            if (tunaiContainer.innerHTML.trim() === "") {
+            // Jika tunaiContainer kosong, tambahkan konten
+              tunaiContainer.innerHTML = `
+              <div class="mb-3 me-2">
+                <p class="card-text" id="card_item">Nominal Tunai</p>
+                <input type="text" class="form-control" id="nominal_tunai" name="nominal_tunai"
+                  placeholder="Isi nominal tunai ..."></input>
+              </div>
+              <div class="mb-3 ms-2">
+                <p class="card-text" id="card_item">Kembalian</p>
+                <input type="text" class="form-control" id="kembalian" name="kembalian" placeholder="Kembalian ..." disabled></input>
+              </div>
+              `;
+
+              // Tambahkan event listener setelah elemen ditambahkan ke DOM
+              const nominalTunai = document.getElementById('nominal_tunai');
+              nominalTunai.addEventListener("input", function() {
+              const subtotal = parseInt(document.getElementById('input-subtotal').value);
+              const nominalTunaiValue = parseInt(nominalTunai.value);
+                            
+              // Hitung kembalian
+              const kembalian = nominalTunaiValue - subtotal;
+              document.getElementById('kembalian').value = kembalian;
+              });
+            }
+          } else if (this.value === 'qris') {
+          const tunaiContainer = document.getElementById('tunai-container');
+          // Kosongkan tunaiContainer jika metode pembayaran bukan tunai
+          tunaiContainer.innerHTML = "";
+          }
+        });
       });
     });
 </script>
