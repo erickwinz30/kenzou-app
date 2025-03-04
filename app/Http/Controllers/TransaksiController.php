@@ -111,6 +111,10 @@ class TransaksiController extends Controller
 
       if ($request->is_paid_off !== $transaksi->is_paid_off) {
         $rules['is_paid_off'] = 'required';
+
+        // Call the memberBenefit function from CatatTransaksiController
+        $catatTransaksiController = new CatatTransaksiController();
+        $catatTransaksiController->memberBenefit($transaksi->id);
       }
 
       if ($request->nomor_polisi !== $transaksi->nomor_polisi) {

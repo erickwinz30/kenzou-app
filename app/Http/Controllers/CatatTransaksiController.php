@@ -86,8 +86,7 @@ class CatatTransaksiController extends Controller
 
       //check if pelanggan exists
       $validatedData = $this->checkRegisteredPelanggan($findPelanggan, $validatedPhoneNumber, $validatedData);
-      //check again if pelanggan exists just in case the previous phone number is not member
-      $findPelangganAgain = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
+
 
       $validatedData['user_id'] = Auth::user()->id;
       $validatedData['date'] = Carbon::now('Asia/Jakarta');
@@ -108,7 +107,6 @@ class CatatTransaksiController extends Controller
 
       if ($request->has('challenge_id')) {
         $validatedData['challenge_id'] = $request->challenge_id;
-        $challengeProgressPoint = 15;
       }
 
       // Log validated data
@@ -262,6 +260,135 @@ class CatatTransaksiController extends Controller
     // return redirect()->with('success', 'Data transaksi telah tertambah!!');
   }
 
+  public function memberBenefit($transactionId)
+  {
+    $transaction = Transaksi::where('id', $transactionId)->first();
+    //check again if pelanggan exists just in case the previous phone number is not member
+    $findPelangganAgain = Pelanggan::where('nomor_telepon', $transaction->pelanggan->nomor_telepon)->first();
+
+    $totalPoint = 0;
+    $layanans = $transaction->detail_layanan ?? collect(); // Ensure $layanans is not null
+    Log::info('Layanan:', ['layanans' => $layanans]);
+    foreach ($layanans as $layanan) {
+      $totalPoint += $layanan->layanan->point;
+    }
+
+    // Log total points calculated
+    Log::info('Total Points Calculated:', ['totalPoint' => $totalPoint]);
+
+    //check if member exists
+    if ($findPelangganAgain) {
+      if ($findPelangganAgain->member_id) {
+        $challengeProgressPoint = null;
+        if (isset($transaction->challenge_id)) {
+          Log::info('Challenge Progress ID:', ['id' => $transaction->challenge_id]);
+
+          $updated = ChallengeProgress::where('challenge_id', $transaction->challenge_id)
+            ->where('member_id', $findPelangganAgain->member_id)
+            ->update(['is_used' => true]);
+          $challengeProgressPoint = 15;
+
+          if ($updated) {
+            Log::info('Challenge Progress updated successfully.');
+          } else {
+            Log::warning('Challenge Progress update failed. No record found with the given ID.');
+          }
+        } else {
+          Log::info('Challenge Progress ID on validated is null');
+          $allChallengeProgress = ChallengeProgress::where('member_id', $findPelangganAgain->member_id)
+            ->where('is_completed', false)
+            ->get();
+          Log::info('All Challenge Progress:', ['progress' => $allChallengeProgress]);
+
+          if ($allChallengeProgress) {
+            Log::info('Challenge Progress found for member.');
+            foreach ($allChallengeProgress as $challengeProgress) {
+              if ($challengeProgress->challenge->is_active) {
+                Log::info('Challenge ' . $challengeProgress->challenge->description . ' is active.');
+                if ($challengeProgress->is_completed == false) {
+                  Log::info('Challenge ' . $challengeProgress->challenge->description . ' is not completed.');
+                  $challengeUnit = $challengeProgress->challenge->unit;
+
+                  if ($challengeUnit === "Transaksi") {
+                    $transactionProgress = $challengeProgress->progress + 1;
+
+                    if ($transactionProgress === $challengeProgress->challenge->target) {
+                      $challengeProgress->update(['progress' => $transactionProgress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+
+                      $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
+                      if ($checkChallengeRepeat) {
+                        ChallengeProgress::create([
+                          'member_id' => $findPelangganAgain->member_id,
+                          'challenge_id' => $challengeProgress->challenge->id,
+                        ]);
+
+                        Log::info('Challenge repeated for member who finish the challenge.');
+                      }
+                    } else {
+                      $challengeProgress->update(['progress' => $transactionProgress]);
+                    }
+                  } else if ($challengeUnit === "Total Pengeluaran Member") {
+                    $totalPengeluaran = $transaction->subtotal;
+                    $progress = $challengeProgress->progress + $totalPengeluaran;
+
+                    if ($progress >= $challengeProgress->challenge->target) {
+                      $challengeProgress->update(['progress' => $progress, 'is_completed' => true, 'completed_at' => Carbon::now('Asia/Jakarta')]);
+
+                      $checkChallengeRepeat = Challenge::where('id', $challengeProgress->challenge->id)->first()->is_repeatable;
+                      if ($checkChallengeRepeat) {
+                        ChallengeProgress::create([
+                          'member_id' => $findPelangganAgain->member_id,
+                          'challenge_id' => $challengeProgress->challenge->id,
+                        ]);
+
+                        Log::info('Challenge repeated for member who finish the challenge.');
+                      }
+                    } else {
+                      $challengeProgress->update(['progress' => $progress]);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        if (isset($transaction->voucher_id)) {
+          Log::info('Voucher ID:', ['id' => $transaction->voucher_id]);
+
+          $this->claimVoucher($transaction->voucher_id, $findPelangganAgain->member_id);
+        }
+        $this->storeNewPoint($transaction, $findPelangganAgain->member_id, $challengeProgressPoint, $totalPoint);
+      } else {
+        Log::info('Old customer without member and need to send invoice through WhatsApp.');
+
+        $transactionData = [];
+        $transactionLayananData = [];
+        $totalPoint = 0;
+
+        $layanans = Layanan::whereIn('id', $transaction->detailLayanans->pluck('layanan_id'))->get();
+        Log::info('Layanan:', ['layanans' => $layanans]);
+
+        $transactionData['transactionId'] = $transaction->id;
+        $transactionData['phoneNumber'] = $transaction->pelanggan->nomor_telepon;
+        $transactionData['subtotal'] = $transaction->subtotal;
+        $transactionData['layanans'] = $transaction->detailLayanans->pluck('layanan_id');
+        $transactionData['date'] = $transaction->date;
+
+        foreach ($layanans as $layanan) {
+          $transactionLayananData[] = [
+            'nama_layanan' => $layanan->nama_layanan,
+            'harga' => $layanan->harga,
+          ];
+        }
+
+        $this->sendMessage($transactionData, $transactionLayananData);
+      }
+    }
+
+    return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah dan pembayaran telah terkonfirmasi!');
+  }
+
   public function viewConfirmationPaidOff($id)
   {
     $transaction = Transaksi::where('id', $id)->first();
@@ -282,7 +409,13 @@ class CatatTransaksiController extends Controller
       $transaction->is_paid_off = $validatedData['is_paid_off'];
       $transaction->save();
 
-      return redirect('/dashboard/transaksiBaru')->with('success', 'Transaksi telah dikonfirmasi.');
+      $this->memberBenefit($transaction->id);
+
+      if ($transaction->is_paid_off == true) {
+        return redirect('/dashboard/transaksiBaru')->with('success', 'Transaksi telah dikonfirmasi.');
+      } else {
+        return redirect('/dashboard/transaksiBaru')->with('error', 'Transaksi belum lunas. Silahkan konfirmasi ke pelanggan!');
+      }
     } catch (\Exception $e) {
       Log::error('Transaction Confirmation Error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
       return redirect()->back()->with('error', 'Terjadi kesalahan saat konfirmasi transaksi.');

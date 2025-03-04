@@ -48,6 +48,10 @@
                     <p>{{ $transaction->pelanggan->nomor_telepon }}</p>
                   </div>
                   <div class="d-flex justify-content-between">
+                    <p><strong>No. Polisi: </strong></p>
+                    <p>{{ $transaction->nomor_polisi }}</p>
+                  </div>
+                  <div class="d-flex justify-content-between">
                     <p><strong>Keterangan: </strong></p>
                     <p>{{ $transaction->keterangan }}</p>
                   </div>
@@ -173,6 +177,14 @@
                   <div class="d-flex justify-content-between">
                     <p><strong>Point: </strong></p>
                     <p class="text-end" style="color: green">+{{ $transaction->pointLogs->point }}</p>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                    <p><strong>Status Lunas: </strong></p>
+                    @if($transaction->is_paid_off == 1)
+                    <p class="text-end" style="color: green">Lunas</p>
+                    @else
+                    <p class="text-end" style="color: red">Belum Lunas</p>
+                    @endif
                   </div>
                 </div>
               </div>

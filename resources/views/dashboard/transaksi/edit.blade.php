@@ -407,8 +407,9 @@
                 </div>
               </div>
             </div>
-            <div class="mb-3 mx-0">
-              <p>Status Lunas</p>
+            <div class="mb-3 mx-0 d-flex justify-content-between align-items-center">
+              <p>Status Lunas: </p>
+              @if($transaksi->is_paid_off == 0)
               <div class="d-flex justify-content-start align-items-center">
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="is_paid_off" id="is_paid_off_tunai" value="0"
@@ -426,6 +427,9 @@
                   </label>
                 </div>
               </div>
+              @else
+              <p>Lunas</p>
+              @endif
             </div>
             <div class="modal-footer">
               <a href="/dashboard/transaksi" class="btn btn-secondary me-1">Batal</a>
