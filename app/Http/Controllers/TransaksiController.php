@@ -15,6 +15,7 @@ use App\Models\ChallengeProgress;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\CatatTransaksiController; // Import the CatatTransaksiController
 
 class TransaksiController extends Controller
 {
@@ -129,16 +130,12 @@ class TransaksiController extends Controller
         $rules['total'] = 'required';
       }
 
-      if ($request->has('voucher_id')) {
-        if ($request->voucher_id !== $transaksi->voucher_id) {
-          $rules['voucher_id'] = 'required';
-        }
+      if ($request->has('voucher_id') && $request->voucher_id !== $transaksi->voucher_id) {
+        $rules['voucher_id'] = 'required';
       }
 
-      if ($request->has('challenge_id')) {
-        if ($request->challenge_id !== $transaksi->challenge_id) {
-          $rules['challenge_id'] = 'required';
-        }
+      if ($request->has('challenge_id') && $request->challenge_id !== $transaksi->challenge_id) {
+        $rules['challenge_id'] = 'required';
       }
 
       if ($request->subtotal != $transaksi->subtotal) {
@@ -148,45 +145,53 @@ class TransaksiController extends Controller
       // 2. Handle mutual exclusivity
       $validatedDataTransaksi = $request->validate($rules);
 
-      if ($request->has('voucher_id')) {
+      if ($request->has('voucher_id') && $request->voucher_id !== $transaksi->voucher_id) {
         if ($request->voucher_id) {
           $validatedDataTransaksi['challenge_id'] = null;
 
           // update the voucher so that it is used on voucher and not on challenge
           $previousChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->first();
-          $previousChallengeProgress->update([
-            'is_used' => false,
-          ]);
-          Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
+          if ($previousChallengeProgress) {
+            $previousChallengeProgress->update([
+              'is_used' => false,
+            ]);
+            Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
+          }
 
           $updatedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $request->voucher_id)->first();
-          $updatedVoucher->update([
-            'is_used' => true,
-            'used_date' => Carbon::now('Asia/Jakarta'),
-          ]);
-          Log::info('Voucher Updated: ', ['voucher' => $updatedVoucher]);
+          if ($updatedVoucher) {
+            $updatedVoucher->update([
+              'is_used' => true,
+              'used_date' => Carbon::now('Asia/Jakarta'),
+            ]);
+            Log::info('Voucher Updated: ', ['voucher' => $updatedVoucher]);
+          }
         } else {
           $validatedDataTransaksi['voucher_id'] = null;
         }
       }
 
-      if ($request->has('challenge_id')) {
+      if ($request->has('challenge_id') && $request->challenge_id !== $transaksi->challenge_id) {
         if ($request->challenge_id) {
           $validatedDataTransaksi['voucher_id'] = null;
 
           // update the voucher so that it is used on challenge and not on voucher
           $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->first();
-          $previousOwnedVoucher->update([
-            'is_used' => false,
-            'used_date' => null,
-          ]);
-          Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
+          if ($previousOwnedVoucher) {
+            $previousOwnedVoucher->update([
+              'is_used' => false,
+              'used_date' => null,
+            ]);
+            Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
+          }
 
           $updatedChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $request->challenge_id)->first();
-          $updatedChallengeProgress->update([
-            'is_used' => true,
-          ]);
-          Log::info('Challenge Progress Updated: ', ['challenge_progress' => $updatedChallengeProgress]);
+          if ($updatedChallengeProgress) {
+            $updatedChallengeProgress->update([
+              'is_used' => true,
+            ]);
+            Log::info('Challenge Progress Updated: ', ['challenge_progress' => $updatedChallengeProgress]);
+          }
         } else {
           $validatedDataTransaksi['challenge_id'] = null;
         }

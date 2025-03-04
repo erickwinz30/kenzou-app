@@ -428,7 +428,10 @@
                 </div>
               </div>
               @else
-              <p>Lunas</p>
+              <div>
+                <input type="hidden" name="is_paid_off" value="1">
+                <p>Lunas</p>
+              </div>
               @endif
             </div>
             <div class="modal-footer">
