@@ -84,6 +84,14 @@ class MemberController extends Controller
     ]);
   }
 
+  public function viewChallengeProgress(ChallengeProgress $challengeProgress)
+  {
+    // echo $challengeProgress;
+    return view('member.challenge.view', [
+      'progress' => $challengeProgress,
+    ]);
+  }
+
   public function account()
   {
     $member = Auth::guard('member')->user();
@@ -246,13 +254,6 @@ class MemberController extends Controller
     return view('member.voucher.view', compact('voucher', 'ownedVouchers'));
   }
 
-  public function viewChallengeProgress(ChallengeProgress $challengeProgress)
-  {
-    // echo $challengeProgress;
-    return view('member.challenge.view', [
-      'progress' => $challengeProgress,
-    ]);
-  }
 
   public function viewLeaderboard()
   {

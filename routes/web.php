@@ -156,8 +156,7 @@ Route::middleware('auth:member')->group(function () {
 
   //challenge progress
   Route::get('/challenge-progress', [MemberController::class, 'challenge'])->name('challenge-index');
-  Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress']);
-
+  Route::get('/challenge-progress/{challengeProgress}', [MemberController::class, 'viewChallengeProgress'])->name('challenge-progress.view');
   //leaderboard
   Route::get('/leaderboard', [MemberController::class, 'viewLeaderboard'])->name('leaderboard');
 

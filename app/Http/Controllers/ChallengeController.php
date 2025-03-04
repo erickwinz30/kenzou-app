@@ -129,64 +129,29 @@ class ChallengeController extends Controller
 
     $validatedData = $request->validate($rules);
 
-    $updatedChallenge = Challenge::where('id', $challenge->id)->update($validatedData);
-    Log::info('Challenge updated', ['challenge' => $updatedChallenge]);
+    $challenge->update($validatedData);
+    Log::info('Challenge updated', ['challenge' => $challenge]);
 
-    // $updatedChallengeId = $challenge->id;
-    // $updatingChallengeProgress = ChallengeProgress::where('challenge_id', $updatedChallengeId)->get();
-    // Log::info('Updated Challenge ID', ['updatedChallengeId' => $updatedChallengeId]);
-    // Log::info('List of Updating Challenge Progress', ['updatingChallengeProgress' => $updatingChallengeProgress]);
+    $updatedChallengeId = $challenge->id;
+    $updatingChallengeProgress = ChallengeProgress::where('challenge_id', $updatedChallengeId)->get();
+    Log::info('Updated Challenge ID', ['updatedChallengeId' => $updatedChallengeId]);
+    Log::info('List of Updating Challenge Progress', ['updatingChallengeProgress' => $updatingChallengeProgress]);
 
-    // foreach ($updatingChallengeProgress as $updatingMemberProgress) {
-    //   if ($updatingMemberProgress->progress >= $challenge->target) {
-    //     if (!$updatingMemberProgress->is_completed && !$updatingMemberProgress->is_used) {
-    //       Log::info('Challenge completed', ['challenge' => $challenge]);
-    //       $updatingMemberProgress->is_completed = true;
-    //       $updatingMemberProgress->completed_at = Carbon::now();
-    //       $updatingMemberProgress->save();
-    //     }
-    //   } else {
-    //     Log::info('Challenge not completed', ['challenge' => $challenge]);
-    //     $updatingMemberProgress->is_completed = false;
-    //     $updatingMemberProgress->completed_at = null;
-    //     $updatingMemberProgress->save();
-    //   }
-
-    //   // if ($updatedChallengeId === $memberProgress->challenge_id) {
-    //   //   if ($memberProgress->progress >= $challenge->target) {
-    //   //     if (!$memberProgress->is_completed && !$memberProgress->is_used) {
-    //   //       Log::info('Challenge completed', ['challenge' => $challenge]);
-    //   //       $memberProgress->is_completed = true;
-    //   //       $memberProgress->completed_at = Carbon::now();
-    //   //       $memberProgress->save();
-    //   //     }
-    //   //   } else {
-    //   //     Log::info('Challenge not completed', ['challenge' => $challenge]);
-    //   //     $memberProgress->is_completed = false;
-    //   //     $memberProgress->completed_at = null;
-    //   //     $memberProgress->save();
-    //   //   }
-    //   // }
-    // }
-
-    // foreach ($challengeProgress as $memberChallengeProgress) {
-    //   $challenges = Challenge::where('id', $challenge->id)->get();
-    //   foreach ($challenges as $challenge) {
-    //     if ($challenge->unit === $memberChallengeProgress->challenge->unit) {
-    //       if ($memberChallengeProgress->progress >= $challenge->target) {
-    //         if (!$memberChallengeProgress->is_completed && !$memberChallengeProgress->is_used) {
-    //           $memberChallengeProgress->is_completed = true;
-    //           $memberChallengeProgress->completed_at = Carbon::now();
-    //           $memberChallengeProgress->save();
-    //         }
-    //       } else {
-    //         $memberChallengeProgress->is_completed = false;
-    //         $memberChallengeProgress->completed_at = null;
-    //         $memberChallengeProgress->save();
-    //       }
-    //     }
-    //   }
-    // }
+    foreach ($updatingChallengeProgress as $updatingMemberProgress) {
+      if ($updatingMemberProgress->progress >= $challenge->target) {
+        if (!$updatingMemberProgress->is_completed && !$updatingMemberProgress->is_used) {
+          Log::info('Challenge completed', ['challenge' => $challenge]);
+          $updatingMemberProgress->is_completed = true;
+          $updatingMemberProgress->completed_at = Carbon::now();
+          $updatingMemberProgress->save();
+        }
+      } else {
+        Log::info('Challenge not completed', ['challenge' => $challenge]);
+        $updatingMemberProgress->is_completed = false;
+        $updatingMemberProgress->completed_at = null;
+        $updatingMemberProgress->save();
+      }
+    }
 
     return redirect('/dashboard/challenge')->with('success', 'Challenge berhasil diupdate!!!');
   }
