@@ -1,143 +1,143 @@
 @extends('dashboard.layout.main')
 
 @section('container')
-  <style>
-    .select2-container {
-      width: 100% !important;
-    }
-  </style>
+<style>
+  .select2-container {
+    width: 100% !important;
+  }
+</style>
 
-  <div class="pagetitle">
-    <h1>Challenge</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item">Admin</li>
-        <li class="breadcrumb-item active">Challenge</li>
-        <li class="breadcrumb-item active">Edit</li>
-      </ol>
-    </nav>
-  </div><!-- End Page Title -->
+<div class="pagetitle">
+  <h1>Challenge</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Admin</li>
+      <li class="breadcrumb-item active">Challenge</li>
+      <li class="breadcrumb-item active">Edit</li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
 
-  @if (session()->has('error'))
-    <x-alert-error :message="session('error')" />
-  @endif
+@if (session()->has('error'))
+<x-alert-error :message="session('error')" />
+@endif
 
-  <section class="section">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Edit Challenge</h5>
-            <form action="/dashboard/challenge/{{ $challenge->id }}" method="POST" id="editForm">
-              @method('put')
-              @csrf
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="description" class="form-label">Deskripsi</label>
-                  <input type="text" class="form-control @error('description') is-invalid @enderror" id="description"
-                    name="description" value="{{ old('description', $challenge->description) }}" required autofocus>
-                  @error('description')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
+<section class="section">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Edit Challenge</h5>
+          <form action="/dashboard/challenge/{{ $challenge->id }}" method="POST" id="editForm">
+            @method('put')
+            @csrf
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="description" class="form-label">Deskripsi</label>
+                <input type="text" class="form-control @error('description') is-invalid @enderror" id="description"
+                  name="description" value="{{ old('description', $challenge->description) }}" required autofocus>
+                @error('description')
+                <div class="invalid-feedback">
+                  {{ $message }}
                 </div>
-                <div>
-                  <label class="form-label">Tanggal Berlaku:</label>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
-                    <div class="mb-3">
-                      <label for="from_date" class="form-label">Dari</label>
-                      <input class="form-control @error('from_date') is-invalid @enderror" type="datetime-local"
-                        id="from_date" name="from_date"
-                        value="{{ old('from_date', \Carbon\Carbon::parse($challenge->from_date)->format('Y-m-d\TH:i')) }}">
-                      @error('from_date')
-                        <div class="invalid-feedback">
-                          <p>{{ $message }}</p>
-                        </div>
-                      @enderror
+                @enderror
+              </div>
+              <div>
+                <label class="form-label">Tanggal Berlaku:</label>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 mb-3">
+                  <div class="mb-3">
+                    <label for="from_date" class="form-label">Dari</label>
+                    <input class="form-control @error('from_date') is-invalid @enderror" type="datetime-local"
+                      id="from_date" name="from_date"
+                      value="{{ old('from_date', \Carbon\Carbon::parse($challenge->from_date)->format('Y-m-d\TH:i')) }}">
+                    @error('from_date')
+                    <div class="invalid-feedback">
+                      <p>{{ $message }}</p>
                     </div>
-                    <div>
-                      <label for="to_date" class="form-label">Sampai</label>
-                      <input class="form-control @error('to_date') is-invalid @enderror" type="datetime-local"
-                        id="to_date" name="to_date"
-                        value="{{ old('to_date', \Carbon\Carbon::parse($challenge->to_date)->format('Y-m-d\TH:i')) }}">
-                      @error('to_date')
-                        <div class="invalid-feedback">
-                          <p>{{ $message }}</p>
-                        </div>
-                      @enderror
+                    @enderror
+                  </div>
+                  <div>
+                    <label for="to_date" class="form-label">Sampai</label>
+                    <input class="form-control @error('to_date') is-invalid @enderror" type="datetime-local"
+                      id="to_date" name="to_date"
+                      value="{{ old('to_date', \Carbon\Carbon::parse($challenge->to_date)->format('Y-m-d\TH:i')) }}">
+                    @error('to_date')
+                    <div class="invalid-feedback">
+                      <p>{{ $message }}</p>
                     </div>
+                    @enderror
                   </div>
                 </div>
               </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="unit" class="form-label">Satuan</label>
-                  <div class="input-group d-flex">
-                    <select class="form-select" name="unit" id="unit">
-                      <option value="Transaksi" {{ old('unit', $challenge->unit) == 'Transaksi' ? 'selected' : '' }}>Per
-                        Transaksi
-                      </option>
-                      <option value="Total Pengeluaran Member"
-                        {{ old('unit', $challenge->unit) == 'Total Pengeluaran Member' ? 'selected' : '' }}>
-                        Total pengeluaran member selama periode
-                      </option>
-                    </select>
-                  </div>
-                  @error('unit')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-                <div class="mb-3">
-                  <label for="target" class="form-label">Target</label>
-                  <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
-                    id="target" name="target" value="{{ old('target', $challenge->target) }}" required autofocus>
-                  @error('target')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-              </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="layanan_id" class="form-label">Tipe Hadiah</label>
-                  <select class="form-select" aria-label="Default select example" name="layanan_id" id="layanan_id">
-                    @foreach ($categories as $category)
-                      <optgroup label="{{ $category->name }}">
-                        @foreach ($category->layanans as $layanan)
-                          <option value="{{ $layanan->id }}"
-                            {{ old('layanan_id', $challenge->layanan_id) == $layanan->id ? 'selected' : '' }}>
-                            {{ $layanan->nama_layanan }} {{ $layanan->is_active ? '' : '(Tidak aktif)' }}
-                          </option>
-                        @endforeach
-                      </optgroup>
-                    @endforeach
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="unit" class="form-label">Satuan</label>
+                <div class="input-group d-flex">
+                  <select class="form-select" name="unit" id="unit">
+                    <option value="Transaksi" {{ old('unit', $challenge->unit) == 'Transaksi' ? 'selected' : '' }}>Per
+                      Transaksi
+                    </option>
+                    <option value="Total Pengeluaran Member" {{ old('unit', $challenge->unit) == 'Total Pengeluaran
+                      Member' ? 'selected' : '' }}>
+                      Total pengeluaran member selama periode
+                    </option>
                   </select>
-                  @error('layanan_id')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
                 </div>
+                @error('unit')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
               </div>
-              <div class="modal-footer">
-                <a href="/dashboard/challenge" class="btn btn-secondary me-1">Batal</a>
-                <button type="button" class="btn btn-primary" onclick="editConfirmation()">Edit</button>
+              <div class="mb-3">
+                <label for="target" class="form-label">Target</label>
+                <input type="text" inputmode="numeric" class="form-control @error('target') is-invalid @enderror"
+                  id="target" name="target" value="{{ old('target', $challenge->target) }}" required autofocus>
+                @error('target')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
               </div>
-            </form>
-          </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="layanan_id" class="form-label">Tipe Hadiah</label>
+                <select class="form-select" aria-label="Default select example" name="layanan_id" id="layanan_id">
+                  @foreach ($categories as $category)
+                  <optgroup label="{{ $category->name }}">
+                    @foreach ($category->layanans as $layanan)
+                    <option value="{{ $layanan->id }}" {{ old('layanan_id', $challenge->layanan_id) == $layanan->id ?
+                      'selected' : '' }}>
+                      {{ $layanan->nama_layanan }} {{ $layanan->is_active ? '' : '(Tidak aktif)' }}
+                    </option>
+                    @endforeach
+                  </optgroup>
+                  @endforeach
+                </select>
+                @error('layanan_id')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a href="/dashboard/challenge" class="btn btn-secondary me-1">Batal</a>
+              <button type="button" class="btn btn-primary" onclick="editConfirmation()">Edit</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <script>
-    function editConfirmation() {
+<script>
+  function editConfirmation() {
       Swal.fire({
-        title: "Yakin ingin mengubah data voucher?",
+        title: "Yakin ingin mengubah data challenge?",
         text: "Aksi ini tidak bisa mengembalikan data!",
         icon: "warning",
         showCancelButton: true,
@@ -150,5 +150,5 @@
         }
       });
     };
-  </script>
+</script>
 @endsection
