@@ -79,6 +79,7 @@ class CatatTransaksiController extends Controller
         'total' => 'required',
         'subtotal' => 'required',
         'metode_pembayaran' => 'required',
+        'is_paid_off' => 'nullable|boolean',
       ]);
 
       $findPelanggan = Pelanggan::where('nomor_telepon', $validatedPhoneNumber['nomor_telepon'])->first();
@@ -141,55 +142,7 @@ class CatatTransaksiController extends Controller
         Log::info('Layanan Point:', ['point' => $totalPoint]);
       }
 
-      if ($validatedData['metode_pembayaran'] === 'qris') {
-        $transaction = Transaksi::findOrFail($transaction->id);
-        Log::info('Transaction:', $transaction->toArray());
-
-        Config::$serverKey = config('midtrans.server_key');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        Config::$isProduction = config('midtrans.is_production');
-        // Set sanitization on (default)
-        Config::$isSanitized = config('midtrans.is_sanitized');
-        // Set 3DS transaction for credit card to true
-        Config::$is3ds = config('midtrans.is_3ds');
-
-        $itemDetails = [];
-        foreach ($transaction->detail_layanan as $detail) {
-          $layanan = $detail->layanan;
-          $itemDetails[] = [
-            'id' => $layanan->id,
-            'price' => $layanan->harga,
-            'quantity' => 1,
-            'name' => $layanan->nama_layanan,
-          ];
-        }
-
-        $params = [
-          'transaction_details' => [
-            'order_id' => $transaction->id,
-            'gross_amount' => $transaction->subtotal,
-          ],
-          'item_details' => $itemDetails,
-          'customer_details' => [
-            'first_name' => explode(' ', $transaction->pelanggan->member->nama)[0],
-            'email' => $transaction->pelanggan->member->email,
-            'phone' => $transaction->pelanggan->nomor_telepon,
-          ],
-          'enabled_payments' => ['qris'],
-        ];
-
-        Log::info('Midtrans Transaction Params:', $params);
-
-        $snapToken = Snap::getSnapToken($params);
-        Log::info('Midtrans Snap Token generated successfully');
-
-        // return response()->json(['snap_token' => $snapToken]);
-
-        return redirect()->route('midtrans.qris', ['transaction' => $transaction->id, 'snap_token' => $snapToken]);
-      } else {
-        return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
-      }
-
+      // gamification
       //check if member exists
       // if ($findPelangganAgain) {
       //   if ($findPelangganAgain->member_id) {
@@ -294,7 +247,11 @@ class CatatTransaksiController extends Controller
       //   }
       // }
 
-      return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah!!');
+      if ($transaction->metode_pembayaran === "qris") {
+        return redirect()->route('transaction-confirmation', ['id' => $transaction->id]);
+      } else {
+        return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah, pastikan transaksi sudah lunas!!');
+      }
     } catch (\Exception $e) {
       // Log the error
       Log::error('Transaction Creation Error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
@@ -303,6 +260,33 @@ class CatatTransaksiController extends Controller
     }
 
     // return redirect()->with('success', 'Data transaksi telah tertambah!!');
+  }
+
+  public function viewConfirmationPaidOff($id)
+  {
+    $transaction = Transaksi::where('id', $id)->first();
+    return view('dashboard.kasir.confirmation', [
+      'id' => $transaction->id,
+    ]);
+  }
+
+  public function confirmPaidOff(Request $request)
+  {
+    try {
+      $validatedData = $request->validate([
+        'id' => 'required',
+        'is_paid_off' => 'required|boolean',
+      ]);
+
+      $transaction = Transaksi::findOrFail($validatedData['id']);
+      $transaction->is_paid_off = $validatedData['is_paid_off'];
+      $transaction->save();
+
+      return redirect('/dashboard/transaksiBaru')->with('success', 'Transaksi telah dikonfirmasi.');
+    } catch (\Exception $e) {
+      Log::error('Transaction Confirmation Error:', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+      return redirect()->back()->with('error', 'Terjadi kesalahan saat konfirmasi transaksi.');
+    }
   }
 
   private function checkRegisteredPelanggan($findPelanggan, $validatedPhoneNumber, $validatedData)

@@ -1,421 +1,445 @@
 @extends('dashboard.layout.main')
 
 @section('container')
-  <div class="pagetitle">
-    <h1>Transaksi</h1>
-    <nav>
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="/dashboard/admin">Admin</a></li>
-        <li class="breadcrumb-item"><a href="/dashboard/transaksi">Transaksi</a></li>
-        <li class="breadcrumb-item"><a href="/dashboard/transaksi/{{ $transaksi->id }}/edit">Edit Transaksi</a></li>
-      </ol>
-    </nav>
-  </div><!-- End Page Title -->
+<div class="pagetitle">
+  <h1>Transaksi</h1>
+  <nav>
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/dashboard/admin">Admin</a></li>
+      <li class="breadcrumb-item"><a href="/dashboard/transaksi">Transaksi</a></li>
+      <li class="breadcrumb-item"><a href="/dashboard/transaksi/{{ $transaksi->id }}/edit">Edit Transaksi</a></li>
+    </ol>
+  </nav>
+</div><!-- End Page Title -->
 
-  @if (session()->has('error'))
-    <x-alert-error :message="session('error')" />
-  @endif
+@if (session()->has('error'))
+<x-alert-error :message="session('error')" />
+@endif
 
-  <section class="section">
-    <div class="row justify-content-center">
-      <div class="col-lg-8">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title">Edit Transaksi</h5>
-            <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST">
-              @method('put')
-              @csrf
-              <div class="mb-2 d-flex">
-                <label for="id_transaksi" class="form-label me-3 @error('id_transaksi') is-invalid @enderror">ID
-                  Transaksi: </label>
-                <p>{{ $transaksi->id }}</p>
-              </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="user_id" class="form-label @error('user_id') is-invalid @enderror">Kasir</label>
-                  <select class="form-select" id="user_id" name="user_id">
-                    @foreach ($users as $user)
-                      @if (old('user_id', $transaksi->user->id) == $user->id)
-                        <option value="{{ $user->id }}" selected>{{ $user->nama }}
-                          {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
-                      @else
-                        <option value="{{ $user->id }}">{{ $user->nama }}
-                          {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
-                      @endif
-                    @endforeach
-                  </select>
-                  @error('user_id')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-                <div class="mb-3">
-                  <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">Informasi
-                    Pelanggan</label>
-                  <p class="card-text">
-                    {{ $transaksi->pelanggan->member_id ? $transaksi->pelanggan->member->nama . ' (' . $transaksi->pelanggan->nomor_telepon . ')' : $transaksi->pelanggan->nomor_telepon }}
-                  </p>
-                  @error('nomor_telepon')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-              </div>
-              <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="date" class="form-label @error('date') is-invalid @enderror">Tgl Transaksi</label>
-                  <input type="datetime-local" class="form-control" id="date" name="date"
-                    value="{{ old('date', $transaksi->date) }}" required>
-                  @error('date')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-                <div class="mb-3 mx-0">
-                  <p>Metode Pembayaran</p>
-                  <div class="d-flex justify-content-start align-items-center">
-                    <div class="form-check">
-                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
-                        value="tunai" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'tunai') checked @endif>
-                      <label class="form-check-label" for="exampleRadios1">
-                        Tunai
-                      </label>
-                    </div>
-                    <div class="form-check ms-3">
-                      <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
-                        value="qris" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'qris') checked @endif>
-                      <label class="form-check-label" for="exampleRadios2">
-                        QRIS
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3">
-                  <label for="nomor_polisi" class="form-label @error('nomor_polisi') is-invalid @enderror">No. Polisi
-                    Mobil</label>
-                  <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" required autofocus
-                    value="{{ old('nomor_polisi', $transaksi->nomor_polisi) }}">
-                  @error('nomor_polisi')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-                <div class="mb-3">
-                  <label for="keterangan" class="form-label @error('keterangan') is-invalid @enderror">Keterangan</label>
-                  <textarea class="form-control" id="keterangan" name="keterangan" rows="3" placeholder="Silahkan diisi disini..">{{ old('keterangan', $transaksi->keterangan) }}</textarea>
-                  @error('keterangan')
-                    <div class="invalid-feedback">
-                      {{ $message }}
-                    </div>
-                  @enderror
-                </div>
-              </div>
-              <div>
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <label for="layanan" class="form-label @error('layanan') is-invalid @enderror">Layanan: </label>
-                  <div class="form-check form-switch d-flex justify-content-end align-items-center">
-                    <p class="card-text m-0 me-5">Semua layanan: </p>
-                    <input class="form-check-input" type="checkbox" role="switch" id="layanan-active-switch">
-                  </div>
-                </div>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
-                  @foreach ($layanans as $layanan)
-                    @if ($layanan->is_active == 1)
-                      <div class="col">
-                        <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
-                              <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
-                            </div>
-                            <div>
-                              <button href="#" class="btn btn-primary add-item"
-                                data-layanan-id="{{ $layanan->id }}" data-layanan-name="{{ $layanan->nama_layanan }}"
-                                data-layanan-price="{{ $layanan->harga }}"
-                                @foreach ($detailLayanans as $detailLayanan)
-                              {{ $detailLayanan->layanan_id == $layanan->id ? 'disabled' : '' }} @endforeach>
-                                <i class="bi bi-plus-circle"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    @endif
+<section class="section">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Edit Transaksi</h5>
+          <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST">
+            @method('put')
+            @csrf
+            <div class="mb-2 d-flex">
+              <label for="id_transaksi" class="form-label me-3 @error('id_transaksi') is-invalid @enderror">ID
+                Transaksi: </label>
+              <p>{{ $transaksi->id }}</p>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="user_id" class="form-label @error('user_id') is-invalid @enderror">Kasir</label>
+                <select class="form-select" id="user_id" name="user_id">
+                  @foreach ($users as $user)
+                  @if (old('user_id', $transaksi->user->id) == $user->id)
+                  <option value="{{ $user->id }}" selected>{{ $user->nama }}
+                    {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
+                  @else
+                  <option value="{{ $user->id }}">{{ $user->nama }}
+                    {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
+                  @endif
                   @endforeach
+                </select>
+                @error('user_id')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+              <div class="mb-3">
+                <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">Informasi
+                  Pelanggan</label>
+                <p class="card-text">
+                  {{ $transaksi->pelanggan->member_id ? $transaksi->pelanggan->member->nama . ' (' .
+                  $transaksi->pelanggan->nomor_telepon . ')' : $transaksi->pelanggan->nomor_telepon }}
+                </p>
+                @error('nomor_telepon')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="date" class="form-label @error('date') is-invalid @enderror">Tgl Transaksi</label>
+                <input type="datetime-local" class="form-control" id="date" name="date"
+                  value="{{ old('date', $transaksi->date) }}" required>
+                @error('date')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+              <div class="mb-3 mx-0">
+                <p>Metode Pembayaran</p>
+                <div class="d-flex justify-content-start align-items-center">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
+                      value="tunai" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'tunai') checked
+                    @endif>
+                    <label class="form-check-label" for="exampleRadios1">
+                      Tunai
+                    </label>
+                  </div>
+                  <div class="form-check ms-3">
+                    <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
+                      value="qris" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'qris') checked
+                    @endif>
+                    <label class="form-check-label" for="exampleRadios2">
+                      QRIS
+                    </label>
+                  </div>
                 </div>
               </div>
-              <div>
-                <p class="card-text">Layanan yang terpilih</p>
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="selected-layanan-container">
-                  @foreach ($detailLayanans as $detailLayanan)
-                    <div class="col selected-layanan-item" data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                      data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}"
-                      @if ($transaksi->challenge_id) data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 : $detailLayanan->layanan->harga }}"
-                      @else 
-                      data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
-                      data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
-                      <div class="card shadow h-85" style="border-radius: 15px">
-                        <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                          <div>
-                            <h5 class="card-title p-0 m-0">
-                              {{ $detailLayanan->layanan->nama_layanan }}
-                              @if ($transaksi->challenge_id)
-                                {!! $transaksi->challenge->layanan_id === $detailLayanan->layanan_id
-                                    ? '<span style="color: green;">(Gratis)</span>'
-                                    : '' !!}
-                              @endif
-                            </h5>
-                            <input type="hidden" name="layanan_id[]" value="{{ $detailLayanan->layanan->id }}">
-                          </div>
-                          <div>
-                            <button href="#" class="btn btn-primary remove-item"
-                              data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                              data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}"
-                              @if ($transaksi->challenge_id) data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 : $detailLayanan->layanan->harga }}"
-                              @else data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
-                              data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
-                              <i class="bi bi-trash"></i>
-                            </button>
-                          </div>
-                        </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3">
+                <label for="nomor_polisi" class="form-label @error('nomor_polisi') is-invalid @enderror">No. Polisi
+                  Mobil</label>
+                <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" required autofocus
+                  value="{{ old('nomor_polisi', $transaksi->nomor_polisi) }}">
+                @error('nomor_polisi')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+              <div class="mb-3">
+                <label for="keterangan" class="form-label @error('keterangan') is-invalid @enderror">Keterangan</label>
+                <textarea class="form-control" id="keterangan" name="keterangan" rows="3"
+                  placeholder="Silahkan diisi disini..">{{ old('keterangan', $transaksi->keterangan) }}</textarea>
+                @error('keterangan')
+                <div class="invalid-feedback">
+                  {{ $message }}
+                </div>
+                @enderror
+              </div>
+            </div>
+            <div>
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <label for="layanan" class="form-label @error('layanan') is-invalid @enderror">Layanan: </label>
+                <div class="form-check form-switch d-flex justify-content-end align-items-center">
+                  <p class="card-text m-0 me-5">Semua layanan: </p>
+                  <input class="form-check-input" type="checkbox" role="switch" id="layanan-active-switch">
+                </div>
+              </div>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
+                @foreach ($layanans as $layanan)
+                @if ($layanan->is_active == 1)
+                <div class="col">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">{{ $layanan->nama_layanan }}</h5>
+                        <p class="card-text">Rp {{ number_format($layanan->harga, 0, ',', '.') }}</p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary add-item" data-layanan-id="{{ $layanan->id }}"
+                          data-layanan-name="{{ $layanan->nama_layanan }}" data-layanan-price="{{ $layanan->harga }}"
+                          @foreach ($detailLayanans as $detailLayanan) {{ $detailLayanan->layanan_id == $layanan->id ?
+                          'disabled' : '' }} @endforeach>
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
                       </div>
                     </div>
-                  @endforeach
-                </div>
-              </div>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                <div class="mb-3"></div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <label for="total" class="form-label m-0 @error('total') is-invalid @enderror">Total: </label>
-                  <div class="input-group w-50">
-                    <span class="input-group-text" id="mataUang">Rp</span>
-                    <input type="text" inputmode="numeric" class="form-control" id="total" name="total"
-                      aria-describedby="mataUang">
-                    @error('total')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
                   </div>
                 </div>
-              </div>
-              @if ($ownedVouchers->count() > 0)
-                <div>
-                  <p class="card-text">Voucher yang dimiliki member </p>
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
-                    @if ($transaksi->voucher_id)
-                      <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
-                        data-voucher-name="{{ $usedVoucher->voucher->nama }}"
-                        data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
-                        data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
-                        <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 class="card-title p-0">{{ $usedVoucher->voucher->nama }} <span
-                                  style="color: green;">(Digunakan)</span>
-                              </h5>
-                              <p class="card-text m-0">Diskon {{ $usedVoucher->voucher->discount * 100 }}%</p>
-                              <p class="card-text m-0">Min Tran: Rp.
-                                {{ number_format($usedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
-                              </p>
-                            </div>
-                            <div>
-                              <button href="#" class="btn btn-primary voucher-add-item"
-                                data-voucher-id="{{ $usedVoucher->voucher->id }}"
-                                data-voucher-name="{{ $usedVoucher->voucher->nama }}"
-                                data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
-                                data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
-                                <i class="bi bi-plus-circle"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    @endif
-                    @foreach ($ownedVouchers as $ownedVoucher)
-                      <div class="voucher-list" data-voucher-id="{{ $ownedVoucher->voucher->id }}"
-                        data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
-                        data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
-                        data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
-                        <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 class="card-title p-0">{{ $ownedVoucher->voucher->nama }}</h5>
-                              <p class="card-text m-0">Diskon {{ $ownedVoucher->voucher->discount * 100 }}%</p>
-                              <p class="card-text m-0">Min Tran: Rp.
-                                {{ number_format($ownedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
-                              </p>
-                            </div>
-                            <div>
-                              <button href="#" class="btn btn-primary voucher-add-item"
-                                data-voucher-id="{{ $ownedVoucher->voucher->id }}"
-                                data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
-                                data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
-                                data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
-                                <i class="bi bi-plus-circle"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    @endforeach
-                  </div>
-                </div>
-              @endif
-              {{-- <p class="card-text">Challenge yang diselesaikan member </p> --}}
-              <div id="challenge-list-container">
-                @if ($listChallenge->count() > 0)
-                  <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                    @if ($transaksi->challenge_id)
-                      <div class="challenge-list" data-challenge-id="{{ $usedChallenge->challenge->id }}"
-                        data-challenge-description="{{ $usedChallenge->challenge->description }}"
-                        data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
-                        data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
-                        <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 class="card-title p-0">{{ $usedChallenge->challenge->description }} <span
-                                  style="color: green;">(Digunakan)</span></h5>
-                              <p class="card-text">Free {{ $usedChallenge->challenge->layanan->nama_layanan }}</p>
-                            </div>
-                            <div>
-                              <button href="#" class="btn btn-primary challenge-add-item"
-                                data-challenge-id="{{ $usedChallenge->challenge->id }}"
-                                data-challenge-description="{{ $usedChallenge->challenge->description }}"
-                                data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
-                                data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
-                                <i class="bi bi-plus-circle"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    @endif
-                    @foreach ($listChallenge as $progressChallenge)
-                      <div class="challenge-list" data-challenge-id="{{ $progressChallenge->challenge->id }}"
-                        data-challenge-description="{{ $progressChallenge->challenge->description }}"
-                        data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
-                        data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
-                        <div class="card shadow h-85" style="border-radius: 15px">
-                          <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                            <div>
-                              <h5 class="card-title p-0">{{ $progressChallenge->challenge->description }}</h5>
-                              <p class="card-text">Free {{ $progressChallenge->challenge->layanan->nama_layanan }}</p>
-                            </div>
-                            <div>
-                              <button href="#" class="btn btn-primary challenge-add-item"
-                                data-challenge-id="{{ $progressChallenge->challenge->id }}"
-                                data-challenge-description="{{ $progressChallenge->challenge->description }}"
-                                data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
-                                data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
-                                <i class="bi bi-plus-circle"></i>
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    @endforeach
-                  </div>
                 @endif
+                @endforeach
               </div>
-              @if ($transaksi->badge_id || $transaksi->leaderboard_id || $transaksi->voucher_id || $transaksi->challenge_id)
-                @if ($transaksi->badge_id)
-                  <div id="badge-description-container">
-                    <div class="d-flex justify-content-between align-items-center mb-2" id="badge-description"
-                      data-badge-id="{{ $transaksi->badge->id }}"
-                      data-badge-discount="{{ $transaksi->badge->discount }}">
-                      <p class="m-0">Badge Member: {{ $transaksi->badge->nama }}</p>
-                      <p class="m-0" id="badge-description-value"></p>
-                    </div>
-                  </div>
-                @else
-                  <div id="badge-description-container"></div>
-                @endIf
-                @if ($transaksi->leaderboard_id)
-                  <div id="leaderboard-description-container">
-                    <div class="d-flex justify-content-between align-items-center mb-2" id="leaderboard-description"
-                      data-leaderboard-id="{{ $transaksi->leaderboard->id }}"
-                      data-leaderboard-discount="{{ $transaksi->leaderboard->discount }}">
-                      <p class="m-0">Peringkat Member: {{ $transaksi->leaderboard->rank }}</p>
-                      <p class="m-0" id="leaderboard-description-value"></p>
-                    </div>
-                  </div>
-                @else
-                  <div id="leaderboard-description-container"></div>
-                @endIf
-                @if ($transaksi->voucher_id)
-                  <div id="voucher-description-container">
-                    <div class="d-flex justify-content-between align-items-center mb-2" id="voucher-description"
-                      data-voucher-id="{{ $transaksi->voucher->id }}"
-                      data-voucher-discount="{{ $transaksi->voucher->discount }}">
-                      <input type="hidden" name="voucher_id" value="{{ $transaksi->voucher_id }}">
-                      <p class="m-0">{{ $transaksi->voucher->nama }}</p>
-                      <div class="d-flex justify-content-end align-items-center">
-                        <p class="m-0" id="voucher-description-value"></p>
-                        <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
-                          <i class="bi bi-x-circle"></i>
+            </div>
+            <div>
+              <p class="card-text">Layanan yang terpilih</p>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="selected-layanan-container">
+                @foreach ($detailLayanans as $detailLayanan)
+                <div class="col selected-layanan-item" data-layanan-id="{{ $detailLayanan->layanan->id }}"
+                  data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if ($transaksi->challenge_id)
+                  data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
+                  $detailLayanan->layanan->harga }}"
+                  @else
+                  data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
+                  data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0 m-0">
+                          {{ $detailLayanan->layanan->nama_layanan }}
+                          @if ($transaksi->challenge_id)
+                          {!! $transaksi->challenge->layanan_id === $detailLayanan->layanan_id
+                          ? '<span style="color: green;">(Gratis)</span>'
+                          : '' !!}
+                          @endif
+                        </h5>
+                        <input type="hidden" name="layanan_id[]" value="{{ $detailLayanan->layanan->id }}">
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary remove-item"
+                          data-layanan-id="{{ $detailLayanan->layanan->id }}"
+                          data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if ($transaksi->challenge_id)
+                          data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
+                          $detailLayanan->layanan->harga }}"
+                          @else data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
+                          data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
+                          <i class="bi bi-trash"></i>
                         </button>
                       </div>
                     </div>
-                  </div>
-                @else
-                  <div id="voucher-description-container"></div>
-                @endIf
-                @if ($transaksi->challenge_id)
-                  <div id="challenge-description-container">
-                    <div class="d-flex justify-content-between align-items-center mb-2" id="challenge-description"
-                      data-challenge-id="{{ $transaksi->challenge->id }}"
-                      data-challenge-free-layanan="{{ $transaksi->challenge->layanan_id }}"
-                      data-challenge-free-layanan-name="{{ $transaksi->challenge->layanan->nama_layanan }}">
-                      <p class="m-0">{{ $transaksi->challenge->description }}</p>
-                      <div class="d-flex justify-content-end align-items-center">
-                        <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_id }}">
-                        <p class="m-0">Gratis {{ $transaksi->challenge->layanan->nama_layanan }}</p>
-                        <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
-                          <i class="bi bi-x-circle"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                @else
-                  <div id="challenge-description-container"></div>
-                @endIf
-              @endif
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex justify-content-end">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                  <label for="subtotal"
-                    class="form-label m-0 @error('subtotal') is-invalid @enderror">Subtotal:</label>
-                  <div class="input-group w-50">
-                    <span class="input-group-text" id="mataUang">Rp</span>
-                    <input type="text" inputmode="numeric" class="form-control" id="subtotal" name="subtotal"
-                      aria-describedby="mataUang" required>
-                    @error('subtotal')
-                      <div class="invalid-feedback">
-                        {{ $message }}
-                      </div>
-                    @enderror
                   </div>
                 </div>
+                @endforeach
               </div>
-              <div class="modal-footer">
-                <a href="/dashboard/transaksi" class="btn btn-secondary me-1">Batal</a>
-                <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+              <div class="mb-3"></div>
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <label for="total" class="form-label m-0 @error('total') is-invalid @enderror">Total: </label>
+                <div class="input-group w-50">
+                  <span class="input-group-text" id="mataUang">Rp</span>
+                  <input type="text" inputmode="numeric" class="form-control" id="total" name="total"
+                    aria-describedby="mataUang">
+                  @error('total')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                  @enderror
+                </div>
               </div>
-            </form>
-          </div>
+            </div>
+            @if ($ownedVouchers->count() > 0)
+            <div>
+              <p class="card-text">Voucher yang dimiliki member </p>
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
+                @if ($transaksi->voucher_id)
+                <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                  data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                  data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                  data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">{{ $usedVoucher->voucher->nama }} <span
+                            style="color: green;">(Digunakan)</span>
+                        </h5>
+                        <p class="card-text m-0">Diskon {{ $usedVoucher->voucher->discount * 100 }}%</p>
+                        <p class="card-text m-0">Min Tran: Rp.
+                          {{ number_format($usedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                        </p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary voucher-add-item"
+                          data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                          data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                          data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                          data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endif
+                @foreach ($ownedVouchers as $ownedVoucher)
+                <div class="voucher-list" data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                  data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                  data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                  data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">{{ $ownedVoucher->voucher->nama }}</h5>
+                        <p class="card-text m-0">Diskon {{ $ownedVoucher->voucher->discount * 100 }}%</p>
+                        <p class="card-text m-0">Min Tran: Rp.
+                          {{ number_format($ownedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                        </p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary voucher-add-item"
+                          data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                          data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                          data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                          data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+            </div>
+            @endif
+            {{-- <p class="card-text">Challenge yang diselesaikan member </p> --}}
+            <div id="challenge-list-container">
+              @if ($listChallenge->count() > 0)
+              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
+                @if ($transaksi->challenge_id)
+                <div class="challenge-list" data-challenge-id="{{ $usedChallenge->challenge->id }}"
+                  data-challenge-description="{{ $usedChallenge->challenge->description }}"
+                  data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
+                  data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">{{ $usedChallenge->challenge->description }} <span
+                            style="color: green;">(Digunakan)</span></h5>
+                        <p class="card-text">Free {{ $usedChallenge->challenge->layanan->nama_layanan }}</p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary challenge-add-item"
+                          data-challenge-id="{{ $usedChallenge->challenge->id }}"
+                          data-challenge-description="{{ $usedChallenge->challenge->description }}"
+                          data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
+                          data-challenge-free-layanan-name="{{ $usedChallenge->challenge->layanan->nama_layanan }}">
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endif
+                @foreach ($listChallenge as $progressChallenge)
+                <div class="challenge-list" data-challenge-id="{{ $progressChallenge->challenge->id }}"
+                  data-challenge-description="{{ $progressChallenge->challenge->description }}"
+                  data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
+                  data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
+                  <div class="card shadow h-85" style="border-radius: 15px">
+                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                      <div>
+                        <h5 class="card-title p-0">{{ $progressChallenge->challenge->description }}</h5>
+                        <p class="card-text">Free {{ $progressChallenge->challenge->layanan->nama_layanan }}</p>
+                      </div>
+                      <div>
+                        <button href="#" class="btn btn-primary challenge-add-item"
+                          data-challenge-id="{{ $progressChallenge->challenge->id }}"
+                          data-challenge-description="{{ $progressChallenge->challenge->description }}"
+                          data-challenge-free-layanan="{{ $progressChallenge->challenge->layanan_id }}"
+                          data-challenge-free-layanan-name="{{ $progressChallenge->challenge->layanan->nama_layanan }}">
+                          <i class="bi bi-plus-circle"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                @endforeach
+              </div>
+              @endif
+            </div>
+            @if ($transaksi->badge_id || $transaksi->leaderboard_id || $transaksi->voucher_id ||
+            $transaksi->challenge_id)
+            @if ($transaksi->badge_id)
+            <div id="badge-description-container">
+              <div class="d-flex justify-content-between align-items-center mb-2" id="badge-description"
+                data-badge-id="{{ $transaksi->badge->id }}" data-badge-discount="{{ $transaksi->badge->discount }}">
+                <p class="m-0">Badge Member: {{ $transaksi->badge->nama }}</p>
+                <p class="m-0" id="badge-description-value"></p>
+              </div>
+            </div>
+            @else
+            <div id="badge-description-container"></div>
+            @endIf
+            @if ($transaksi->leaderboard_id)
+            <div id="leaderboard-description-container">
+              <div class="d-flex justify-content-between align-items-center mb-2" id="leaderboard-description"
+                data-leaderboard-id="{{ $transaksi->leaderboard->id }}"
+                data-leaderboard-discount="{{ $transaksi->leaderboard->discount }}">
+                <p class="m-0">Peringkat Member: {{ $transaksi->leaderboard->rank }}</p>
+                <p class="m-0" id="leaderboard-description-value"></p>
+              </div>
+            </div>
+            @else
+            <div id="leaderboard-description-container"></div>
+            @endIf
+            @if ($transaksi->voucher_id)
+            <div id="voucher-description-container">
+              <div class="d-flex justify-content-between align-items-center mb-2" id="voucher-description"
+                data-voucher-id="{{ $transaksi->voucher->id }}"
+                data-voucher-discount="{{ $transaksi->voucher->discount }}">
+                <input type="hidden" name="voucher_id" value="{{ $transaksi->voucher_id }}">
+                <p class="m-0">{{ $transaksi->voucher->nama }}</p>
+                <div class="d-flex justify-content-end align-items-center">
+                  <p class="m-0" id="voucher-description-value"></p>
+                  <button type="button" class="btn p-0 ms-2 my-auto" id="remove-voucher">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            @else
+            <div id="voucher-description-container"></div>
+            @endIf
+            @if ($transaksi->challenge_id)
+            <div id="challenge-description-container">
+              <div class="d-flex justify-content-between align-items-center mb-2" id="challenge-description"
+                data-challenge-id="{{ $transaksi->challenge->id }}"
+                data-challenge-free-layanan="{{ $transaksi->challenge->layanan_id }}"
+                data-challenge-free-layanan-name="{{ $transaksi->challenge->layanan->nama_layanan }}">
+                <p class="m-0">{{ $transaksi->challenge->description }}</p>
+                <div class="d-flex justify-content-end align-items-center">
+                  <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_id }}">
+                  <p class="m-0">Gratis {{ $transaksi->challenge->layanan->nama_layanan }}</p>
+                  <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+                    <i class="bi bi-x-circle"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            @else
+            <div id="challenge-description-container"></div>
+            @endIf
+            @endif
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex justify-content-end">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <label for="subtotal" class="form-label m-0 @error('subtotal') is-invalid @enderror">Subtotal:</label>
+                <div class="input-group w-50">
+                  <span class="input-group-text" id="mataUang">Rp</span>
+                  <input type="text" inputmode="numeric" class="form-control" id="subtotal" name="subtotal"
+                    aria-describedby="mataUang" required>
+                  @error('subtotal')
+                  <div class="invalid-feedback">
+                    {{ $message }}
+                  </div>
+                  @enderror
+                </div>
+              </div>
+            </div>
+            <div class="mb-3 mx-0">
+              <p>Status Lunas</p>
+              <div class="d-flex justify-content-start align-items-center">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="is_paid_off" id="is_paid_off_tunai" value="0"
+                    @if(old('is_paid_off', $transaksi->is_paid_off) == '0') checked
+                  @endif>
+                  <label class="form-check-label" for="is_paid_off_tunai">
+                    Belum Lunas
+                  </label>
+                </div>
+                <div class="form-check ms-3">
+                  <input class="form-check-input" type="radio" name="is_paid_off" id="is_paid_off_qris" value="1"
+                    @if(old('is_paid_off', $transaksi->is_paid_off) == '1') checked @endif>
+                  <label class="form-check-label" for="is_paid_off_qris">
+                    Lunas
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <a href="/dashboard/transaksi" class="btn btn-secondary me-1">Batal</a>
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
       let inputTotalElement = document.getElementById('total');
       let inputSubtotalElement = document.getElementById('subtotal');
       let inputTotal = 0;
@@ -988,5 +1012,5 @@
       clickChallengeItem();
       updateSubtotal();
     });
-  </script>
+</script>
 @endsection

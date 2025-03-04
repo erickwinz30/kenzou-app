@@ -115,6 +115,8 @@ Route::middleware('notAdmin')->group(function () {
   Route::post('/dashboard/transaksiBaru/fetch-check-voucher', [CatatTransaksiController::class, 'checkMemberVoucher']);
   Route::post('/dashboard/transaksiBaru/fetch-check-challenge', [CatatTransaksiController::class, 'checkMemberChallenge']);
   Route::post('/dashboard/transaksiBaru/fetch-check-rank', [CatatTransaksiController::class, 'checkMemberRank']);
+  Route::get('/dashboard/transaksiBaru/confirm-paid-off/{id}', [CatatTransaksiController::class, 'viewConfirmationPaidOff'])->name('transaction-confirmation');
+  Route::post('/dashboard/transaksiBaru/confirm-paid-off/{id}', [CatatTransaksiController::class, 'confirmPaidOff'])->name('confirm-paid-off');
 
   //midtrans
   Route::post('/midtrans/transaction', [MidtransController::class, 'createTransaction'])->name('midtrans.transaction');

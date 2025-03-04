@@ -109,6 +109,10 @@ class TransaksiController extends Controller
         $rules['metode_pembayaran'] = 'required';
       }
 
+      if ($request->is_paid_off !== $transaksi->is_paid_off) {
+        $rules['is_paid_off'] = 'required';
+      }
+
       if ($request->nomor_polisi !== $transaksi->nomor_polisi) {
         $rules['nomor_polisi'] = 'max:12';
       }

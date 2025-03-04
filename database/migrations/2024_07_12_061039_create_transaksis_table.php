@@ -24,6 +24,7 @@ return new class extends Migration
       $table->decimal('total');
       $table->decimal('subtotal');
       $table->string('metode_pembayaran');
+      $table->boolean('is_paid_off')->default(false);
       $table->string('keterangan')->nullable();
       $table->timestamps();
     });
