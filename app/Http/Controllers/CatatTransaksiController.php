@@ -476,7 +476,7 @@ class CatatTransaksiController extends Controller
 
   private function claimVoucher($voucherId, $memberId)
   {
-    $voucher = OwnedVoucher::where('member_id', $memberId)->where('voucher_id', $voucherId)->first();
+    $voucher = OwnedVoucher::where('member_id', $memberId)->where('voucher_id', $voucherId)->where('is_used', false)->first();
 
     if ($voucher) {
       $voucher->update([
