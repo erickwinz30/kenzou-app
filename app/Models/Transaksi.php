@@ -60,6 +60,11 @@ class Transaksi extends Model
     return $this->belongsTo(Challenge::class, 'challenge_id');
   }
 
+  public function challenge_progress()
+  {
+    return $this->hasOne(ChallengeProgress::class, 'progress_challenge_id');
+  }
+
   public function badge()
   {
     return $this->belongsTo(Badge::class, 'badge_id');

@@ -9,10 +9,13 @@ use App\Models\Badge;
 use App\Models\Member;
 use App\Models\Layanan;
 use App\Models\Voucher;
+use App\Models\PointLog;
 use App\Models\Challenge;
 use App\Models\Pelanggan;
+use App\Models\Transaksi;
 use App\Models\LayananLog;
 use Illuminate\Support\Str;
+use App\Models\DetailLayanan;
 use App\Models\CategoryLayanan;
 use Illuminate\Database\Seeder;
 use App\Models\BadgeLeaderboard;
@@ -67,7 +70,7 @@ class DatabaseSeeder extends Seeder
       [
         'nama_layanan' => 'Cuci Eksterior',
         'harga' => '80000',
-        'point' => 2,
+        'point' => 3,
         'detail' => 'Pencucian eksterior dengan cuci manual dan menggunakan robot',
         'category_layanan_id' => 1,
       ],
@@ -88,7 +91,7 @@ class DatabaseSeeder extends Seeder
       [
         'nama_layanan' => 'Fogging',
         'harga' => '50000',
-        'point' => 3,
+        'point' => 1,
         'detail' => 'Pemberian asap/uap disinfektan',
         'category_layanan_id' => 3,
       ],
@@ -289,16 +292,16 @@ class DatabaseSeeder extends Seeder
         'is_repeatable' => 1,
         'is_active' => 1,
       ],
-      [
-        'description' => "Melakukan akumulasi transaksi sebesar Rp. 800000",
-        'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
-        'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
-        'target' => 800000,
-        'unit' => 'Total Pengeluaran Member',
-        'layanan_id' => 1,
-        'is_repeatable' => 0,
-        'is_active' => 1,
-      ],
+      // [
+      //   'description' => "Melakukan akumulasi transaksi sebesar Rp. 800000",
+      //   'from_date' => Carbon::create(2024, 1, 1, 0, 0, 0)->toIso8601String(),
+      //   'to_date' => Carbon::create(2025, 12, 31, 23, 59, 59)->toIso8601String(),
+      //   'target' => 800000,
+      //   'unit' => 'Total Pengeluaran Member',
+      //   'layanan_id' => 1,
+      //   'is_repeatable' => 0,
+      //   'is_active' => 1,
+      // ],
     ];
 
     foreach ($challenges as $dataChallenge) {
@@ -316,5 +319,109 @@ class DatabaseSeeder extends Seeder
         Log::info($createdChallengeProgress);
       }
     }
+
+    $this->createTransaksiSeeds();
+  }
+
+  private function createTransaksiSeeds()
+  {
+    $startDate = Carbon::create(2025, 1, 1)->startOfDay();
+    $endDate = Carbon::create(2025, 3, 31)->endOfDay();
+
+    $pelanggans = Pelanggan::all();
+    $users = User::where('is_admin', 1)->get();
+    $layanans = Layanan::all();
+
+    Log::info('Starting transaction seeding');
+    Log::info('Pelanggan count: ' . $pelanggans->count());
+    Log::info('User count: ' . $users->count());
+    Log::info('Layanan count: ' . $layanans->count());
+
+    while ($startDate <= $endDate) {
+      $transactionCount = rand(0, 5); // 0 to 5 transactions per day
+
+      Log::info('Creating ' . $transactionCount . ' transactions for date: ' . $startDate->toDateString());
+
+      for ($i = 0; $i < $transactionCount; $i++) {
+        $pelanggan = $pelanggans->random();
+        $user = $users->random();
+
+        // Select random services and calculate total before creating the transaction
+        $selectedLayanans = $layanans->random(rand(1, 3)); // 1 to 3 services per transaction
+        $subtotal = $selectedLayanans->sum('harga');
+        $total = $subtotal; // Assuming no discounts for simplicity
+
+        $transaksi = Transaksi::create([
+          'id' => Str::uuid(),
+          'pelanggan_id' => $pelanggan->id,
+          'user_id' => $user->id,
+          'date' => $this->getRandomTimeWithinOperatingHours($startDate),
+          'nomor_polisi' => $this->generateRandomPlateNumber(),
+          'metode_pembayaran' => $this->getRandomPaymentMethod(),
+          'is_paid_off' => true,
+          'keterangan' => null,
+          'subtotal' => $subtotal,
+          'total' => $total,
+        ]);
+
+        Log::info('Created transaction', ['transaksi' => $transaksi]);
+
+        // Create DetailLayanan records
+        foreach ($selectedLayanans as $layanan) {
+          DetailLayanan::create([
+            'transaksi_id' => $transaksi->id,
+            'layanan_id' => $layanan->id,
+          ]);
+        }
+
+        // Calculate total points for the transaction
+        $totalPoint = $selectedLayanans->sum('point');
+
+        // Create PointLog if the pelanggan is a member
+        if ($pelanggan->member_id) {
+          $pointLog = PointLog::create([
+            'member_id' => $pelanggan->member_id,
+            'point' => $totalPoint,
+            'transaksi_id' => $transaksi->id,
+            'status' => 'Transaksi',
+            'date' => Carbon::now('Asia/Jakarta'),
+            'is_increase' => true,
+          ]);
+
+          Log::info('Created PointLog', ['pointLog' => $pointLog]);
+        }
+      }
+
+      $startDate->addDay();
+    }
+
+    Log::info('Finished transaction seeding');
+  }
+
+  private function getRandomTimeWithinOperatingHours(Carbon $date)
+  {
+    $openingTime = 8; // 8 AM
+    $closingTime = 17; // 5 PM
+
+    $randomHour = rand($openingTime, $closingTime - 1);
+    $randomMinute = rand(0, 59);
+
+    return $date->copy()->setHour($randomHour)->setMinute($randomMinute)->setSecond(0);
+  }
+
+  private function generateRandomPlateNumber()
+  {
+    $letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $numbers = '0123456789';
+
+    return substr(str_shuffle($letters), 0, 1) .
+      substr(str_shuffle($numbers), 0, 4) .
+      substr(str_shuffle($letters), 0, 2);
+  }
+
+  private function getRandomPaymentMethod()
+  {
+    $methods = ['qris', 'tunai'];
+    return $methods[array_rand($methods)];
   }
 }

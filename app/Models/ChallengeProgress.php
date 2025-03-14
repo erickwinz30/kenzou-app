@@ -37,6 +37,6 @@ class ChallengeProgress extends Model
 
   public function transaksi()
   {
-    return $this->hasOne(Transaksi::class, 'challenge_progress_id');
+    return $this->belongsTo(Transaksi::class, 'challenge_progress_id');
   }
 }

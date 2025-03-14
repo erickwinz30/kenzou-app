@@ -59,16 +59,17 @@
                 <div class="col-12 col-md-4 mt-3">
                   <div class="btn-group w-100 w-md-auto" role="group">
                     <a href="/dashboard/transaksi"
-                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksi') ? 'active' : '' }}">Today</a>
+                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksi') ? 'active' : '' }}">Hari
+                      ini</a>
                     <a href="{{ route('transaksi.thisWeek') }}"
-                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisWeek') ? 'active' : '' }}">This
-                      Week</a>
+                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisWeek') ? 'active' : '' }}">Minggu
+                      Ini</a>
                     <a href="{{ route('transaksi.thisMonth') }}"
-                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisMonth') ? 'active' : '' }}">This
-                      Month</a>
+                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisMonth') ? 'active' : '' }}">Bulan
+                      Ini</a>
                     <a href="{{ route('transaksi.thisYear') }}"
-                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisYear') ? 'active' : '' }}">This
-                      Year</a>
+                      class="btn btn-outline-primary {{ Request::is('dashboard/transaksiThisYear') ? 'active' : '' }}">Tahun
+                      Ini</a>
                   </div>
                 </div>
               </div>

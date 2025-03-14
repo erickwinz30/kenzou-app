@@ -16,7 +16,7 @@ return new class extends Migration
       $table->foreignUuid('pelanggan_id');
       $table->foreignUuid('user_id');
       $table->foreignUuid('voucher_id')->nullable()->constrained('vouchers');
-      $table->foreignUuid('challenge_id')->nullable()->constrained('challenges');
+      $table->foreignUuid('challenge_progress_id')->nullable()->constrained('challenge_progress');
       $table->foreignId('badge_id')->nullable()->constrained('badges');
       $table->foreignId('leaderboard_id')->nullable()->constrained('badge_leaderboards');
       $table->datetime('date');

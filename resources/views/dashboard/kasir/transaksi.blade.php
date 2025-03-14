@@ -129,7 +129,7 @@
             <div class="mb-3">
               <h6 class="card-text fw-semibold" id="card_item">Nomor Polisi</h6>
               <input type="text" class="form-control" id="nomor_polisi" name="nomor_polisi" rows="3"
-                placeholder="Isi nomor polisi mobil ..."></input>
+                placeholder="Isi nomor polisi mobil ..." required></input>
             </div>
             <div class="mb-3">
               <h6 class="card-text fw-semibold" id="card_item">Keterangan</h6>
@@ -668,7 +668,7 @@
                 <p class="card-text my-auto">${challengeDescription}</p>
                 <p class="card-text my-auto">Gratis ${challengeLayananName}</p>
               </div>
-              <input type="hidden" name="challenge_id" value="${challengeId}" />
+              <input type="hidden" name="challenge_progress_id" value="${challengeId}" />
               <div class="d-flex justify-content-end align-items-center">
                 <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge" data-layanan-id=${challengeLayananId}>
                 <i class="bi bi-x-circle"></i>

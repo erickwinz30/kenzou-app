@@ -105,8 +105,8 @@ class CatatTransaksiController extends Controller
 
       $challengeProgressPoint = null;
 
-      if ($request->has('challenge_id')) {
-        $validatedData['challenge_id'] = $request->challenge_id;
+      if ($request->has('challenge_progress_id')) {
+        $validatedData['challenge_progress_id'] = $request->challenge_progress_id;
       }
 
       // Log validated data
@@ -247,8 +247,14 @@ class CatatTransaksiController extends Controller
 
       if ($transaction->metode_pembayaran === "qris") {
         return redirect()->route('transaction-confirmation', ['id' => $transaction->id]);
-      } else {
-        return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah, pastikan transaksi sudah lunas!!');
+      } else if ($transaction->metode_pembayaran === "tunai") {
+        if ($transaction->is_paid_off == true) {
+          $this->memberBenefit($transaction->id);
+          return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah dan pembayaran telah terkonfirmasi');
+          // $this->memberBenefit($transaction->id);
+        } else {
+          return redirect('/dashboard/transaksiBaru')->with('success', 'Data transaksi telah tertambah, pastikan kembali transaksi ketika sudah lunas!!');
+        }
       }
     } catch (\Exception $e) {
       // Log the error
@@ -280,10 +286,10 @@ class CatatTransaksiController extends Controller
     if ($findPelangganAgain) {
       if ($findPelangganAgain->member_id) {
         $challengeProgressPoint = null;
-        if (isset($transaction->challenge_id)) {
-          Log::info('Challenge Progress ID:', ['id' => $transaction->challenge_id]);
+        if (isset($transaction->challenge_progress_id)) {
+          Log::info('Challenge Progress ID:', ['id' => $transaction->challenge_progress_id]);
 
-          $updated = ChallengeProgress::where('challenge_id', $transaction->challenge_id)
+          $updated = ChallengeProgress::where('id', $transaction->challenge_progress_id)
             ->where('member_id', $findPelangganAgain->member_id)
             ->update(['is_used' => true]);
           $challengeProgressPoint = 15;
@@ -382,7 +388,7 @@ class CatatTransaksiController extends Controller
           ];
         }
 
-        $this->sendMessage($transactionData, $transactionLayananData);
+        // $this->sendMessage($transactionData, $transactionLayananData);
       }
     }
 
@@ -443,6 +449,7 @@ class CatatTransaksiController extends Controller
 
   private function storeNewPoint($transaction, $memberId, $challengePoint, $totalPoint)
   {
+    Log::info("Running storeNewPoint Function");
     if (!is_numeric($totalPoint)) {
       Log::error('Non-numeric value passed to increment method.', ['totalPoint' => $totalPoint]);
       throw new \InvalidArgumentException('Total point must be a numeric value.');
@@ -476,6 +483,9 @@ class CatatTransaksiController extends Controller
         'is_used' => true,
         'used_date' => Carbon::now('Asia/Jakarta')
       ]);
+      Log::info('Voucher claimed successfully', ['voucher' => $voucher]);
+    } else {
+      Log::warning('Voucher not found or already used', ['voucher_id' => $voucherId, 'member_id' => $memberId]);
     }
   }
 
@@ -750,7 +760,7 @@ class CatatTransaksiController extends Controller
           Log::info('List Progressed Challenge:', ['Challenge' => $challengeProgress]);
 
           $data[] = [
-            'id' => $challengeProgress->challenge->id,
+            'id' => $challengeProgress->id,
             'description' => $challengeProgress->challenge->description,
             'target' => $challengeProgress->challenge->target,
             'unit' => $challengeProgress->challenge->unit,
