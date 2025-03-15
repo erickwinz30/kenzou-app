@@ -12,7 +12,7 @@ class Transaksi extends Model
 
   protected $keyType = 'string';
   protected $guarded = ['id'];
-  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs', 'voucher', 'challenge', 'badge', 'leaderboard', 'pointLogs'];
+  protected $with = ['pelanggan', 'layanan', 'user', 'detail_layanan', 'pointLogs', 'voucher', 'challenge_progress', 'badge', 'leaderboard', 'pointLogs'];
 
   public $incrementing = false;
 
@@ -55,14 +55,9 @@ class Transaksi extends Model
     return $this->belongsTo(Voucher::class, 'voucher_id');
   }
 
-  public function challenge()
-  {
-    return $this->belongsTo(Challenge::class, 'challenge_id');
-  }
-
   public function challenge_progress()
   {
-    return $this->hasOne(ChallengeProgress::class, 'progress_challenge_id');
+    return $this->belongsTo(ChallengeProgress::class, 'challenge_progress_id');
   }
 
   public function badge()

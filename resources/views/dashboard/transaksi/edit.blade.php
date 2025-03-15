@@ -12,7 +12,7 @@
   </nav>
 </div><!-- End Page Title -->
 
-@if (session()->has('error'))
+@if(session()->has('error'))
 <x-alert-error :message="session('error')" />
 @endif
 
@@ -35,7 +35,7 @@
                 <label for="user_id" class="form-label @error('user_id') is-invalid @enderror">Kasir</label>
                 <select class="form-select" id="user_id" name="user_id">
                   @foreach ($users as $user)
-                  @if (old('user_id', $transaksi->user->id) == $user->id)
+                  @if(old('user_id', $transaksi->user->id) == $user->id)
                   <option value="{{ $user->id }}" selected>{{ $user->nama }}
                     {{ $user->is_active ? '' : '(Tidak aktif)' }}</option>
                   @else
@@ -54,8 +54,9 @@
                 <label for="nomor_telepon" class="form-label @error('nomor_telepon') is-invalid @enderror">Informasi
                   Pelanggan</label>
                 <p class="card-text">
-                  {{ $transaksi->pelanggan->member_id ? $transaksi->pelanggan->member->nama . ' (' .
-                  $transaksi->pelanggan->nomor_telepon . ')' : $transaksi->pelanggan->nomor_telepon }}
+                  {{ $transaksi->pelanggan->member_id
+                  ? $transaksi->pelanggan->member->nama . ' (' . $transaksi->pelanggan->nomor_telepon . ')'
+                  : $transaksi->pelanggan->nomor_telepon }}
                 </p>
                 @error('nomor_telepon')
                 <div class="invalid-feedback">
@@ -80,7 +81,7 @@
                 <div class="d-flex justify-content-start align-items-center">
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios1"
-                      value="tunai" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'tunai') checked
+                      value="tunai" @if(old('metode_pembayaran', $transaksi->metode_pembayaran) == 'tunai') checked
                     @endif>
                     <label class="form-check-label" for="exampleRadios1">
                       Tunai
@@ -88,7 +89,7 @@
                   </div>
                   <div class="form-check ms-3">
                     <input class="form-check-input" type="radio" name="metode_pembayaran" id="exampleRadios2"
-                      value="qris" @if (old('metode_pembayaran', $transaksi->metode_pembayaran) == 'qris') checked
+                      value="qris" @if(old('metode_pembayaran', $transaksi->metode_pembayaran) == 'qris') checked
                     @endif>
                     <label class="form-check-label" for="exampleRadios2">
                       QRIS
@@ -130,7 +131,7 @@
               </div>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="layananContainer">
                 @foreach ($layanans as $layanan)
-                @if ($layanan->is_active == 1)
+                @if($layanan->is_active == 1)
                 <div class="col">
                   <div class="card shadow h-85" style="border-radius: 15px">
                     <div class="card-body p-3 d-flex justify-content-between align-items-center">
@@ -158,7 +159,7 @@
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="selected-layanan-container">
                 @foreach ($detailLayanans as $detailLayanan)
                 <div class="col selected-layanan-item" data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                  data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if ($transaksi->challenge_id)
+                  data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if($transaksi->challenge_id)
                   data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
                   $detailLayanan->layanan->harga }}"
                   @else
@@ -169,7 +170,7 @@
                       <div>
                         <h5 class="card-title p-0 m-0">
                           {{ $detailLayanan->layanan->nama_layanan }}
-                          @if ($transaksi->challenge_id)
+                          @if($transaksi->challenge_id)
                           {!! $transaksi->challenge->layanan_id === $detailLayanan->layanan_id
                           ? '<span style="color: green;">(Gratis)</span>'
                           : '' !!}
@@ -180,7 +181,7 @@
                       <div>
                         <button href="#" class="btn btn-primary remove-item"
                           data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                          data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if ($transaksi->challenge_id)
+                          data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if($transaksi->challenge_id)
                           data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
                           $detailLayanan->layanan->harga }}"
                           @else data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
@@ -210,11 +211,11 @@
                 </div>
               </div>
             </div>
-            @if ($ownedVouchers->count() > 0)
+            @if($ownedVouchers->count() > 0)
             <div>
               <p class="card-text">Voucher yang dimiliki member </p>
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
-                @if ($transaksi->voucher_id)
+                @if($transaksi->voucher_id)
                 <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
                   data-voucher-name="{{ $usedVoucher->voucher->nama }}"
                   data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
@@ -273,11 +274,13 @@
               </div>
             </div>
             @endif
-            {{-- <p class="card-text">Challenge yang diselesaikan member </p> --}}
+
+            @if($usedChallenge->count() > 0 || $listChallenge->count() > 0)
+            <p class="card-text">Challenge yang diselesaikan member </p>
+            @endif
             <div id="challenge-list-container">
-              @if ($listChallenge->count() > 0)
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
-                @if ($transaksi->challenge_id)
+                @if($transaksi->challenge_progress_id)
                 <div class="challenge-list" data-challenge-id="{{ $usedChallenge->challenge->id }}"
                   data-challenge-description="{{ $usedChallenge->challenge->description }}"
                   data-challenge-free-layanan="{{ $usedChallenge->challenge->layanan_id }}"
@@ -302,6 +305,7 @@
                   </div>
                 </div>
                 @endif
+                @if ($listChallenge->count() > 0)
                 @foreach ($listChallenge as $progressChallenge)
                 <div class="challenge-list" data-challenge-id="{{ $progressChallenge->challenge->id }}"
                   data-challenge-description="{{ $progressChallenge->challenge->description }}"
@@ -326,11 +330,11 @@
                   </div>
                 </div>
                 @endforeach
+                @endif
               </div>
-              @endif
             </div>
             @if ($transaksi->badge_id || $transaksi->leaderboard_id || $transaksi->voucher_id ||
-            $transaksi->challenge_id)
+            $transaksi->challenge_progress_id)
             @if ($transaksi->badge_id)
             <div id="badge-description-container">
               <div class="d-flex justify-content-between align-items-center mb-2" id="badge-description"
@@ -372,16 +376,18 @@
             @else
             <div id="voucher-description-container"></div>
             @endIf
-            @if ($transaksi->challenge_id)
+            @if ($transaksi->challenge_progress_id)
             <div id="challenge-description-container">
               <div class="d-flex justify-content-between align-items-center mb-2" id="challenge-description"
-                data-challenge-id="{{ $transaksi->challenge->id }}"
-                data-challenge-free-layanan="{{ $transaksi->challenge->layanan_id }}"
-                data-challenge-free-layanan-name="{{ $transaksi->challenge->layanan->nama_layanan }}">
-                <p class="m-0">{{ $transaksi->challenge->description }}</p>
+                data-challenge-id="{{ $transaksi->challenge_progress_id }}"
+                data-challenge-free-layanan="{{ $transaksi->challenge_progress->challenge->layanan_id }}"
+                data-challenge-free-layanan-name="{{ $transaksi->challenge_progress->challenge->layanan->nama_layanan }}"
+                data-challenge-free-layanan-price="{{ $transaksi->challenge_progress->challenge->layanan->harga }}">
+                <p class="m-0">{{ $transaksi->challenge_progress->challenge->description }}</p>
                 <div class="d-flex justify-content-end align-items-center">
-                  <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_id }}">
-                  <p class="m-0">Gratis {{ $transaksi->challenge->layanan->nama_layanan }}</p>
+                  <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_progress_id }}">
+                  <p class="m-0">Gratis {{ $transaksi->challenge_progress->challenge->layanan->nama_layanan }}
+                  </p>
                   <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
                     <i class="bi bi-x-circle"></i>
                   </button>
@@ -409,12 +415,11 @@
             </div>
             <div class="mb-3 mx-0 d-flex justify-content-between align-items-center">
               <p>Status Lunas: </p>
-              @if($transaksi->is_paid_off == 0)
+              @if ($transaksi->is_paid_off == 0)
               <div class="d-flex justify-content-start align-items-center">
                 <div class="form-check">
                   <input class="form-check-input" type="radio" name="is_paid_off" id="is_paid_off_tunai" value="0"
-                    @if(old('is_paid_off', $transaksi->is_paid_off) == '0') checked
-                  @endif>
+                    @if(old('is_paid_off', $transaksi->is_paid_off) == '0') checked @endif>
                   <label class="form-check-label" for="is_paid_off_tunai">
                     Belum Lunas
                   </label>
@@ -456,28 +461,64 @@
       const addLayananItemButton = document.querySelectorAll('.add-item');
 
       function updateTotalHarga() {
-        let total = 0;
-        const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+      let total = 0;
+      const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
+      const challengeDescriptionContainer = document.getElementById('challenge-description-container');
 
-        selectedLayananItems.forEach((layananItems) => {
-          let layananPrice = parseFloat(layananItems.getAttribute('data-layanan-price'));
+      // Cek apakah ada challenge yang aktif
+      const isChallengActive = challengeDescriptionContainer.innerHTML !== '';
 
-          if (layananPrice) {
-            total += layananPrice;
-          }
-        });
-        console.log("Total harga: " + total);
+      // Kumpulkan semua harga layanan
+      selectedLayananItems.forEach((layananItem) => {
+      // Gunakan data-layanan-previous-price untuk mendapatkan harga asli
+      let layananPrice = parseFloat(layananItem.getAttribute('data-layanan-price'));
 
-        inputTotalElement.value = total;
+      if (!isNaN(layananPrice)) {
+      total += layananPrice;
+      }
+      });
+
+      console.log("Total harga sebelum perhitungan challenge: " + total);
+
+      // Jika halaman dimuat dengan challenge yang sudah aktif
+      // dan layanan gratis belum diatur ke 0
+      if (isChallengActive) {
+      const challengeDescription = document.getElementById('challenge-description');
+      const challengeFreeLayananId = challengeDescription.getAttribute('data-challenge-free-layanan');
+
+      // Periksa apakah harga layanan gratis sudah diatur ke 0
+      let freeServiceAlreadyZero = false;
+      selectedLayananItems.forEach((layananItem) => {
+      const layananId = layananItem.getAttribute('data-layanan-id');
+      if (layananId === challengeFreeLayananId) {
+      const currentPrice = parseFloat(layananItem.getAttribute('data-layanan-price'));
+      if (currentPrice === 0) {
+      freeServiceAlreadyZero = true;
+      }
+      }
+      });
+
+      // Jika harga layanan gratis belum diatur ke 0, kurangi dari total
+      if (!freeServiceAlreadyZero) {
+      const challengeFreePrice = parseFloat(challengeDescription.getAttribute('data-challenge-free-layanan-price')) || 0;
+      if (!isNaN(challengeFreePrice)) {
+      console.log("Mengurangi harga layanan gratis: " + challengeFreePrice);
+      total -= challengeFreePrice;
+      }
+      }
       }
 
+      console.log("Total harga final: " + total);
+      inputTotalElement.value = total;
+      }
+
+
       function updateSubtotal() {
-        const total = parseFloat(inputTotalElement.value);
+        const total = parseFloat(inputTotalElement.value) || 0; // Tambahkan || 0 untuk menghindari NaN
         let subtotal = 0;
         const badgeDescriptionContainer = document.getElementById('badge-description-container');
         const leaderboardDescriptionContainer = document.getElementById('leaderboard-description-container');
         const voucherDescriptionContainer = document.getElementById('voucher-description-container');
-        const challengeDescriptionContainer = document.getElementById('challenge-description-container');
 
         let badgeDiscountResult = 0;
         let leaderboardDiscountResult = 0;
@@ -485,7 +526,7 @@
 
         if (badgeDescriptionContainer.innerHTML !== '') {
           const badgeDescription = document.getElementById('badge-description');
-          const badgeDiscount = parseFloat(badgeDescription.getAttribute('data-badge-discount'));
+          const badgeDiscount = parseFloat(badgeDescription.getAttribute('data-badge-discount')) || 0;
           const badgeDescriptionValue = document.getElementById('badge-description-value');
           badgeDiscountResult = total * badgeDiscount;
           badgeDescriptionValue.textContent = "- Rp. " + badgeDiscountResult;
@@ -494,7 +535,8 @@
 
         if (leaderboardDescriptionContainer.innerHTML !== "") {
           const leaderboardDescription = document.getElementById('leaderboard-description');
-          const leaderboardDiscount = parseFloat(leaderboardDescription.getAttribute('data-leaderboard-discount'));
+          const leaderboardDiscount = parseFloat(leaderboardDescription.getAttribute('data-leaderboard-discount')) ||
+            0;
           const leaderboardDescriptionValue = document.getElementById('leaderboard-description-value');
           leaderboardDiscountResult = total * leaderboardDiscount;
           leaderboardDescriptionValue.textContent = "- Rp. " + leaderboardDiscountResult;
@@ -503,7 +545,7 @@
 
         if (voucherDescriptionContainer.innerHTML !== '') {
           const voucherDescription = document.getElementById('voucher-description');
-          const voucherDiscount = parseFloat(voucherDescription.getAttribute('data-voucher-discount'));
+          const voucherDiscount = parseFloat(voucherDescription.getAttribute('data-voucher-discount')) || 0;
           const voucherDescriptionValue = document.getElementById('voucher-description-value');
           voucherDiscountResult = total * voucherDiscount;
           voucherDescriptionValue.textContent = "- Rp. " + voucherDiscountResult;
@@ -933,32 +975,44 @@
           button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            const challengeDescriptionContainer = document.getElementById(
-              'challenge-description-container');
+            const challengeDescriptionContainer = document.getElementById('challenge-description-container');
             const selectedLayananItems = document.querySelectorAll('.selected-layanan-item');
             const challengeId = button.getAttribute('data-challenge-id');
             const challengeDescription = button.getAttribute('data-challenge-description');
             const challengeFreeLayanan = button.getAttribute('data-challenge-free-layanan');
             const challengeFreeLayananName = button.getAttribute('data-challenge-free-layanan-name');
 
+            // Cari harga layanan yang akan digratiskan
+            let challengeFreeLayananPrice = 0;
+            selectedLayananItems.forEach((layanan) => {
+              let selectedLayananId = layanan.getAttribute('data-layanan-id');
+              if (selectedLayananId == challengeFreeLayanan) {
+                challengeFreeLayananPrice = parseFloat(layanan.getAttribute(
+                  'data-layanan-previous-price'));
+              }
+            });
+
             const newChallengeDescription = document.createElement('div');
             newChallengeDescription.classList.add('d-flex', 'justify-content-between',
-              'align-items-center',
-              'mb-2');
+              'align-items-center', 'mb-2');
             newChallengeDescription.setAttribute('id', 'challenge-description');
             newChallengeDescription.setAttribute('data-challenge-id', challengeId);
             newChallengeDescription.setAttribute('data-challenge-free-layanan', challengeFreeLayanan);
+            newChallengeDescription.setAttribute('data-challenge-free-layanan-name',
+            challengeFreeLayananName);
+            newChallengeDescription.setAttribute('data-challenge-free-layanan-price',
+              challengeFreeLayananPrice);
 
             newChallengeDescription.innerHTML = `
-              <p class="m-0">${challengeDescription}</p>
-              <div class="d-flex justify-content-end align-items-center">
-                <input type="hidden" name="challenge_id" value="${challengeId}">
-                <p class="m-0">Gratis ${challengeFreeLayananName}</p>
-                <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
-                  <i class="bi bi-x-circle"></i>
-                </button>
-              </div>
-            `;
+      <p class="m-0">${challengeDescription}</p>
+      <div class="d-flex justify-content-end align-items-center">
+        <input type="hidden" name="challenge_id" value="${challengeId}">
+        <p class="m-0">Gratis ${challengeFreeLayananName}</p>
+        <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
+          <i class="bi bi-x-circle"></i>
+        </button>
+      </div>
+      `;
 
             selectedLayananItems.forEach((layanan) => {
               let selectedLayananId = layanan.getAttribute('data-layanan-id');
@@ -989,6 +1043,13 @@
               voucherItemButton.disabled = true;
             });
 
+            // disabling all other challenge add item buttons
+            challengeAddItemButtons.forEach((challengeButton) => {
+              if (challengeButton !== button) {
+                challengeButton.disabled = true;
+              }
+            });
+
             updateTotalHarga();
             updateSubtotal();
 
@@ -997,6 +1058,7 @@
           });
         });
       }
+
 
       function checkChallengeUsed() {
         const challengeDescriptionContainer = document.getElementById('challenge-description-container');

@@ -78,7 +78,8 @@ class TransaksiController extends Controller
       ->whereHas('challenge', function ($query) {
         $query->where('is_active', true);
       })->get();
-    $usedChallenge = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->where('is_used', true)->first();
+    $usedChallenge = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('id', $transaksi->challenge_progress_id)->where('is_used', true)->first();
+    Log::info('Used Challenge: ', ['challenge' => $usedChallenge]);
 
     return view('dashboard.transaksi.edit', [
       'transaksi' => $transaksi,

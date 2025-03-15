@@ -35,7 +35,7 @@ class Challenge extends Model
     });
   }
 
-  public function progress()
+  public function challenge_progress()
   {
     return $this->hasMany(ChallengeProgress::class, 'challenge_id');
   }
