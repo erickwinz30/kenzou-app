@@ -159,8 +159,9 @@
               <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="selected-layanan-container">
                 @foreach ($detailLayanans as $detailLayanan)
                 <div class="col selected-layanan-item" data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                  data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if($transaksi->challenge_id)
-                  data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
+                  data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if($transaksi->challenge_progress_id)
+                  data-layanan-price="{{ $transaksi->challenge_progress->challenge->layanan_id ===
+                  $detailLayanan->layanan_id ? 0 :
                   $detailLayanan->layanan->harga }}"
                   @else
                   data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
@@ -170,8 +171,8 @@
                       <div>
                         <h5 class="card-title p-0 m-0">
                           {{ $detailLayanan->layanan->nama_layanan }}
-                          @if($transaksi->challenge_id)
-                          {!! $transaksi->challenge->layanan_id === $detailLayanan->layanan_id
+                          @if($transaksi->challenge_progress_id)
+                          {!! $transaksi->challenge_progress->challenge->layanan_id === $detailLayanan->layanan_id
                           ? '<span style="color: green;">(Gratis)</span>'
                           : '' !!}
                           @endif
@@ -181,8 +182,10 @@
                       <div>
                         <button href="#" class="btn btn-primary remove-item"
                           data-layanan-id="{{ $detailLayanan->layanan->id }}"
-                          data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}" @if($transaksi->challenge_id)
-                          data-layanan-price="{{ $transaksi->challenge->layanan_id === $detailLayanan->layanan_id ? 0 :
+                          data-layanan-name="{{ $detailLayanan->layanan->nama_layanan }}"
+                          @if($transaksi->challenge_progress_id)
+                          data-layanan-price="{{ $transaksi->challenge_progress->challenge->layanan_id ===
+                          $detailLayanan->layanan_id ? 0 :
                           $detailLayanan->layanan->harga }}"
                           @else data-layanan-price="{{ $detailLayanan->layanan->harga }}" @endif
                           data-layanan-previous-price="{{ $detailLayanan->layanan->harga }}">
@@ -211,71 +214,70 @@
                 </div>
               </div>
             </div>
-            @if($ownedVouchers->count() > 0)
-            <div>
-              <p class="card-text">Voucher yang dimiliki member </p>
-              <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
-                @if($transaksi->voucher_id)
-                <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
-                  data-voucher-name="{{ $usedVoucher->voucher->nama }}"
-                  data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
-                  data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
-                  <div class="card shadow h-85" style="border-radius: 15px">
-                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                      <div>
-                        <h5 class="card-title p-0">{{ $usedVoucher->voucher->nama }} <span
-                            style="color: green;">(Digunakan)</span>
-                        </h5>
-                        <p class="card-text m-0">Diskon {{ $usedVoucher->voucher->discount * 100 }}%</p>
-                        <p class="card-text m-0">Min Tran: Rp.
-                          {{ number_format($usedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
-                        </p>
-                      </div>
-                      <div>
-                        <button href="#" class="btn btn-primary voucher-add-item"
-                          data-voucher-id="{{ $usedVoucher->voucher->id }}"
-                          data-voucher-name="{{ $usedVoucher->voucher->nama }}"
-                          data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
-                          data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
-                          <i class="bi bi-plus-circle"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                @endif
-                @foreach ($ownedVouchers as $ownedVoucher)
-                <div class="voucher-list" data-voucher-id="{{ $ownedVoucher->voucher->id }}"
-                  data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
-                  data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
-                  data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
-                  <div class="card shadow h-85" style="border-radius: 15px">
-                    <div class="card-body p-3 d-flex justify-content-between align-items-center">
-                      <div>
-                        <h5 class="card-title p-0">{{ $ownedVoucher->voucher->nama }}</h5>
-                        <p class="card-text m-0">Diskon {{ $ownedVoucher->voucher->discount * 100 }}%</p>
-                        <p class="card-text m-0">Min Tran: Rp.
-                          {{ number_format($ownedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
-                        </p>
-                      </div>
-                      <div>
-                        <button href="#" class="btn btn-primary voucher-add-item"
-                          data-voucher-id="{{ $ownedVoucher->voucher->id }}"
-                          data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
-                          data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
-                          data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
-                          <i class="bi bi-plus-circle"></i>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                @endforeach
-              </div>
-            </div>
-            @endif
 
-            @if($usedChallenge->count() > 0 || $listChallenge->count() > 0)
+            @if(($usedVoucher ?? collect())->count() > 0 || ($OwnedVouchers ?? collect())->count() > 0)
+            <p class="card-text">Voucher yang dimiliki member </p>
+            @endif
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3" id="voucher-list-container">
+              @if($transaksi->voucher_id)
+              <div class="voucher-list" data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                <div class="card shadow h-85" style="border-radius: 15px">
+                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title p-0">{{ $usedVoucher->voucher->nama }} <span
+                          style="color: green;">(Digunakan)</span>
+                      </h5>
+                      <p class="card-text m-0">Diskon {{ $usedVoucher->voucher->discount * 100 }}%</p>
+                      <p class="card-text m-0">Min Tran: Rp.
+                        {{ number_format($usedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                      </p>
+                    </div>
+                    <div>
+                      <button href="#" class="btn btn-primary voucher-add-item"
+                        data-voucher-id="{{ $usedVoucher->voucher->id }}"
+                        data-voucher-name="{{ $usedVoucher->voucher->nama }}"
+                        data-voucher-discount="{{ $usedVoucher->voucher->discount }}"
+                        data-voucher-minimum-transaction="{{ $usedVoucher->voucher->minimum_transaction }}">
+                        <i class="bi bi-plus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @endif
+              @foreach ($ownedVouchers as $ownedVoucher)
+              <div class="voucher-list" data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                <div class="card shadow h-85" style="border-radius: 15px">
+                  <div class="card-body p-3 d-flex justify-content-between align-items-center">
+                    <div>
+                      <h5 class="card-title p-0">{{ $ownedVoucher->voucher->nama }}</h5>
+                      <p class="card-text m-0">Diskon {{ $ownedVoucher->voucher->discount * 100 }}%</p>
+                      <p class="card-text m-0">Min Tran: Rp.
+                        {{ number_format($ownedVoucher->voucher->minimum_transaction, 0, ',', '.') }}
+                      </p>
+                    </div>
+                    <div>
+                      <button href="#" class="btn btn-primary voucher-add-item"
+                        data-voucher-id="{{ $ownedVoucher->voucher->id }}"
+                        data-voucher-name="{{ $ownedVoucher->voucher->nama }}"
+                        data-voucher-discount="{{ $ownedVoucher->voucher->discount }}"
+                        data-voucher-minimum-transaction="{{ $ownedVoucher->voucher->minimum_transaction }}">
+                        <i class="bi bi-plus-circle"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              @endforeach
+            </div>
+
+            @if(($usedChallenge ?? collect())->count() > 0 || ($listChallenge ?? collect())->count() > 0)
             <p class="card-text">Challenge yang diselesaikan member </p>
             @endif
             <div id="challenge-list-container">
@@ -385,7 +387,7 @@
                 data-challenge-free-layanan-price="{{ $transaksi->challenge_progress->challenge->layanan->harga }}">
                 <p class="m-0">{{ $transaksi->challenge_progress->challenge->description }}</p>
                 <div class="d-flex justify-content-end align-items-center">
-                  <input type="hidden" name="challenge_id" value="{{ $transaksi->challenge_progress_id }}">
+                  <input type="hidden" name="challenge_progress_id" value="{{ $transaksi->challenge_progress_id }}">
                   <p class="m-0">Gratis {{ $transaksi->challenge_progress->challenge->layanan->nama_layanan }}
                   </p>
                   <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
@@ -1006,7 +1008,7 @@
             newChallengeDescription.innerHTML = `
       <p class="m-0">${challengeDescription}</p>
       <div class="d-flex justify-content-end align-items-center">
-        <input type="hidden" name="challenge_id" value="${challengeId}">
+        <input type="hidden" name="challenge_progress_id" value="${challengeId}">
         <p class="m-0">Gratis ${challengeFreeLayananName}</p>
         <button type="button" class="btn p-0 ms-2 my-auto" id="remove-challenge">
           <i class="bi bi-x-circle"></i>

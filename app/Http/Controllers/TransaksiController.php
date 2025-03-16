@@ -99,6 +99,8 @@ class TransaksiController extends Controller
   public function update(Request $request, Transaksi $transaksi)
   {
     try {
+      $rules = [];
+
       if ($request->user_id !== $transaksi->user_id) {
         $rules['user_id'] = 'required';
       }
@@ -131,14 +133,6 @@ class TransaksiController extends Controller
         $rules['total'] = 'required';
       }
 
-      if ($request->has('voucher_id') && $request->voucher_id !== $transaksi->voucher_id) {
-        $rules['voucher_id'] = 'required';
-      }
-
-      if ($request->has('challenge_id') && $request->challenge_id !== $transaksi->challenge_id) {
-        $rules['challenge_id'] = 'required';
-      }
-
       if ($request->subtotal != $transaksi->subtotal) {
         $rules['subtotal'] = 'required';
       }
@@ -146,88 +140,128 @@ class TransaksiController extends Controller
       // 2. Handle mutual exclusivity
       $validatedDataTransaksi = $request->validate($rules);
 
-      if ($request->has('voucher_id') && $request->voucher_id !== $transaksi->voucher_id) {
-        if ($request->voucher_id) {
-          $validatedDataTransaksi['challenge_id'] = null;
-
-          // update the voucher so that it is used on voucher and not on challenge
-          $previousChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->first();
-          if ($previousChallengeProgress) {
-            $previousChallengeProgress->update([
-              'is_used' => false,
-            ]);
-            Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
-          }
-
-          $updatedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $request->voucher_id)->first();
-          if ($updatedVoucher) {
-            $updatedVoucher->update([
-              'is_used' => true,
-              'used_date' => Carbon::now('Asia/Jakarta'),
-            ]);
-            Log::info('Voucher Updated: ', ['voucher' => $updatedVoucher]);
-          }
-        } else {
-          $validatedDataTransaksi['voucher_id'] = null;
-        }
-      }
-
-      if ($request->has('challenge_id') && $request->challenge_id !== $transaksi->challenge_id) {
-        if ($request->challenge_id) {
-          $validatedDataTransaksi['voucher_id'] = null;
-
-          // update the voucher so that it is used on challenge and not on voucher
-          $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->first();
-          if ($previousOwnedVoucher) {
-            $previousOwnedVoucher->update([
-              'is_used' => false,
-              'used_date' => null,
-            ]);
-            Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
-          }
-
-          $updatedChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $request->challenge_id)->first();
-          if ($updatedChallengeProgress) {
-            $updatedChallengeProgress->update([
-              'is_used' => true,
-            ]);
-            Log::info('Challenge Progress Updated: ', ['challenge_progress' => $updatedChallengeProgress]);
-          }
-        } else {
-          $validatedDataTransaksi['challenge_id'] = null;
-        }
-      }
-
-      // Handle case when both are null
-      if (
-        $request->has('voucher_id') && $request->has('challenge_id')
-        && !$request->voucher_id && !$request->challenge_id
-      ) {
+      // Handle voucher_id
+      if (!$request->has('voucher_id') || $request->voucher_id === null) {
         $validatedDataTransaksi['voucher_id'] = null;
-        $validatedDataTransaksi['challenge_id'] = null;
 
-        $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)->where('voucher_id', $transaksi->voucher_id)->first();
-        $previousChallengeProgress = ChallengeProgress::where('member_id', $transaksi->pelanggan->member_id)->where('challenge_id', $transaksi->challenge_id)->first();
+        // Reset previous voucher if it exists
+        $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)
+          ->where('voucher_id', $transaksi->voucher_id)
+          ->where('is_used', true)
+          ->first();
 
         if ($previousOwnedVoucher) {
           $previousOwnedVoucher->update([
             'is_used' => false,
             'used_date' => null,
           ]);
-          Log::info('Previous Owned Voucher Updated: ', ['owned_voucher' => $previousOwnedVoucher]);
+          Log::info('Previous Owned Voucher Reset: ', ['owned_voucher' => $previousOwnedVoucher]);
         }
+      } elseif ($request->voucher_id !== $transaksi->voucher_id) {
+        $validatedDataTransaksi['voucher_id'] = $request->voucher_id;
+        $validatedDataTransaksi['challenge_progress_id'] = null;
+
+        // Reset previous challenge if it exists
+        $previousChallengeProgress = ChallengeProgress::where('id', $transaksi->challenge_progress_id)
+          ->where('is_used', true)
+          ->first();
 
         if ($previousChallengeProgress) {
           $previousChallengeProgress->update([
             'is_used' => false,
           ]);
-          Log::info('Previous Challenge Progress Updated: ', ['challenge_progress' => $previousChallengeProgress]);
+          Log::info('Previous Challenge Progress Reset: ', ['challenge_progress' => $previousChallengeProgress]);
+        }
+
+        // Reset previous voucher if it exists
+        $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)
+          ->where('voucher_id', $transaksi->voucher_id)
+          ->where('is_used', true)
+          ->first();
+
+        if ($previousOwnedVoucher) {
+          $previousOwnedVoucher->update([
+            'is_used' => false,
+            'used_date' => null,
+          ]);
+          Log::info('Previous Owned Voucher Reset: ', ['owned_voucher' => $previousOwnedVoucher]);
+        }
+
+        // Mark new voucher as used
+        $updatedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)
+          ->where('voucher_id', $request->voucher_id)
+          ->first();
+
+        if ($updatedVoucher) {
+          $updatedVoucher->update([
+            'is_used' => true,
+            'used_date' => Carbon::now('Asia/Jakarta'),
+          ]);
+          Log::info('Voucher Updated: ', ['voucher' => $updatedVoucher]);
+        }
+      }
+
+      // Handle challenge_progress_id
+      if (!$request->has('challenge_progress_id') || $request->challenge_progress_id === null) {
+        $validatedDataTransaksi['challenge_progress_id'] = null;
+
+        // Reset previous challenge if it exists
+        $previousChallengeProgress = ChallengeProgress::where('id', $transaksi->challenge_progress_id)
+          ->where('is_used', true)
+          ->first();
+
+        if ($previousChallengeProgress) {
+          $previousChallengeProgress->update([
+            'is_used' => false,
+          ]);
+          Log::info('Previous Challenge Progress Reset: ', ['challenge_progress' => $previousChallengeProgress]);
+        }
+      } elseif ($request->challenge_progress_id !== $transaksi->challenge_progress_id) {
+        $validatedDataTransaksi['challenge_progress_id'] = $request->challenge_progress_id;
+        $validatedDataTransaksi['voucher_id'] = null;
+
+        // Reset previous voucher if it exists
+        $previousOwnedVoucher = OwnedVoucher::where('member_id', $transaksi->pelanggan->member_id)
+          ->where('voucher_id', $transaksi->voucher_id)
+          ->where('is_used', true)
+          ->first();
+
+        if ($previousOwnedVoucher) {
+          $previousOwnedVoucher->update([
+            'is_used' => false,
+            'used_date' => null,
+          ]);
+          Log::info('Previous Owned Voucher Reset: ', ['owned_voucher' => $previousOwnedVoucher]);
+        }
+
+        // Reset previous challenge if it exists
+        $previousChallengeProgress = ChallengeProgress::where('id', $transaksi->challenge_progress_id)
+          ->where('is_used', true)
+          ->first();
+
+        if ($previousChallengeProgress) {
+          $previousChallengeProgress->update([
+            'is_used' => false,
+          ]);
+          Log::info('Previous Challenge Progress Reset: ', ['challenge_progress' => $previousChallengeProgress]);
+        }
+
+        // Mark new challenge as used
+        $updatedChallengeProgress = ChallengeProgress::where('id', $request->challenge_progress_id)
+          ->first();
+
+        if ($updatedChallengeProgress) {
+          $updatedChallengeProgress->update([
+            'is_used' => true,
+          ]);
+          Log::info('Challenge Progress Updated: ', ['challenge_progress' => $updatedChallengeProgress]);
         }
       }
 
       $updatedTransaction = Transaksi::where('id', $transaksi->id)->update($validatedDataTransaksi);
       Log::info('Transaction Updated: ', ['transaction' => $updatedTransaction]);
 
+      // Rest of the code remains the same
       $rules2 = [
         'layanan_id' => 'array',
         'layanan_id.*' => 'nullable|:layanans,id',
@@ -276,12 +310,6 @@ class TransaksiController extends Controller
 
         foreach ($validatedDataLayanan['layanan_id'] as $index => $layananId) {
           if ($layananId) {
-            // $index is the array position
-            // $layananId is the actual layanan ID
-
-            // Access other data if needed using the same index
-            // Example: $validatedDataLayanan['other_field'][$index]
-
             if ($transaksi->pelanggan->member_id) {
               $layananPoint = Layanan::where('id', $layananId)->first()->point;
               $updatedTotalPoint += $layananPoint;
@@ -314,8 +342,7 @@ class TransaksiController extends Controller
       return redirect('/dashboard/transaksi')->with('success', 'Data transaksi telah diupdate!!');
     } catch (\Exception $e) {
       Log::error('Transaction Update Error: ', ['message' => $e->getMessage()]);
-
-      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat menghapus transaksi');
+      return redirect('/dashboard/transaksi')->with('error', 'Terjadi kesalahan saat mengupdate transaksi: ' . $e->getMessage());
     }
   }
 
