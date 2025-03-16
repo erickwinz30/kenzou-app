@@ -411,13 +411,13 @@ class CatatTransaksiController extends Controller
         'is_paid_off' => 'required|boolean',
       ]);
 
-      $transaction = Transaksi::findOrFail($validatedData['id']);
-      $transaction->is_paid_off = $validatedData['is_paid_off'];
-      $transaction->save();
+      if ($validatedData['is_paid_off'] == true) {
+        $transaction = Transaksi::findOrFail($validatedData['id']);
+        $transaction->is_paid_off = $validatedData['is_paid_off'];
+        $transaction->save();
 
-      $this->memberBenefit($transaction->id);
+        $this->memberBenefit($transaction->id);
 
-      if ($transaction->is_paid_off == true) {
         return redirect('/dashboard/transaksiBaru')->with('success', 'Transaksi telah dikonfirmasi.');
       } else {
         return redirect('/dashboard/transaksiBaru')->with('error', 'Transaksi belum lunas. Silahkan konfirmasi ke pelanggan!');
