@@ -229,7 +229,7 @@ class DatabaseSeeder extends Seeder
       [
         'nama' => 'Miyawaki Sakura',
         'email' => 'miyawakisakura@gmail.com',
-        'nomor_telepon' => '086473829177',
+        'nomor_telepon' => '085155431948',
         'tanggal_lahir' => Carbon::create(1998, 3, 19),
         'experience_point' => 1940,
         'redeemable_point' => 1940,
@@ -238,7 +238,7 @@ class DatabaseSeeder extends Seeder
       [
         'nama' => 'Huh Yunjin',
         'email' => 'huh.yunjin@gmail.com',
-        'nomor_telepon' => '084388749990',
+        'nomor_telepon' => '089666020017',
         'tanggal_lahir' => Carbon::create(2001, 10, 8),
         'experience_point' => 1247,
         'redeemable_point' => 1240,
@@ -325,8 +325,8 @@ class DatabaseSeeder extends Seeder
 
   private function createTransaksiSeeds()
   {
-    $startDate = Carbon::create(2025, 1, 1)->startOfDay();
-    $endDate = Carbon::create(2025, 3, 31)->endOfDay();
+    $startDate = Carbon::create(2025, 5, 1)->startOfDay();
+    $endDate = Carbon::create(2025, 5, 31)->endOfDay();
 
     $pelanggans = Pelanggan::all();
     $users = User::where('is_admin', 1)->get();
