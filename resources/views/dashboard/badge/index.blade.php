@@ -55,9 +55,9 @@
                       <td>{{ $badge->min_point }}</td>
                       <td>{{ $badge->max_point }}</td>
                       <td>{{ $badge->discount * 100 }}%</td>
-                      <td>
-                        <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}"
-                          style="max-width: 100px">
+                      <td class="text-center">
+                        <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->nama }}"
+                          style="max-width: 100px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                       </td>
                       <td class="text-center">
                         @if ($badge->is_active === 1)
@@ -131,8 +131,10 @@
                       <td>{{ $leaderboard->badge_name }}</td>
                       <td>{{ $leaderboard->rank }}</td>
                       <td>{{ $leaderboard->discount * 100 }}%</td>
-                      <td><img src="{{ asset('storage/' . $leaderboard->image) }}" alt="{{ $leaderboard->image }}"
-                          style="max-width: 100px"></td>
+                      <td class="text-center">
+                        <img src="{{ asset('storage/' . $leaderboard->image) }}" alt="{{ $leaderboard->badge_name }}"
+                          style="max-width: 100px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                      </td>
                       <td class="text-center">
                         @if ($leaderboard->is_active === 1)
                           <span

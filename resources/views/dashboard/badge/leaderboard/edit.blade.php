@@ -82,10 +82,10 @@
               <p class="fw-bold text-center">Preview Gambar</p>
               <div class="d-flex justify-content-center">
                 @if ($leaderboard->image)
-                <img class="img-preview img-fluid mb-3" style="max-height: 200px"
+                <img class="img-preview img-fluid mb-3" style="max-height: 200px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);"
                   src="{{ asset('storage/' . $leaderboard->image) }}">
                 @else
-                <img class="img-preview img-fluid mb-3" style="max-height: 200px">
+                <img class="img-preview img-fluid mb-3" style="max-height: 200px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 @endif
               </div>
             </div>

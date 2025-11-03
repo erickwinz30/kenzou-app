@@ -14,7 +14,7 @@
           <div class="mb-4">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 d-flex align-items-center my-3">
               <div class="d-flex justify-content-center">
-                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}" style="max-width: 100px">
+                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->nama }}" style="max-width: 100px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
               </div>
               <div>
                 <h2 class="fs-4 text-center">{{ $badge->nama }}</h2>

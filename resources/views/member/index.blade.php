@@ -16,7 +16,7 @@
           <div class="d-flex justify-content-around align-items-center mb-2" style="box-sizing: border-box">
             <div class="text-center">
               <div>
-                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->image }}" style="max-width: 100px">
+                <img src="{{ asset('storage/' . $badge->image) }}" alt="{{ $badge->nama }}" style="max-width: 100px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
               </div>
               <div>
                 <h2>{{ $badge->nama }}</h2>

@@ -112,10 +112,44 @@ class DatabaseSeeder extends Seeder
     $storagePaths = [];
 
     foreach ($localPaths as $key => $localPath) {
-      // Salin gambar ke direktori penyimpanan aplikasi
-      $storagePath = 'badge-image/' . basename($localPath);
-      Storage::disk('public')->put($storagePath, file_get_contents($localPath));
-      $storagePaths[$key] = $storagePath;
+      // Cek apakah file ada
+      if (file_exists($localPath)) {
+        // Salin gambar ke direktori penyimpanan aplikasi
+        $storagePath = 'badge-image/' . basename($localPath);
+        Storage::disk('public')->put($storagePath, file_get_contents($localPath));
+        $storagePaths[$key] = $storagePath;
+      } else {
+        // Jika file tidak ada, buat placeholder dengan warna berbeda
+        $storagePath = 'badge-image/' . $key . '.png';
+        
+        // Buat gambar placeholder 200x200 dengan GD
+        $image = imagecreatetruecolor(200, 200);
+        
+        // Set warna berdasarkan badge
+        if ($key === 'bronze') {
+          $bgColor = imagecolorallocate($image, 205, 127, 50); // Bronze color
+        } elseif ($key === 'silver') {
+          $bgColor = imagecolorallocate($image, 192, 192, 192); // Silver color
+        } else {
+          $bgColor = imagecolorallocate($image, 255, 215, 0); // Gold color
+        }
+        
+        imagefill($image, 0, 0, $bgColor);
+        
+        // Tambahkan text
+        $textColor = imagecolorallocate($image, 255, 255, 255);
+        $text = strtoupper($key);
+        imagestring($image, 5, 70, 95, $text, $textColor);
+        
+        // Simpan ke buffer
+        ob_start();
+        imagepng($image);
+        $imageData = ob_get_clean();
+        imagedestroy($image);
+        
+        Storage::disk('public')->put($storagePath, $imageData);
+        $storagePaths[$key] = $storagePath;
+      }
     }
 
     $badges = [
@@ -157,10 +191,49 @@ class DatabaseSeeder extends Seeder
     $storagePathLeaderboards = [];
 
     foreach ($localPathsLeaderboard as $key => $localPathLeaderboard) {
-      // Salin gambar ke direktori penyimpanan aplikasi
-      $storagePathLeaderboard = 'badge-leaderboard-image/' . basename($localPathLeaderboard);
-      Storage::disk('public')->put($storagePathLeaderboard, file_get_contents($localPathLeaderboard));
-      $storagePathLeaderboards[$key] = $storagePathLeaderboard;
+      // Cek apakah file ada
+      if (file_exists($localPathLeaderboard)) {
+        // Salin gambar ke direktori penyimpanan aplikasi
+        $storagePathLeaderboard = 'badge-leaderboard-image/' . basename($localPathLeaderboard);
+        Storage::disk('public')->put($storagePathLeaderboard, file_get_contents($localPathLeaderboard));
+        $storagePathLeaderboards[$key] = $storagePathLeaderboard;
+      } else {
+        // Jika file tidak ada, buat placeholder dengan warna berbeda
+        $filename = $key === 'bronze' ? '3.png' : ($key === 'silver' ? '2.png' : '1.png');
+        $storagePathLeaderboard = 'badge-leaderboard-image/' . $filename;
+        
+        // Buat gambar placeholder 200x200 dengan GD
+        $image = imagecreatetruecolor(200, 200);
+        
+        // Set warna berdasarkan badge
+        if ($key === 'bronze') {
+          $bgColor = imagecolorallocate($image, 205, 127, 50); // Bronze color
+          $rank = '3rd';
+        } elseif ($key === 'silver') {
+          $bgColor = imagecolorallocate($image, 192, 192, 192); // Silver color
+          $rank = '2nd';
+        } else {
+          $bgColor = imagecolorallocate($image, 255, 215, 0); // Gold color
+          $rank = '1st';
+        }
+        
+        imagefill($image, 0, 0, $bgColor);
+        
+        // Tambahkan text
+        $textColor = imagecolorallocate($image, 255, 255, 255);
+        $text = strtoupper($key);
+        imagestring($image, 5, 70, 85, $text, $textColor);
+        imagestring($image, 4, 80, 105, $rank, $textColor);
+        
+        // Simpan ke buffer
+        ob_start();
+        imagepng($image);
+        $imageData = ob_get_clean();
+        imagedestroy($image);
+        
+        Storage::disk('public')->put($storagePathLeaderboard, $imageData);
+        $storagePathLeaderboards[$key] = $storagePathLeaderboard;
+      }
     }
 
     $badgeLeaderboards = [
