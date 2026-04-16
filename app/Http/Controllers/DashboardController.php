@@ -11,6 +11,21 @@ use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
 {
+  private function sqlDateFormatExpression(string $column, string $mysqlFormat, string $pgsqlFormat, bool $truncateHour = false): string
+  {
+    $driver = DB::connection()->getDriverName();
+
+    if ($driver === 'pgsql') {
+      if ($truncateHour) {
+        return "TO_CHAR(DATE_TRUNC('hour', {$column}), '{$pgsqlFormat}')";
+      }
+
+      return "TO_CHAR({$column}, '{$pgsqlFormat}')";
+    }
+
+    return "DATE_FORMAT({$column}, '{$mysqlFormat}')";
+  }
+
   public function index()
   {
     $todayTransaksi = $this->countMobil();
@@ -124,28 +139,29 @@ class DashboardController extends Controller
   public function perHourSales(Request $request)
   {
     $currentDate = Carbon::now()->format('Y-m-d');
+    $hourExpression = $this->sqlDateFormatExpression('date', '%Y-%m-%d %H:00:00', 'YYYY-MM-DD HH24:00:00', true);
 
     $results = DB::table('transaksis')
       ->select(
-        DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+        DB::raw("{$hourExpression} as hour"),
         DB::raw('SUM(subtotal) as subtotal')
       )
       ->whereDate('date', $currentDate) // Filter by current date
       ->whereTime('date', '>=', '07:30:00')
       ->whereTime('date', '<=', '17:30:00')
-      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+      ->groupBy(DB::raw($hourExpression))
       ->orderBy('hour')
       ->get();
 
     $results2 = DB::table('transaksis')
       ->select(
-        DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00') as hour"),
+        DB::raw("{$hourExpression} as hour"),
         DB::raw('COUNT(id) as transaksi_id')
       )
       ->whereDate('date', $currentDate) // Filter by current date
       ->whereTime('date', '>=', '07:30:00')
       ->whereTime('date', '<=', '17:30:00')
-      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d %H:00:00')"))
+      ->groupBy(DB::raw($hourExpression))
       ->orderBy('hour')
       ->get();
 
@@ -199,16 +215,17 @@ class DashboardController extends Controller
   public function perDaySales(Request $request)
   {
     // $currentMonth = Carbon::now()->format('Y-m'); // Get current month and year
+    $dayExpression = $this->sqlDateFormatExpression('date', '%Y-%m-%d', 'YYYY-MM-DD');
 
     // Query for total sales per day
     $results = DB::table('transaksis')
       ->select(
-        DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+        DB::raw("{$dayExpression} as day"),
         DB::raw('SUM(subtotal) as subtotal')
       )
       ->whereYear('date', Carbon::now()->year) // Filter by current year
       ->whereMonth('date', Carbon::now()->month) // Filter by current month
-      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+      ->groupBy(DB::raw($dayExpression))
       ->orderBy('day')
       ->get();
 
@@ -246,15 +263,17 @@ class DashboardController extends Controller
 
   public function perDayCars(Request $request)
   {
+    $dayExpression = $this->sqlDateFormatExpression('date', '%Y-%m-%d', 'YYYY-MM-DD');
+
     // Query for total transaction count per day
     $results2 = DB::table('transaksis')
       ->select(
-        DB::raw("DATE_FORMAT(date, '%Y-%m-%d') as day"),
+        DB::raw("{$dayExpression} as day"),
         DB::raw('COUNT(id) as transaksi_id')
       )
       ->whereYear('date', Carbon::now()->year) // Filter by current year
       ->whereMonth('date', Carbon::now()->month) // Filter by current month
-      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m-%d')"))
+      ->groupBy(DB::raw($dayExpression))
       ->orderBy('day')
       ->get();
 
@@ -291,14 +310,16 @@ class DashboardController extends Controller
 
   public function perMonthSales(Request $request)
   {
+    $monthExpression = $this->sqlDateFormatExpression('date', '%Y-%m', 'YYYY-MM');
+
     // Query for total sales per month
     $results = DB::table('transaksis')
       ->select(
-        DB::raw("DATE_FORMAT(date, '%Y-%m') as month"),
+        DB::raw("{$monthExpression} as month"),
         DB::raw('SUM(subtotal) as subtotal')
       )
       ->whereYear('date', Carbon::now()->year) // Filter by the current year
-      ->groupBy(DB::raw("DATE_FORMAT(date, '%Y-%m')"))
+      ->groupBy(DB::raw($monthExpression))
       ->orderBy('month')
       ->get();
 
@@ -335,19 +356,21 @@ class DashboardController extends Controller
 
   public function perMonthLayanan(Request $request)
   {
+    $monthShortExpression = $this->sqlDateFormatExpression('transaksis.date', '%b', 'Mon');
+
     // Query for total sales per month
     $results = DB::table('detail_layanans')
       ->join('layanans', 'detail_layanans.layanan_id', '=', 'layanans.id')
       ->join('transaksis', 'detail_layanans.transaksi_id', '=', 'transaksis.id')
       ->select(
-        DB::raw("DATE_FORMAT(transaksis.date, '%b') AS month"),
+        DB::raw("{$monthShortExpression} AS month"),
         'layanans.nama_layanan',
         DB::raw('COUNT(detail_layanans.id) AS jumlah_penggunaan'),
         DB::raw("MIN(transaksis.date) as first_date_of_month")
       )
       ->whereYear('transaksis.date', Carbon::now()->year)
       ->groupBy(
-        DB::raw("DATE_FORMAT(transaksis.date, '%b')"),
+        DB::raw($monthShortExpression),
         'layanans.nama_layanan'
       )
       ->orderBy('first_date_of_month')

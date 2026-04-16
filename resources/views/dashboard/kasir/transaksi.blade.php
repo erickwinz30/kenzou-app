@@ -102,7 +102,7 @@
       <!-- Detail Transaksi -->
       <div class="card">
         <div class="card-body">
-          <form action="/dashboard/transaksiBaru" method="POST">
+          <form action="/dashboard/transaksiBaru" method="POST" id="transaction-form">
             @csrf
             <h5 class="card-title">Detail Transaksi</h5>
             {{-- Container detail layanan pada transaksi --}}
@@ -164,7 +164,7 @@
               </div>
             </div>
             <div class="mt-3 text-end">
-              <button type="submit" class="btn btn-primary">Simpan</button>
+              <button type="submit" class="btn btn-primary" id="submit-transaction-btn">Simpan</button>
             </div>
           </form>
         </div>
@@ -175,9 +175,15 @@
   </div>
 </section>
 
+<script type="text/javascript"
+  src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
+  data-client-key="{{ $midtrans_client_key }}"></script>
+
 <script>
   document.addEventListener("DOMContentLoaded", function() {
       const addItemButtons = document.querySelectorAll(".add-item");
+      const transactionForm = document.getElementById("transaction-form");
+      const submitTransactionButton = document.getElementById("submit-transaction-btn");
       const addNoPelanggan = document.getElementById("tambahNoPelanggan");
       const containerItem = document.getElementById("item_transaksi");
       const totalElement = document.getElementById("total-display");
@@ -194,6 +200,27 @@
       let rankDiscountPercentage = 0;
       let subtotal = 0;
       let timeoutId;
+
+      function showToast(icon, title, text = '') {
+        if (typeof Swal !== 'undefined') {
+          Swal.fire({
+            icon,
+            title,
+            text,
+          });
+          return;
+        }
+
+        alert(text ? `${title}\n${text}` : title);
+      }
+
+      async function parseJsonSafe(response) {
+        try {
+          return await response.json();
+        } catch (error) {
+          return null;
+        }
+      }
 
       // fuction untuk update subtotal
       function updateSubtotal(badgeDiscount, amount, voucherDiscount, rankDiscount) {
@@ -1196,6 +1223,112 @@
           tunaiContainer.innerHTML = "";
           }
         });
+      });
+
+      transactionForm.addEventListener('submit', async function(event) {
+        const selectedPaymentMethod = document.querySelector('input[name="metode_pembayaran"]:checked')?.value;
+        if (selectedPaymentMethod !== 'qris') {
+          return;
+        }
+
+        event.preventDefault();
+
+        if (typeof window.snap === 'undefined') {
+          showToast('error', 'Midtrans Snap belum siap', 'Coba refresh halaman terlebih dahulu.');
+          return;
+        }
+
+        submitTransactionButton.disabled = true;
+        const originalButtonText = submitTransactionButton.textContent;
+        submitTransactionButton.textContent = 'Memproses...';
+
+        try {
+          const transactionFormData = new FormData(transactionForm);
+
+          const saveTransactionResponse = await fetch(transactionForm.action, {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: transactionFormData,
+          });
+
+          const saveTransactionResult = await parseJsonSafe(saveTransactionResponse);
+          if (!saveTransactionResponse.ok || !saveTransactionResult?.transaction_id) {
+            const errorMessage = saveTransactionResult?.message || 'Gagal menyimpan transaksi.';
+            showToast('error', 'Transaksi gagal', errorMessage);
+            return;
+          }
+
+          const paymentFormData = new FormData();
+          paymentFormData.append('transaction_id', saveTransactionResult.transaction_id);
+          paymentFormData.append('metode_pembayaran', 'qris');
+
+          const createPaymentResponse = await fetch('/midtrans/transaction', {
+            method: 'POST',
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest',
+              'Accept': 'application/json',
+              'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            body: paymentFormData,
+          });
+
+          const createPaymentResult = await parseJsonSafe(createPaymentResponse);
+          if (!createPaymentResponse.ok || !createPaymentResult?.snap_token) {
+            const errorMessage = createPaymentResult?.message || 'Gagal membuat pembayaran Midtrans.';
+            showToast('error', 'Pembayaran gagal', errorMessage);
+            return;
+          }
+
+          const syncPaymentStatus = async (orderId) => {
+            if (!orderId) {
+              return;
+            }
+
+            await fetch('/midtrans/confirm-payment', {
+              method: 'POST',
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+              },
+              body: new URLSearchParams({
+                order_id: orderId,
+              }),
+            });
+          };
+
+          window.snap.pay(createPaymentResult.snap_token, {
+            onSuccess: async function(result) {
+              await syncPaymentStatus(result?.order_id || createPaymentResult.order_id || saveTransactionResult.transaction_id);
+              showToast('success', 'Pembayaran berhasil', 'Pembayaran QRIS berhasil diproses.');
+              window.location.href = '/dashboard/transaksiBaru';
+            },
+            onPending: function() {
+              showToast('info', 'Menunggu pembayaran', 'Silakan selesaikan pembayaran QRIS pelanggan.');
+              submitTransactionButton.disabled = false;
+              submitTransactionButton.textContent = originalButtonText;
+            },
+            onError: function() {
+              showToast('error', 'Pembayaran gagal', 'Terjadi kendala saat memproses pembayaran.');
+              submitTransactionButton.disabled = false;
+              submitTransactionButton.textContent = originalButtonText;
+            },
+            onClose: function() {
+              submitTransactionButton.disabled = false;
+              submitTransactionButton.textContent = originalButtonText;
+              showToast('warning', 'Popup ditutup', 'Pembayaran belum diselesaikan.');
+            },
+          });
+        } catch (error) {
+          console.error(error);
+          showToast('error', 'Terjadi kesalahan', 'Silakan coba kembali.');
+          submitTransactionButton.disabled = false;
+          submitTransactionButton.textContent = originalButtonText;
+        }
       });
     });
 </script>

@@ -148,6 +148,12 @@
                         class="bi bi-eye"></i></a>
                     <a href="/dashboard/transaksi/{{ $transaksi->id }}/edit" class="btn btn-warning"><i
                         class="bi bi-pencil"></i></a>
+                    @if (!$transaksi->is_paid_off && $transaksi->metode_pembayaran === 'qris')
+                    <button type="button" class="btn btn-success"
+                      onclick="reopenSnapPayment('{{ $transaksi->id }}')">
+                      <i class="bi bi-qr-code-scan"></i>
+                    </button>
+                    @endif
                     <form action="/dashboard/transaksi/{{ $transaksi->id }}" method="POST" class="d-inline"
                       id="deleteForm{{ $transaksi->id }}">
                       @method('DELETE')
@@ -196,6 +202,9 @@
 <script src="https://cdn.datatables.net/buttons/3.1.1/js/buttons.colVis.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script type="text/javascript"
+  src="{{ config('midtrans.is_production') ? 'https://app.midtrans.com/snap/snap.js' : 'https://app.sandbox.midtrans.com/snap/snap.js' }}"
+  data-client-key="{{ config('midtrans.client_key') }}"></script>
 
 <script>
   $(document).ready(function() {
@@ -336,6 +345,78 @@
 </script>
 
 <script>
+  async function reopenSnapPayment(transactionId) {
+    if (typeof window.snap === 'undefined') {
+      Swal.fire('Snap belum siap', 'Silakan refresh halaman dan coba lagi.', 'warning');
+      return;
+    }
+
+    const csrfToken = '{{ csrf_token() }}';
+
+    try {
+      Swal.fire({
+        title: 'Menyiapkan pembayaran...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      const response = await fetch(`/dashboard/transaksi/${transactionId}/pay`, {
+        method: 'POST',
+        headers: {
+          'X-CSRF-TOKEN': csrfToken,
+          'Accept': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+
+      if (!response.ok || !result?.snap_token) {
+        throw new Error(result?.message || 'Gagal menyiapkan pembayaran Midtrans.');
+      }
+
+      const syncPaymentStatus = async (orderId) => {
+        if (!orderId) {
+          return;
+        }
+
+        await fetch('/midtrans/confirm-payment', {
+          method: 'POST',
+          headers: {
+            'X-CSRF-TOKEN': csrfToken,
+            'Accept': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          body: new URLSearchParams({
+            order_id: orderId,
+          }),
+        });
+      };
+
+      Swal.close();
+      window.snap.pay(result.snap_token, {
+        onSuccess: async function(snapResult) {
+          await syncPaymentStatus(snapResult?.order_id || result.order_id || transactionId);
+          Swal.fire('Berhasil', 'Pembayaran berhasil diproses.', 'success').then(() => {
+            window.location.reload();
+          });
+        },
+        onPending: function() {
+          Swal.fire('Menunggu Pembayaran', 'Silakan selesaikan pembayaran pelanggan.', 'info');
+        },
+        onError: function() {
+          Swal.fire('Gagal', 'Pembayaran gagal diproses.', 'error');
+        },
+        onClose: function() {
+          Swal.fire('Dibatalkan', 'Popup pembayaran ditutup.', 'info');
+        }
+      });
+    } catch (error) {
+      Swal.fire('Gagal', error.message || 'Terjadi kesalahan saat membuka pembayaran.', 'error');
+    }
+  }
+
   //konfirmasi hapus data
     function deleteConfirmation(id) {
       Swal.fire({

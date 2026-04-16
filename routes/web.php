@@ -12,7 +12,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\LayananController;
 use App\Http\Controllers\VoucherController;
 use App\Http\Controllers\FeedbackController;
-use App\Http\Controllers\MidtransController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ChallengeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DateRangeController;
@@ -42,13 +42,14 @@ Route::middleware('isAdmin')->group(function () {
   Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
   Route::get('/dashboard/fetch-sales-data', [DashboardController::class, 'perHourSales'])->name('fetch-sales-data');
   Route::get('/dashboard/fetch-sales-this-month', [DashboardController::class, 'perDaySales'])->name('fetch-sales-this-month');
-  Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-sales-this-month');
+  Route::get('/dashboard/fetch-car-this-month', [DashboardController::class, 'perDayCars'])->name('fetch-car-this-month');
   Route::get('/dashboard/fetch-sales-this-year', [DashboardController::class, 'perMonthSales'])->name('fetch-sales-this-year');
   Route::get('/dashboard/fetch-layanan-this-year', [DashboardController::class, 'perMonthLayanan'])->name('fetch-layanan-this-year');
 
   //dashboard transaksi
   Route::resource('dashboard/transaksi', TransaksiController::class);
   Route::post('/dashboard/transaksi/active-switch', [TransaksiController::class, 'activeSwitch']);
+  Route::post('/dashboard/transaksi/{transaction}/pay', [PaymentController::class, 'createTransaction'])->name('dashboard.transaksi.pay');
 
   //dateRange
   Route::post('/dashboard/transaksi/searchFromDate', [TransaksiController::class, 'searchFromDate'])->name('searchFromDate');
@@ -119,13 +120,16 @@ Route::middleware('notAdmin')->group(function () {
   Route::post('/dashboard/transaksiBaru/confirm-paid-off/{id}', [CatatTransaksiController::class, 'confirmPaidOff'])->name('confirm-paid-off');
 
   //midtrans
-  Route::post('/midtrans/transaction', [MidtransController::class, 'createTransaction'])->name('midtrans.transaction');
+  Route::get('/payment/transaction/{transaction}', [PaymentController::class, 'createTransaction'])->name('payment.transaction');
+  Route::post('/midtrans/transaction', [PaymentController::class, 'createTransaction'])->name('midtrans.transaction');
   Route::get('/midtrans/qris/{transaction}', [CatatTransaksiController::class, 'showQris'])->name('midtrans.qris');
-  Route::post('/midtrans/notification', [MidtransController::class, 'notificationHandler'])->name('midtrans.notification');
+  Route::post('/midtrans/notification', [PaymentController::class, 'handleCallback'])->name('midtrans.notification');
 
   //tampil list layanan
   Route::get('/dashboard/list-layanan', [CatatTransaksiController::class, 'layanan']);
 });
+
+Route::post('/midtrans/confirm-payment', [PaymentController::class, 'confirmPayment'])->name('midtrans.confirm-payment');
 
 //login
 Route::get('dashboard/login', [LoginController::class, 'index'])->name('dashboard-login')->middleware('guest');

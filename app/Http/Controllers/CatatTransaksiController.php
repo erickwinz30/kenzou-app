@@ -37,11 +37,11 @@ class CatatTransaksiController extends Controller
     // Set your Merchant Server Key
     Config::$serverKey = $serverKey;
     // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-    Config::$isProduction = config('midtrans.is_production');
+    Config::$isProduction = config('midtrans.is_production', false);
     // Set sanitization on (default)
-    Config::$isSanitized = config('midtrans.is_sanitized');
+    Config::$isSanitized = config('midtrans.is_sanitized', true);
     // Set 3DS transaction for credit card to true
-    Config::$is3ds = config('midtrans.is_3ds');
+    Config::$is3ds = config('midtrans.is_3ds', true);
 
     // Log the configuration
     Log::info('Midtrans Configuration:', [
@@ -56,6 +56,7 @@ class CatatTransaksiController extends Controller
     return view('dashboard.kasir.transaksi', [
       'layanans' => Layanan::all(),
       'tanggal_transaksi' => Carbon::now('Asia/Jakarta')->format('d-m-Y'),
+      'midtrans_client_key' => config('midtrans.client_key'),
     ]);
   }
 
@@ -246,7 +247,14 @@ class CatatTransaksiController extends Controller
       // }
 
       if ($transaction->metode_pembayaran === "qris") {
-        return redirect()->route('transaction-confirmation', ['id' => $transaction->id]);
+        if ($request->expectsJson() || $request->wantsJson()) {
+          return response()->json([
+            'message' => 'Transaksi berhasil dibuat. Lanjutkan ke pembayaran QRIS.',
+            'transaction_id' => $transaction->id,
+          ]);
+        }
+
+        return redirect()->route('payment.transaction', ['transaction' => $transaction->id]);
       } else if ($transaction->metode_pembayaran === "tunai") {
         if ($transaction->is_paid_off == true) {
           $this->memberBenefit($transaction->id);
@@ -656,8 +664,8 @@ class CatatTransaksiController extends Controller
 
 
     // using twillio
-    $sid    = env('TWILIO_SID');
-    $token  = env('TWILIO_AUTH_TOKEN');
+    $sid = env('TWILIO_SID');
+    $token = env('TWILIO_AUTH_TOKEN');
     $twilio = new Client($sid, $token);
 
     $message = $twilio->messages
@@ -669,7 +677,7 @@ class CatatTransaksiController extends Controller
         )
       );
 
-    print($message->sid);
+    print ($message->sid);
 
     // $sid    = env('TWILIO_SID');
     // $token  = env('TWILIO_AUTH_TOKEN');
